@@ -3397,11 +3397,9 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 		break;
 	case RT5671_AIF2:
 		bclk_ms = 1;
-		mask_clk = RT5671_I2S_BCLK_MS2_MASK | RT5671_I2S_PD2_MASK |
-			RT5671_I2S_PD1_MASK;
+		mask_clk = RT5671_I2S_BCLK_MS2_MASK | RT5671_I2S_PD2_MASK;
 		val_clk = bclk_ms << RT5671_I2S_BCLK_MS2_SFT |
-			pre_div << RT5671_I2S_PD2_SFT |
-			pre_div << RT5671_I2S_PD1_SFT ;
+			pre_div << RT5671_I2S_PD2_SFT;
 		snd_soc_update_bits(codec, RT5671_I2S2_SDP,
 			RT5671_I2S_DL_MASK, val_len);
 		snd_soc_update_bits(codec, RT5671_ADDA_CLK1, mask_clk, val_clk);
@@ -3421,8 +3419,6 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 		snd_soc_update_bits(codec, RT5671_I2S4_SDP,
 			RT5671_I2S_DL_MASK, val_len);
 		snd_soc_update_bits(codec, RT5671_DSP_CLK, mask_clk, val_clk);
-		snd_soc_update_bits(codec, RT5671_ADDA_CLK1, RT5671_I2S_PD1_MASK,
-			pre_div << RT5671_I2S_PD1_SFT);
 		break;
 	}
 
