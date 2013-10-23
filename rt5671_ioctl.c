@@ -20,7 +20,7 @@
 #include "rt5671.h"
 #include "rt5671-dsp.h"
 
-hweq_t hweq_param[] = {
+struct hweq_t hweq_param[] = {
 	{/* NORMAL */
 		{0},
 		{0},
@@ -28,19 +28,23 @@ hweq_t hweq_param[] = {
 	},
 	{/* SPK */
 		{0},
-		{0x1c10,0x01f4,	0xc5e9,	0x1a98,	0x1d2c,	0xc882,	0x1c10,	0x01f4,	0xe904,	0x1c10,	0x01f4, 0xe904,	0x1c10,	0x01f4,	0x1c10,	0x01f4,	0x2000,	0x0000,	0x2000},
+		{0x1c10, 0x01f4, 0xc5e9, 0x1a98, 0x1d2c, 0xc882, 0x1c10,
+		0x01f4, 0xe904, 0x1c10, 0x01f4, 0xe904, 0x1c10, 0x01f4,
+		0x1c10, 0x01f4, 0x2000, 0x0000, 0x2000},
 		0x0000,
 	},
 	{/* HP */
 		{0},
-		{0x1c10,0x01f4,	0xc5e9,	0x1a98,	0x1d2c,	0xc882,	0x1c10,	0x01f4,	0xe904,	0x1c10,	0x01f4, 0xe904,	0x1c10,	0x01f4,	0x1c10,	0x01f4,	0x2000,	0x0000,	0x2000},
+		{0x1c10, 0x01f4, 0xc5e9, 0x1a98, 0x1d2c, 0xc882, 0x1c10,
+		0x01f4, 0xe904, 0x1c10, 0x01f4, 0xe904, 0x1c10, 0x01f4,
+		0x1c10, 0x01f4, 0x2000, 0x0000, 0x2000},
 		0x0000,
 	},
 };
 #define RT5671_HWEQ_LEN ARRAY_SIZE(hweq_param)
 
 int eqreg[EQ_CH_NUM][EQ_REG_NUM] = {
-	{0xa4, 0xa5, 0xeb, 0xec, 0xed, 0xee, 0xe7, 0xe8, 0xe9, 0xea, 0xe5, 
+	{0xa4, 0xa5, 0xeb, 0xec, 0xed, 0xee, 0xe7, 0xe8, 0xe9, 0xea, 0xe5,
 	 0xe6, 0xae, 0xaf, 0xb0, 0xb4, 0xb5, 0xb6, 0xba, 0xbb, 0xbc, 0xc0,
 	 0xc1, 0xc4, 0xc5, 0xc6, 0xca, 0xcc},
 	{0xa6, 0xa7, 0xf5, 0xf6, 0xf7, 0xf8, 0xf1, 0xf2, 0xf3, 0xf4, 0xef,
@@ -56,17 +60,16 @@ int rt5671_update_eqmode(
 	struct rt_codec_ops *ioctl_ops = rt_codec_get_ioctl_ops();
 	int i;
 
-	if(codec == NULL ||  mode >= RT5671_HWEQ_LEN)
+	if (codec == NULL ||  mode >= RT5671_HWEQ_LEN)
 		return -EINVAL;
 
 	dev_dbg(codec->dev, "%s(): mode=%d\n", __func__, mode);
 
-	for(i = 0; i <= EQ_REG_NUM; i++) {
+	for (i = 0; i <= EQ_REG_NUM; i++)
 		hweq_param[mode].reg[i] = eqreg[channel][i];
-	}
 
-	for(i = 0; i <= EQ_REG_NUM; i++) {
-		if(hweq_param[mode].reg[i])
+	for (i = 0; i <= EQ_REG_NUM; i++) {
+		if (hweq_param[mode].reg[i])
 			ioctl_ops->index_write(codec, hweq_param[mode].reg[i],
 					hweq_param[mode].value[i]);
 		else
@@ -87,12 +90,11 @@ int rt5671_ioctl_common(struct snd_hwdep *hw, struct file *file,
 	struct snd_soc_codec *codec = hw->private_data;
 	struct rt_codec_cmd __user *_rt_codec = (struct rt_codec_cmd *)arg;
 	struct rt_codec_cmd rt_codec;
-	//struct rt_codec_ops *ioctl_ops = rt_codec_get_ioctl_ops();
 	int *buf;
 	static int eq_mode[EQ_CH_NUM];
 
 	if (copy_from_user(&rt_codec, _rt_codec, sizeof(rt_codec))) {
-		dev_err(codec->dev,"copy_from_user faild\n");
+		dev_err(codec->dev, "copy_from_user faild\n");
 		return -EFAULT;
 	}
 	dev_dbg(codec->dev, "%s(): rt_codec.number=%d, cmd=%d\n",
@@ -100,13 +102,15 @@ int rt5671_ioctl_common(struct snd_hwdep *hw, struct file *file,
 	buf = kmalloc(sizeof(*buf) * rt_codec.number, GFP_KERNEL);
 	if (buf == NULL)
 		return -ENOMEM;
-	if (copy_from_user(buf, rt_codec.buf, sizeof(*buf) * rt_codec.number)) {
+	if (copy_from_user(buf, rt_codec.buf,
+		sizeof(*buf) * rt_codec.number))
 		goto err;
-	}
-	
+
 	switch (cmd) {
 	case RT_SET_CODEC_HWEQ_IOCTL:
-		if (eq_mode == *buf)
+		if (*buf >= EQ_CH_NUM)
+			break;
+		if (eq_mode[*buf] == *(buf + 1))
 			break;
 		eq_mode[*buf] = *(buf + 1);
 		rt5671_update_eqmode(codec, eq_mode[*buf], *buf);
@@ -114,7 +118,8 @@ int rt5671_ioctl_common(struct snd_hwdep *hw, struct file *file,
 
 	case RT_GET_CODEC_ID:
 		*buf = snd_soc_read(codec, RT5671_VENDOR_ID2);
-		if (copy_to_user(rt_codec.buf, buf, sizeof(*buf) * rt_codec.number))
+		if (copy_to_user(rt_codec.buf, buf,
+			sizeof(*buf) * rt_codec.number))
 			goto err;
 		break;
 	case RT_READ_CODEC_DSP_IOCTL:

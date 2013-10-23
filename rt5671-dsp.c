@@ -26,9 +26,6 @@
 
 #define DSP_CLK_RATE RT5671_DSP_CLK_96K
 
-static unsigned int rt5671_dsp_read(
-	struct snd_soc_codec *codec, unsigned int reg);
-
 static unsigned short rt5671_dsp_patch[][2] = {
 	{0xe1, 0x0010}, {0xe2, 0x0000}, {0xe0, 0x6ac9},
 	{0xe1, 0x0064}, {0xe2, 0x0000}, {0xe0, 0x68c5},
@@ -651,7 +648,6 @@ static int rt5671_dsp_write(struct snd_soc_codec *codec,
 		dev_err(codec->dev, "DSP is busy: %d\n", ret);
 		goto err;
 	}
-	mdelay(10);
 
 	return 0;
 
@@ -866,7 +862,6 @@ static int rt5671_dsp_rate(struct snd_soc_codec *codec, int sys_clk,
 		tab_num = RT5671_DSP_4096000_NUM;
 		break;
 	case 11289600:
-	case 22579200:
 		rate_tab = rt5671_dsp_11289600;
 		tab_num = RT5671_DSP_11289600_NUM;
 		break;
@@ -1069,12 +1064,13 @@ static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP,
 		RT5671_RST_DSP);
 	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP, 0);
+
+	msleep(10);
 /*	Expend 1.6 seconds
 	ret = rt5671_dsp_do_patch(codec);
 	if (ret < 0)
 		goto effect_err;
 */
-	msleep(10);
 	ret = rt5671_dsp_rate(codec,
 		rt5671->sysclk ?
 		rt5671->sysclk : 11289600,
@@ -1319,6 +1315,7 @@ int rt5671_dsp_probe(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP, 0);
 
 	msleep(10);
+
 	rt5671_dsp_write(codec, 0x22fb, 0);
 	/* power down DSP*/
 	rt5671_dsp_write(codec, 0x22f9, 1);
@@ -1429,5 +1426,4 @@ int rt5671_dsp_resume(struct snd_soc_codec *codec)
 }
 EXPORT_SYMBOL_GPL(rt5671_dsp_resume);
 #endif
-
 

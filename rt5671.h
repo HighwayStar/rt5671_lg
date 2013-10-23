@@ -15,7 +15,7 @@
 
 #ifndef __RT5671_H__
 #define __RT5671_H__
-#define REALTEK_USE_AMIC	1
+#define REALTEK_USE_AMIC	0
 /* Info */
 #define RT5671_RESET				0x00
 #define RT5671_VENDOR_ID			0xfd
@@ -1077,6 +1077,7 @@
 #define RT5671_PLL1_SRC_BCLK1			(0x1 << 12)
 #define RT5671_PLL1_SRC_BCLK2			(0x2 << 12)
 #define RT5671_PLL1_SRC_BCLK3			(0x3 << 12)
+#define RT5671_PLL1_SRC_BCLK4			(0x4 << 12)
 #define RT5671_PLL1_PD_MASK			(0x1 << 3)
 #define RT5671_PLL1_PD_SFT			3
 #define RT5671_PLL1_PD_1			(0x0 << 3)
@@ -2189,6 +2190,15 @@ enum {
 	RT5671_AIFS,
 };
 
+enum {
+	RT5671_BTN_EVENT = BIT(0), /* Jack evulse */
+	RT5671_BR_EVENT = BIT(1), /* Button Release */
+	RT5671_J_IN_EVENT = BIT(2), /* Jack insert */
+	RT5671_J_OUT_EVENT = BIT(3), /* Jack evulse */
+	RT5671_UN_EVENT = BIT(4), /* Unknown */
+	RT5671_VAD_EVENT = BIT(5), /* VAD Triggered */
+};
+
 #define RT5671_U_IF1 (0x1)
 #define RT5671_U_IF2 (0x1 << 1)
 #define RT5671_U_IF3 (0x1 << 2)
@@ -2211,6 +2221,7 @@ struct rt5671_pll_code {
 struct rt5671_priv {
 	struct snd_soc_codec *codec;
 	struct delayed_work patch_work;
+	struct regmap *regmap;
 
 	int aif_pu;
 	int sysclk;
@@ -2228,8 +2239,9 @@ struct rt5671_priv {
 	int dsp_sw; /* expected parameter setting */
 	bool dsp_play_pass;
 	bool dsp_rec_pass;
-	bool vad_en;	// Oder 130620
-	int stream;	// Oder 130620
+	bool vad_en;
+	int stream;
+	int jack_type;
 };
 
 int rt5671_conn_mux_path(struct snd_soc_codec *codec,

@@ -77,4 +77,3 @@ int rt5671_dsp_resume(struct snd_soc_codec *codec);
 
 #endif /* __RT5671_DSP_H__ */
 
-
