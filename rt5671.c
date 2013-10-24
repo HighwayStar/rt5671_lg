@@ -107,27 +107,25 @@ static struct rt5671_init_reg init_list[] = {
 #endif
 #ifdef JD1_FUNC
 #if REALTEK_USE_AMIC
-	{RT5671_GPIO_CTRL2	, 0x0024}, // Oder 130618
-//	{RT5671_GPIO_CTRL1	, 0x8000}, // Oder 130806
+	{RT5671_GPIO_CTRL2	, 0x0024}, /* Oder 130618 */
+	{RT5671_GPIO_CTRL1	, 0x8000}, /* Oder 130806 */
 	{RT5671_IRQ_CTRL2	, 0x0280},
 	{RT5671_JD_CTRL3	, 0x0088},
-	{RT5671_GPIO_CTRL1	, 0x8000}, // Oder 130806
 #else
-	{RT5671_DMIC_CTRL1	, 0x1105}, // Oder 130619 set GPIO8
-	{RT5671_GPIO_CTRL3	, 0x0100}, // Oder 130619 set GPIO8 OUTPUT
-	{RT5671_GPIO_CTRL2	, 0x0004}, // Oder 130619
+	{RT5671_DMIC_CTRL1	, 0x1105}, /* Oder 130619 set GPIO8 */
+	{RT5671_GPIO_CTRL3	, 0x0100}, /* Oder 130619 set GPIO8 OUTPUT */
+	{RT5671_GPIO_CTRL2	, 0x0004}, /* Oder 130619 */
 	{RT5671_GPIO_CTRL1	, 0x8000},
-	{RT5671_IRQ_CTRL2	, 0x0280}, //hyunsoo 130710 0x0200->0x0280
+	{RT5671_IRQ_CTRL2	, 0x0280}, /* hyunsoo 130710 0x0200->0x0280 */
 	{RT5671_JD_CTRL3	, 0x0088},
-	{RT5671_GPIO_CTRL1	, 0x8000}, // Oder 130806
 #endif
 #endif
 	{RT5671_ASRC_2		, 0x0550},
 	{RT5671_ASRC_3		, 0x0055},
-#if 0 /* DMIC2 */	// For AMIC VAD test 130620
+#if 0 /* DMIC2 */
 	{RT5671_STO1_ADC_MIXER	, 0x5940},
 #endif
-/* 	{RT5671_CJ_CTRL1	, 0x1001}, //BST1 20db */
+/* 	{RT5671_CJ_CTRL1	, 0x1001}, BST1 20db */
 #if 0 /* test DSP */
 	{RT5671_STO_DAC_MIXER	, 0x4646},
 	{RT5671_DSP_PATH1	, 0xc000},
@@ -693,9 +691,11 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 			RT5671_PWR_MIC_DET, RT5671_PWR_MIC_DET);
 		regfa = snd_soc_read(codec, RT5671_DIG_MISC);
 		snd_soc_update_bits(codec, RT5671_DIG_MISC, 0x1, 0x1);
-//		snd_soc_write(codec, RT5671_GPIO_CTRL2, 0x0004);
-//		snd_soc_update_bits(codec, RT5671_GPIO_CTRL1,
-//			RT5671_GP1_PIN_MASK, RT5671_GP1_PIN_IRQ);
+/*
+		snd_soc_write(codec, RT5671_GPIO_CTRL2, 0x0004);
+		snd_soc_update_bits(codec, RT5671_GPIO_CTRL1,
+			RT5671_GP1_PIN_MASK, RT5671_GP1_PIN_IRQ);
+*/
 		reg61 = snd_soc_read(codec, RT5671_PWR_DIG1);
 		snd_soc_update_bits(codec, RT5671_PWR_DIG1,
 			RT5671_PWR_DAC_L1 | RT5671_PWR_DAC_R1,
@@ -830,7 +830,7 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 EXPORT_SYMBOL(rt5671_check_interrupt_event);
 
 #if REALTEK_USE_AMIC
-// Oder 130618 start
+/* Oder 130618 start */
 int rt5671_gpio2_control(struct snd_soc_codec *codec, int on)
 {
 	printk(KERN_INFO "[%s] spk is %d\n", __func__, on);
@@ -843,9 +843,9 @@ int rt5671_gpio2_control(struct snd_soc_codec *codec, int on)
 	return 0;
 }
 EXPORT_SYMBOL(rt5671_gpio2_control);
-// Oder 130618 end
+/* Oder 130618 end */
 #else
-// Oder 130619 start
+/* Oder 130619 start */
 int rt5671_gpio8_control(struct snd_soc_codec *codec, int on)
 {
 	if (on)
@@ -856,7 +856,7 @@ int rt5671_gpio8_control(struct snd_soc_codec *codec, int on)
 	return 0;
 }
 EXPORT_SYMBOL(rt5671_gpio8_control);
-// Oder 130619 end
+/* Oder 130619 end */
 #endif
 int rt5671_sel_gpio78910_i2s_pin(struct snd_soc_codec *codec)
 {
@@ -1128,7 +1128,7 @@ static int set_dmic_clk(struct snd_soc_dapm_widget *w,
 	red = 2000000 * 12;
 	for (i = 0; i < ARRAY_SIZE(div); i++) {
 
-#if 0//original
+#if 0 /* original */
 		bound = div[i] * 2000000;
 		if (rate > bound)
 			continue;
@@ -2051,19 +2051,6 @@ static int rt5671_hp_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
-		if(rt5671->combo_jack_en) {
-			snd_soc_write(codec, RT5671_JD_CTRL3,
-				RT5671_JD_CBJ_EN | RT5671_JD_F_JD1_1
-				<< RT5671_JD_TRI_CBJ_SEL_SFT);
-			snd_soc_update_bits(codec, RT5671_CJ_CTRL1,
-				RT5671_CBJ_BST1_EN, RT5671_CBJ_BST1_EN);
-			snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
-				RT5671_CBJ_MN_JD, 0);
-		}else {
-			snd_soc_write(codec, RT5671_CJ_CTRL1, 0x0005);
-			snd_soc_write(codec, RT5671_CJ_CTRL2, 0x00a7);
-		}
-		msleep(100);
 		rt5671_pmu_depop(codec);
 		break;
 
@@ -2239,22 +2226,6 @@ static int rt5671_bst1_event(struct snd_soc_dapm_widget *w,
 		if(rt5671->combo_jack_en) {
 			snd_soc_update_bits(codec, RT5671_PWR_VOL,
 				RT5671_PWR_MIC_DET, RT5671_PWR_MIC_DET);
-#ifdef JD1_FUNC
-			snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
-				RT5671_CBJ_MN_JD, RT5671_CBJ_MN_JD);
-			snd_soc_write(codec, RT5671_JD_CTRL3,
-				RT5671_JD_CBJ_EN |
-				RT5671_JD_F_JD1_1 << RT5671_JD_TRI_CBJ_SEL_SFT);
-			snd_soc_update_bits(codec, RT5671_CJ_CTRL1,
-				RT5671_CBJ_BST1_EN, RT5671_CBJ_BST1_EN);
-			snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
-				RT5671_CBJ_MN_JD, 0);
-#else
-			snd_soc_write(codec, RT5671_JD_CTRL3, 0x00f0);
-			snd_soc_write(codec, RT5671_CJ_CTRL2,0x1827);
-			snd_soc_write(codec, RT5671_CJ_CTRL2,0x0827);
-			snd_soc_write(codec, RT5671_CJ_CTRL1,0x0005);
-#endif
 		}
 		break;
 
@@ -3617,11 +3588,11 @@ static int rt5671_set_dai_pll(struct snd_soc_dai *dai, int pll_id, int source,
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	struct rt5671_pll_code pll_code;
 	int ret;
-
-//	if (source == rt5671->pll_src && freq_in == rt5671->pll_in &&
-//	    freq_out == rt5671->pll_out)
-//		return 0;
-
+/*
+	if (source == rt5671->pll_src && freq_in == rt5671->pll_in &&
+	    freq_out == rt5671->pll_out)
+		return 0;
+*/
 	if (!freq_in || !freq_out) {
 		dev_dbg(codec->dev, "PLL disabled\n");
 
@@ -3775,8 +3746,10 @@ static ssize_t rt5671_codec_show(struct device *dev,
 		if (cnt + RT5671_REG_DISP_LEN >= PAGE_SIZE)
 			break;
 		val = snd_soc_read(codec, i);
-		//if (!val)
-			//continue;
+/*
+		if (!val)
+			continue;
+*/
 		cnt += snprintf(buf + cnt, RT5671_REG_DISP_LEN,
 				"#rng%02x  #rv%04x  #rd0\n", i, val);
 	}
@@ -3824,7 +3797,7 @@ static ssize_t rt5671_codec_store(struct device *dev,
 
 	if(i==count)
 		pr_debug("0x%02x = 0x%04x\n", addr,
-			codec->hw_read(codec, addr));
+			snd_soc_read(codec, addr));
 	else
 		snd_soc_write(codec, addr, val);
 
@@ -3840,7 +3813,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 	switch (level) {
 	case SND_SOC_BIAS_ON:
 		if (rt5671->vad_en) {
-#ifdef VAD_CAPTURE_TEST  //when merged to soc(dsp), this code should be removed.
+#ifdef VAD_CAPTURE_TEST  /* when merged to soc(dsp), this code should be removed. */
 			if (rt5671->stream == SNDRV_PCM_STREAM_CAPTURE){
 				snd_soc_write(codec, RT5671_VAD_CTRL1, 0x277c);
 				printk("[%s] Sending ACK to Codec...!\n", __func__);
@@ -3879,7 +3852,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 		break;
 
 	case SND_SOC_BIAS_OFF:
-// Oder 130620 start
+/* Oder 130620 start */
 		if (rt5671->vad_en) {
 			snd_soc_update_bits(codec, RT5671_GLB_CLK,
 				RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_PLL1);
@@ -3898,41 +3871,41 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_write(codec, RT5671_STO1_ADC_MIXER, 0x3c20);
 			snd_soc_write(codec, RT5671_REC_MONO2_MIXER, 0x001b);
 			snd_soc_write(codec, RT5671_DIG_INF1_DATA, 0x9002);
-			//snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x4200);
+			/* snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x4200); */
 			snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x0e00);
-//			snd_soc_write(codec, RT5671_CJ_CTRL2, 0x08a7);
+			/* snd_soc_write(codec, RT5671_CJ_CTRL2, 0x08a7); */
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x279c);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x273c);
 			snd_soc_write(codec, RT5671_IRQ_CTRL3, 0x0040);
 			snd_soc_update_bits(codec, RT5671_STO1_ADC_DIG_VOL, RT5671_L_MUTE, 0);
 #else
-			// Oder 130701 update for DMIC1 start 19.2M to 16k
+			/* Oder 130701 update for DMIC1 start 19.2M to 16k */
 #ifdef SWITCH_FS_FOR_VAD
-			snd_soc_write(codec, RT5671_ADDA_CLK1, 0xc000);//48KHZ --> 16KHZ
+			snd_soc_write(codec, RT5671_ADDA_CLK1, 0xc000);/* 48KHZ --> 16KHZ */
 			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x9106);
-			snd_soc_write(codec, RT5671_PLL_CTRL1, 0x2a82);//19.2M --> 48k*512
-			snd_soc_write(codec, RT5671_PLL_CTRL2, 0xf000);//19.2M --> 48K*512
+			snd_soc_write(codec, RT5671_PLL_CTRL1, 0x2a82);/* 19.2M --> 48k*512 */
+			snd_soc_write(codec, RT5671_PLL_CTRL2, 0xf000);/* 19.2M --> 48K*512 */
 #endif
 			snd_soc_update_bits(codec, RT5671_GPIO_CTRL1, 0x4030, 0x4010);
 			snd_soc_write(codec, RT5671_PWR_DIG2, 0x8801);
 			rt5671_index_write(codec, RT5671_HP_DCC_INT1, 0xdf00);
 			snd_soc_write(codec, RT5671_PWR_DIG2, 0x8001);
 			snd_soc_write(codec, RT5671_PWR_DIG1, 0x8000);
-			snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0204); // Oder 2013071
+			snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0204); /* Oder 2013071 */
 #ifndef SWITCH_FS_FOR_VAD
 			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x9586);
 #endif
 			snd_soc_write(codec, RT5671_STO1_ADC_MIXER, 0x5860);
 			snd_soc_write(codec, RT5671_DIG_INF1_DATA, 0x9002);
-			//snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x4200);
+			/* snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x4200); */
 			snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x0e00);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x279c);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x273c);
 			snd_soc_write(codec, RT5671_IRQ_CTRL3, 0x0040);
 			snd_soc_update_bits(codec, RT5671_STO1_ADC_DIG_VOL, RT5671_L_MUTE, 0);
-			// Oder 130701 update end
+			/* Oder 130701 update end */
 #endif
 		} else {
 		snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
