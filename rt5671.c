@@ -47,6 +47,12 @@
 #include "rt5671.h"
 #include "rt5671-dsp.h"
 
+static int pmu_depop_time = 80;
+module_param(pmu_depop_time, int, 0644);
+
+static int hp_amp_time = 20;
+module_param(hp_amp_time, int, 0644);
+
 #define RT5671_DET_EXT_MIC 0
 /* #define USE_INT_CLK */
 #define JD1_FUNC
@@ -102,7 +108,6 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_STO1_ADC_DIG_VOL, 0xafaf},	/* Mute STO1 ADC for depop */
 /*	{RT5671_DD_MIXER	, 0x1414}, */
 	{RT5671_PDM_OUT_CTRL	, 0xff00},
-	{RT5671_GEN_CTRL2	, 0x0723},
 #if 0 /* test IF_ADC3 */
 	{RT5671_DIG_INF1_DATA	, 0x2002}, /* IF_ADC3 -> IF2_ADC */
 	{RT5671_STO2_ADC_MIXER	, 0x3820},
@@ -251,7 +256,8 @@ static const u16 rt5671_reg[RT5671_VENDOR_ID2 + 1] = {
 	[RT5671_ADC_MONO_HP_CTRL1] = 0xb300,
 	[RT5671_ADC_STO2_HP_CTRL1] = 0xb300,
 	[RT5671_DIG_MISC] = 0x8010,
-	[RT5671_GEN_CTRL2] = 0x0003,
+	[RT5671_GEN_CTRL2] = 0x0033,
+	[RT5671_GEN_CTRL3] = 0x0080,
 };
 
 static int rt5671_reset(struct snd_soc_codec *codec)
@@ -1995,58 +2001,83 @@ static int rt5671_mono_adcr_event(struct snd_soc_dapm_widget *w,
 
 void hp_amp_power(struct snd_soc_codec *codec, int on)
 {
-	static int hp_amp_power_count;
-
 	if(on) {
-		if(hp_amp_power_count <= 0) {
-			snd_soc_update_bits(codec, RT5671_CHARGE_PUMP,
-				RT5671_PM_HP_MASK, RT5671_PM_HP_HV);
-			/* headphone amp power on */
-			snd_soc_update_bits(codec, RT5671_PWR_VOL,
-				RT5671_PWR_HV_L | RT5671_PWR_HV_R,
-				RT5671_PWR_HV_L | RT5671_PWR_HV_R);
-			snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
-				RT5671_PWR_HP_L | RT5671_PWR_HP_R |
-				RT5671_PWR_HA |	RT5671_PWR_FV1 |
-				RT5671_PWR_FV2,	RT5671_PWR_HP_L |
-				RT5671_PWR_HP_R | RT5671_PWR_HA |
-				RT5671_PWR_FV1 | RT5671_PWR_FV2);
-			/* depop parameters */
-			snd_soc_write(codec, RT5671_DEPOP_M2, 0x3100);
-			snd_soc_write(codec, RT5671_DEPOP_M1, 0x8009);
-			rt5671_index_write(codec, RT5671_HP_DCC_INT1, 0x9f00);
-			msleep(50);
-			snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
-		}
-		hp_amp_power_count++;
-	} else {
-		hp_amp_power_count--;
-		if(hp_amp_power_count <= 0) {
-			snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
-				RT5671_PWR_HP_L | RT5671_PWR_HP_R |
-				RT5671_PWR_HA, 0);
-		}
+		snd_soc_update_bits(codec, RT5671_CHARGE_PUMP,
+			RT5671_PM_HP_MASK, RT5671_PM_HP_HV);
+		snd_soc_update_bits(codec, RT5671_GEN_CTRL2,
+			0x0400, 0x0400);
+		/* headphone amp power on */
+		snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
+			RT5671_PWR_HA |	RT5671_PWR_FV1 |
+			RT5671_PWR_FV2,	RT5671_PWR_HA |
+			RT5671_PWR_FV1 | RT5671_PWR_FV2);
+		/* depop parameters */
+		snd_soc_write(codec, RT5671_DEPOP_M2, 0x3100);
+		snd_soc_write(codec, RT5671_DEPOP_M1, 0x8009);
+		rt5671_index_write(codec, RT5671_HP_DCC_INT1, 0x9f00);
+		pr_debug("hp_amp_time=%d\n",hp_amp_time);
+		mdelay(hp_amp_time);
+		snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 	}
 }
 
 static void rt5671_pmu_depop(struct snd_soc_codec *codec)
 {
-	hp_amp_power(codec, 1);
-
 	/* headphone unmute sequence */
+	rt5671_index_write(codec, RT5671_MAMP_INT_REG2, 0xb400);
+	snd_soc_write(codec, RT5671_DEPOP_M3, 0x0772);
+	snd_soc_write(codec, RT5671_DEPOP_M1, 0x805d);
+	snd_soc_write(codec, RT5671_DEPOP_M1, 0x831d);
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL2,
+				0x0300, 0x0300);
 	snd_soc_update_bits(codec, RT5671_HP_VOL,
 		RT5671_L_MUTE | RT5671_R_MUTE, 0);
-	msleep(100);
+	pr_debug("pmu_depop_time=%d\n",pmu_depop_time);
+	msleep(pmu_depop_time);
+	snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 }
 
 static void rt5671_pmd_depop(struct snd_soc_codec *codec)
 {
+	/* headphone mute sequence */
+	rt5671_index_write(codec, RT5671_MAMP_INT_REG2, 0xb400);
+	snd_soc_write(codec, RT5671_DEPOP_M3, 0x0772);
+	snd_soc_write(codec, RT5671_DEPOP_M1, 0x803d);
+	mdelay(10);
+	snd_soc_write(codec, RT5671_DEPOP_M1, 0x831d);
+	mdelay(10);
 	snd_soc_update_bits(codec, RT5671_HP_VOL,
 		RT5671_L_MUTE | RT5671_R_MUTE, RT5671_L_MUTE | RT5671_R_MUTE);
+	msleep(20);
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL2, 0x0300, 0x0);
 	snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 	snd_soc_write(codec, RT5671_DEPOP_M3, 0x0707);
-	hp_amp_power(codec, 0);
+	rt5671_index_write(codec, RT5671_MAMP_INT_REG2, 0xfc00);
+	/* Avoid turn off the lout */
+	if (!(snd_soc_read(codec, RT5671_PWR_ANLG1) & RT5671_PWR_LM))
+		snd_soc_write(codec, RT5671_DEPOP_M1, 0x0004);
+	msleep(30);
+}
 
+static int rt5671_hp_power_event(struct snd_soc_dapm_widget *w,
+			   struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		printk("%s SND_SOC_DAPM_POST_PMU\n",__func__);
+		hp_amp_power(codec, 1);
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		printk("%s SND_SOC_DAPM_PRE_PMD\n",__func__);
+		hp_amp_power(codec, 0);
+		break;
+	default:
+		return 0;
+	}
+
+	return 0;
 }
 
 static int rt5671_hp_event(struct snd_soc_dapm_widget *w,
@@ -2796,13 +2827,19 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_MIXER("MONOAmp MIX", SND_SOC_NOPM, 0,
 		0, rt5671_monoamp_mix, ARRAY_SIZE(rt5671_monoamp_mix)),
 
-	SND_SOC_DAPM_PGA_S("HP amp", 1, SND_SOC_NOPM, 0, 0,
+	SND_SOC_DAPM_SUPPLY_S("Improve HP Amp Drv", 1, SND_SOC_NOPM,
+		0, 0, rt5671_hp_power_event, SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
+	SND_SOC_DAPM_SUPPLY("HP L Amp", RT5671_PWR_ANLG1,
+		RT5671_PWR_HP_L_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("HP R Amp", RT5671_PWR_ANLG1,
+		RT5671_PWR_HP_R_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_PGA_S("HP Amp", 1, SND_SOC_NOPM, 0, 0,
 		rt5671_hp_event, SND_SOC_DAPM_PRE_PMD |
 		SND_SOC_DAPM_POST_PMU),
-	SND_SOC_DAPM_PGA_S("LOUT amp", 1, SND_SOC_NOPM, 0, 0,
+	SND_SOC_DAPM_PGA_S("LOUT Amp", 1, SND_SOC_NOPM, 0, 0,
 		rt5671_lout_event, SND_SOC_DAPM_PRE_PMD |
 		SND_SOC_DAPM_POST_PMU),
-	SND_SOC_DAPM_PGA_S("Mono amp", 1, RT5671_PWR_ANLG1,
+	SND_SOC_DAPM_PGA_S("Mono Amp", 1, RT5671_PWR_ANLG1,
 		RT5671_PWR_MA_BIT, 0, rt5671_mono_event,
 		SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMU),
 
@@ -3283,19 +3320,23 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "PDM2 R Mux", "Mono DAC", "Mono DAC MIXR" },
 	{ "PDM2 R Mux", NULL, "PDM2 Power" },
 
-	{ "HP amp", NULL, "HPO MIX" },
-	{ "HP amp", NULL, "JD Power" },
-	{ "HP amp", NULL, "Mic Det Power" },
-	{ "HPOL", NULL, "HP amp" },
-	{ "HPOR", NULL, "HP amp" },
+	{ "HP Amp", NULL, "HPO MIX" },
+	{ "HP Amp", NULL, "JD Power" },
+	{ "HP Amp", NULL, "Mic Det Power" },
+	{ "HPOL", NULL, "HP Amp" },
+	{ "HPOL", NULL, "HP L Amp" },
+	{ "HPOL", NULL, "Improve HP Amp Drv" },
+	{ "HPOR", NULL, "HP Amp" },
+	{ "HPOR", NULL, "HP R Amp" },
+	{ "HPOR", NULL, "Improve HP Amp Drv" },
 
-	{ "LOUT amp", NULL, "LOUT MIX" },
-	{ "LOUTL", NULL, "LOUT amp" },
-	{ "LOUTR", NULL, "LOUT amp" },
+	{ "LOUT Amp", NULL, "LOUT MIX" },
+	{ "LOUTL", NULL, "LOUT Amp" },
+	{ "LOUTR", NULL, "LOUT Amp" },
 
-	{ "Mono amp", NULL, "MONOAmp MIX" },
-	{ "MonoP", NULL, "Mono amp" },
-	{ "MonoN", NULL, "Mono amp" },
+	{ "Mono Amp", NULL, "MONOAmp MIX" },
+	{ "MonoP", NULL, "Mono Amp" },
+	{ "MonoN", NULL, "Mono Amp" },
 
 	{ "PDM1L", NULL, "PDM1 L Mux" },
 	{ "PDM1R", NULL, "PDM1 R Mux" },
