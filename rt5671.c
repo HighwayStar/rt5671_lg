@@ -52,6 +52,8 @@
 #define JD1_FUNC
 /* #define ALC_DRC_FUNC */
 
+/* #define RT5671_PUSH_BUTTON */
+
 /* remove this define when merged to SOC
  * #define VAD_CAPTURE_TEST
  */
@@ -771,6 +773,10 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 	int val, jack_type, event_type;
 
 	printk("%s\n", __func__);
+
+	if (snd_soc_read(codec, 0xbe) & 0x0080)
+		return RT5671_VAD_EVENT;
+
 	val = snd_soc_read(codec, RT5671_A_JD_CTRL1) & 0x0070;
 	printk("val = 0x%x rt5671->jack_type=0x%x\n", val, rt5671->jack_type);
 	*data = 0;
@@ -2217,6 +2223,7 @@ static int rt5671_bst1_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
+		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x0);
 		snd_soc_update_bits(codec,RT5671_CHARGE_PUMP,
 			RT5671_OSW_L_MASK | RT5671_OSW_R_MASK,
 			RT5671_OSW_L_DIS | RT5671_OSW_R_DIS);
@@ -2230,6 +2237,7 @@ static int rt5671_bst1_event(struct snd_soc_dapm_widget *w,
 		break;
 
 	case SND_SOC_DAPM_PRE_PMD:
+		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x4);
 		snd_soc_update_bits(codec, RT5671_PWR_ANLG2,
 			RT5671_PWR_BST1_P, 0);
 		break;
