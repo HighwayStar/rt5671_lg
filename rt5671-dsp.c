@@ -1065,7 +1065,7 @@ static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 		RT5671_RST_DSP);
 	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP, 0);
 
-	msleep(10);
+	mdelay(10);
 /*	Expend 1.6 seconds
 	ret = rt5671_dsp_do_patch(codec);
 	if (ret < 0)
@@ -1314,7 +1314,7 @@ int rt5671_dsp_probe(struct snd_soc_codec *codec)
 		RT5671_RST_DSP);
 	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP, 0);
 
-	msleep(10);
+	mdelay(10);
 
 	rt5671_dsp_write(codec, 0x22fb, 0);
 	/* power down DSP*/

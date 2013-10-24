@@ -1407,8 +1407,8 @@ static const struct snd_kcontrol_new rt5671_lout_mix[] = {
 };
 
 static const struct snd_kcontrol_new rt5671_monoamp_mix[] = {
-	SOC_DAPM_SINGLE("DAC L2 Switch", RT5671_MONO_MIXER,
-			RT5671_M_DAC_L2_MA_SFT, 1, 1),
+	SOC_DAPM_SINGLE("DAC L1 Switch", RT5671_MONO_MIXER,
+			RT5671_M_DAC_L1_MA_SFT, 1, 1),
 	SOC_DAPM_SINGLE("MONOVOL Switch", RT5671_MONO_MIXER,
 			RT5671_M_OV_L_MM_SFT, 1, 1),
 };
@@ -3304,7 +3304,7 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "MONOVOL MIX", "DAC L2 Switch", "DAC L2" },
 	{ "MONOVOL MIX", "BST4 Switch", "BST4" },
 
-	{ "MONOAmp MIX",  "DAC L2 Switch", "DAC L2" },
+	{ "MONOAmp MIX",  "DAC L1 Switch", "DAC L1" },
 	{ "MONOAmp MIX",  "MONOVOL Switch", "MONOVOL MIX" },
 
 	{ "PDM1 L Mux", "Stereo DAC", "Stereo DAC MIXL" },
@@ -3433,9 +3433,9 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 		snd_soc_update_bits(codec, RT5671_ADDA_CLK1, mask_clk, val_clk);
 		break;
 	case RT5671_AIF4:
-		mask_clk = RT5671_I2S_BCLK_MS1_MASK | RT5671_I2S_PD1_MASK;
-		val_clk = bclk_ms << RT5671_I2S_BCLK_MS1_SFT |
-			pre_div << RT5671_I2S_PD1_SFT;
+		mask_clk = RT5671_I2S_BCLK_MS4_MASK | RT5671_I2S_PD4_MASK;
+		val_clk = bclk_ms << RT5671_I2S_BCLK_MS4_SFT |
+			pre_div << RT5671_I2S_PD4_SFT;
 		snd_soc_update_bits(codec, RT5671_I2S4_SDP,
 			RT5671_I2S_DL_MASK, val_len);
 		snd_soc_update_bits(codec, RT5671_DSP_CLK, mask_clk, val_clk);
@@ -3887,7 +3887,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 				RT5671_PWR_BG | RT5671_PWR_VREF2,
 				RT5671_PWR_VREF1 | RT5671_PWR_MB |
 				RT5671_PWR_BG | RT5671_PWR_VREF2);
-			msleep(10);
+			mdelay(10);
 			snd_soc_update_bits(codec, RT5671_PWR_ANLG2,
 				RT5671_PWR_JD1, RT5671_PWR_JD1);
 			snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
@@ -4022,7 +4022,7 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 		RT5671_PWR_BG | RT5671_PWR_VREF2,
 		RT5671_PWR_VREF1 | RT5671_PWR_MB |
 		RT5671_PWR_BG | RT5671_PWR_VREF2);
-	msleep(10);
+	mdelay(10);
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
 		RT5671_PWR_FV1 | RT5671_PWR_FV2,
 		RT5671_PWR_FV1 | RT5671_PWR_FV2);
@@ -4052,7 +4052,6 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 #endif
 
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x1);
-	snd_soc_update_bits(codec, RT5671_PWR_MIXER, RT5671_PWR_PAD, RT5671_PWR_PAD);
 
 	codec->dapm.bias_level = SND_SOC_BIAS_STANDBY;
 	rt5671->codec = codec;

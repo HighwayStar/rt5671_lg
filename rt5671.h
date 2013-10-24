@@ -141,9 +141,6 @@
 #define RT5671_ALC_CTRL_2			0xb5
 #define RT5671_ALC_CTRL_3			0xb6
 #define RT5671_ALC_CTRL_4			0xb7
-#define RT5671_ANC_CTRL1			0xb8
-#define RT5671_ANC_CTRL2			0xb9
-#define RT5671_ANC_CTRL3			0xba
 #define RT5671_JD_CTRL				0xbb
 #define RT5671_IRQ_CTRL1			0xbc
 #define RT5671_IRQ_CTRL2			0xbd
@@ -424,7 +421,7 @@
 #define RT5671_M_ANC_DAC_L			(0x1 << 10)
 #define RT5671_M_ANC_DAC_L_SFT			10
 #define RT5671_M_DAC_R1_STO_L			(0x1 << 9)
-#define RT5671_M_DAC_R1_STO_L_SFT			9
+#define RT5671_M_DAC_R1_STO_L_SFT		9
 #define RT5671_DAC_R1_STO_L_VOL_MASK		(0x1 << 8)
 #define RT5671_DAC_R1_STO_L_VOL_SFT		8
 #define RT5671_M_DAC_R1				(0x1 << 6)
@@ -438,7 +435,7 @@
 #define RT5671_M_ANC_DAC_R			(0x1 << 2)
 #define RT5671_M_ANC_DAC_R_SFT			2
 #define RT5671_M_DAC_L1_STO_R			(0x1 << 1)
-#define RT5671_M_DAC_L1_STO_R_SFT			1
+#define RT5671_M_DAC_L1_STO_R_SFT		1
 #define RT5671_DAC_L1_STO_R_VOL_MASK		(0x1)
 #define RT5671_DAC_L1_STO_R_VOL_SFT		0
 
@@ -574,10 +571,6 @@
 /* REC Left Mixer Control 2 (0x3c) */
 #define RT5671_G_BST1_RM_L_MASK			(0x7 << 13)
 #define RT5671_G_BST1_RM_L_SFT			13
-#define RT5671_G_OM_L_RM_L_MASK			(0x7 << 10)
-#define RT5671_G_OM_L_RM_L_SFT			10
-#define RT5671_M_HP_L_RM_L			(0x1 << 6)
-#define RT5671_M_HP_L_RM_L_SFT			6
 #define RT5671_M_IN_L_RM_L			(0x1 << 5)
 #define RT5671_M_IN_L_RM_L_SFT			5
 #define RT5671_M_BST4_RM_L			(0x1 << 4)
@@ -588,8 +581,6 @@
 #define RT5671_M_BST2_RM_L_SFT			2
 #define RT5671_M_BST1_RM_L			(0x1 << 1)
 #define RT5671_M_BST1_RM_L_SFT			1
-#define RT5671_M_OM_L_RM_L			(0x1)
-#define RT5671_M_OM_L_RM_L_SFT			0
 
 /* REC Right Mixer Control 1 (0x3d) */
 #define RT5671_G_HP_R_RM_R_MASK			(0x7 << 13)
@@ -606,10 +597,6 @@
 /* REC Right Mixer Control 2 (0x3e) */
 #define RT5671_G_BST1_RM_R_MASK			(0x7 << 13)
 #define RT5671_G_BST1_RM_R_SFT			13
-#define RT5671_G_OM_R_RM_R_MASK			(0x7 << 10)
-#define RT5671_G_OM_R_RM_R_SFT			10
-#define RT5671_M_HP_R_RM_R			(0x1 << 6)
-#define RT5671_M_HP_R_RM_R_SFT			6
 #define RT5671_M_IN_R_RM_R			(0x1 << 5)
 #define RT5671_M_IN_R_RM_R_SFT			5
 #define RT5671_M_BST4_RM_R			(0x1 << 4)
@@ -620,8 +607,6 @@
 #define RT5671_M_BST2_RM_R_SFT			2
 #define RT5671_M_BST1_RM_R			(0x1 << 1)
 #define RT5671_M_BST1_RM_R_SFT			1
-#define RT5671_M_OM_R_RM_R			(0x1)
-#define RT5671_M_OM_R_RM_R_SFT			0
 
 /* REC Mono Mixer Control 2 (0x40) */
 #define RT5671_G_BST1_RM_M_MASK			(0x7 << 13)
@@ -634,8 +619,6 @@
 #define RT5671_M_BST2_RM_M_SFT			2
 #define RT5671_M_BST1_RM_M			(0x1 << 1)
 #define RT5671_M_BST1_RM_M_SFT			1
-#define RT5671_M_OM_L_RM_M			(0x1 << 0)
-#define RT5671_M_OM_L_RM_M_SFT			0
 
 
 /* HPMIX Control (0x45) */
@@ -657,10 +640,8 @@
 #define RT5671_M_DACL1_HML_SFT			0
 
 /* Mono Output Mixer Control (0x4c) */
-#define RT5671_M_DAC_R2_MA			(0x1 << 15)
-#define RT5671_M_DAC_R2_MA_SFT			15
-#define RT5671_M_DAC_L2_MA			(0x1 << 14)
-#define RT5671_M_DAC_L2_MA_SFT			14
+#define RT5671_M_DAC_L1_MA			(0x1 << 14)
+#define RT5671_M_DAC_L1_MA_SFT			14
 #define RT5671_M_OV_R_MM			(0x1 << 13)
 #define RT5671_M_OV_R_MM_SFT			13
 #define RT5671_M_OV_L_MM			(0x1 << 12)
@@ -695,20 +676,12 @@
 #define RT5671_G_DAC_L1_OM_L_SFT		7
 
 /* Output Left Mixer Control 3 (0x4f) */
-#define RT5671_M_SM_L_OM_L			(0x1 << 8)
-#define RT5671_M_SM_L_OM_L_SFT			8
-#define RT5671_M_BST3_OM_L			(0x1 << 7)
-#define RT5671_M_BST3_OM_L_SFT			7
 #define RT5671_M_BST2_OM_L			(0x1 << 6)
 #define RT5671_M_BST2_OM_L_SFT			6
 #define RT5671_M_BST1_OM_L			(0x1 << 5)
 #define RT5671_M_BST1_OM_L_SFT			5
 #define RT5671_M_IN_L_OM_L			(0x1 << 4)
 #define RT5671_M_IN_L_OM_L_SFT			4
-#define RT5671_M_RM_L_OM_L			(0x1 << 3)
-#define RT5671_M_RM_L_OM_L_SFT			3
-#define RT5671_M_DAC_R2_OM_L			(0x1 << 2)
-#define RT5671_M_DAC_R2_OM_L_SFT		2
 #define RT5671_M_DAC_L2_OM_L			(0x1 << 1)
 #define RT5671_M_DAC_L2_OM_L_SFT		1
 #define RT5671_M_DAC_L1_OM_L			(0x1)
@@ -735,20 +708,12 @@
 #define RT5671_G_DAC_R1_OM_R_SFT		7
 
 /* Output Right Mixer Control 3 (0x52) */
-#define RT5671_M_SM_L_OM_R			(0x1 << 8)
-#define RT5671_M_SM_L_OM_R_SFT			8
 #define RT5671_M_BST4_OM_R			(0x1 << 7)
 #define RT5671_M_BST4_OM_R_SFT			7
 #define RT5671_M_BST3_OM_R			(0x1 << 6)
 #define RT5671_M_BST3_OM_R_SFT			6
-#define RT5671_M_BST1_OM_R			(0x1 << 5)
-#define RT5671_M_BST1_OM_R_SFT			5
 #define RT5671_M_IN_R_OM_R			(0x1 << 4)
 #define RT5671_M_IN_R_OM_R_SFT			4
-#define RT5671_M_RM_R_OM_R			(0x1 << 3)
-#define RT5671_M_RM_R_OM_R_SFT			3
-#define RT5671_M_DAC_L2_OM_R			(0x1 << 2)
-#define RT5671_M_DAC_L2_OM_R_SFT		2
 #define RT5671_M_DAC_R2_OM_R			(0x1 << 1)
 #define RT5671_M_DAC_R2_OM_R_SFT		1
 #define RT5671_M_DAC_R1_OM_R			(0x1)
@@ -813,10 +778,6 @@
 #define RT5671_PWR_PDM1_BIT			7
 #define RT5671_PWR_PDM2				(0x1 << 6)
 #define RT5671_PWR_PDM2_BIT			6
-#define RT5671_PWR_IPTV				(0x1 << 1)
-#define RT5671_PWR_IPTV_BIT			1
-#define RT5671_PWR_PAD				(0x1)
-#define RT5671_PWR_PAD_BIT			0
 
 /* Power Management for Analog 1 (0x63) */
 #define RT5671_PWR_VREF1			(0x1 << 15)
@@ -879,10 +840,6 @@
 #define RT5671_PWR_OM_L_BIT			15
 #define RT5671_PWR_OM_R				(0x1 << 14)
 #define RT5671_PWR_OM_R_BIT			14
-#define RT5671_PWR_SM_L				(0x1 << 13)
-#define RT5671_PWR_SM_L_BIT			13
-#define RT5671_PWR_SM_R				(0x1 << 12)
-#define RT5671_PWR_SM_R_BIT			12
 #define RT5671_PWR_RM_L				(0x1 << 11)
 #define RT5671_PWR_RM_L_BIT			11
 #define RT5671_PWR_RM_R				(0x1 << 10)
@@ -1051,6 +1008,7 @@
 #define RT5671_DMIC_3_EN_SFT			4
 #define RT5671_DMIC_3_DIS			(0x0 << 4)
 #define RT5671_DMIC_3_EN			(0x1 << 4)
+
 #if REALTEK_USE_AMIC
 #define RT5671_DMIC_1_DP_MASK			(0x1 << 11)
 #define RT5671_DMIC_1_DP_SFT			11
@@ -1065,19 +1023,36 @@
 #define RT5671_DMIC_1_DP_GPIO7			(0x2 << 0)
 #endif
 
+/* Clock Control 1 (0x7f) */
+#define RT5671_I2S_BCLK_MS4_MASK		(0x1 << 15)
+#define RT5671_I2S_BCLK_MS4_SFT			15
+#define RT5671_I2S_BCLK_MS4_32			(0x0 << 15)
+#define RT5671_I2S_BCLK_MS4_64			(0x1 << 15)
+#define RT5671_I2S_PD4_MASK			(0x7 << 12)
+#define RT5671_I2S_PD4_SFT			12
+#define RT5671_I2S_PD4_1			(0x0 << 12)
+#define RT5671_I2S_PD4_2			(0x1 << 12)
+#define RT5671_I2S_PD4_3			(0x2 << 12)
+#define RT5671_I2S_PD4_4			(0x3 << 12)
+#define RT5671_I2S_PD4_6			(0x4 << 12)
+#define RT5671_I2S_PD4_8			(0x5 << 12)
+#define RT5671_I2S_PD4_12			(0x6 << 12)
+#define RT5671_I2S_PD4_16			(0x7 << 12)
+
 /* Global Clock Control (0x80) */
 #define RT5671_SCLK_SRC_MASK			(0x3 << 14)
 #define RT5671_SCLK_SRC_SFT			14
 #define RT5671_SCLK_SRC_MCLK			(0x0 << 14)
 #define RT5671_SCLK_SRC_PLL1			(0x1 << 14)
 #define RT5671_SCLK_SRC_RCCLK			(0x2 << 14) /* 15MHz */
-#define RT5671_PLL1_SRC_MASK			(0x3 << 12)
-#define RT5671_PLL1_SRC_SFT			12
-#define RT5671_PLL1_SRC_MCLK			(0x0 << 12)
-#define RT5671_PLL1_SRC_BCLK1			(0x1 << 12)
-#define RT5671_PLL1_SRC_BCLK2			(0x2 << 12)
-#define RT5671_PLL1_SRC_BCLK3			(0x3 << 12)
-#define RT5671_PLL1_SRC_BCLK4			(0x4 << 12)
+#define RT5671_PLL1_SRC_MASK			(0x7 << 11)
+#define RT5671_PLL1_SRC_SFT			11
+#define RT5671_PLL1_SRC_MCLK			(0x0 << 11)
+#define RT5671_PLL1_SRC_BCLK1			(0x1 << 11)
+#define RT5671_PLL1_SRC_BCLK2			(0x2 << 11)
+#define RT5671_PLL1_SRC_BCLK3			(0x3 << 11)
+#define RT5671_PLL1_SRC_BCLK4			(0x4 << 11)
+#define RT5671_PLL1_SRC_Int			(0x5 << 11)
 #define RT5671_PLL1_PD_MASK			(0x1 << 3)
 #define RT5671_PLL1_PD_SFT			3
 #define RT5671_PLL1_PD_1			(0x0 << 3)
@@ -1505,64 +1480,6 @@
 #define RT5671_DRC_AGC_NGT_MASK			(0x1f)
 #define RT5671_DRC_AGC_NGT_SFT			0
 
-/* ANC Control 1 (0xb8) */
-#define RT5671_ANC_M_MASK			(0x1 << 15)
-#define RT5671_ANC_M_SFT			15
-#define RT5671_ANC_M_NOR			(0x0 << 15)
-#define RT5671_ANC_M_REV			(0x1 << 15)
-#define RT5671_ANC_MASK				(0x1 << 14)
-#define RT5671_ANC_SFT				14
-#define RT5671_ANC_DIS				(0x0 << 14)
-#define RT5671_ANC_EN				(0x1 << 14)
-#define RT5671_ANC_MD_MASK			(0x3 << 12)
-#define RT5671_ANC_MD_SFT			12
-#define RT5671_ANC_MD_DIS			(0x0 << 12)
-#define RT5671_ANC_MD_67MS			(0x1 << 12)
-#define RT5671_ANC_MD_267MS			(0x2 << 12)
-#define RT5671_ANC_MD_1067MS			(0x3 << 12)
-#define RT5671_ANC_SN_MASK			(0x1 << 11)
-#define RT5671_ANC_SN_SFT			11
-#define RT5671_ANC_SN_DIS			(0x0 << 11)
-#define RT5671_ANC_SN_EN			(0x1 << 11)
-#define RT5671_ANC_CLK_MASK			(0x1 << 10)
-#define RT5671_ANC_CLK_SFT			10
-#define RT5671_ANC_CLK_ANC			(0x0 << 10)
-#define RT5671_ANC_CLK_REG			(0x1 << 10)
-#define RT5671_ANC_ZCD_MASK			(0x3 << 8)
-#define RT5671_ANC_ZCD_SFT			8
-#define RT5671_ANC_ZCD_DIS			(0x0 << 8)
-#define RT5671_ANC_ZCD_T1			(0x1 << 8)
-#define RT5671_ANC_ZCD_T2			(0x2 << 8)
-#define RT5671_ANC_ZCD_WT			(0x3 << 8)
-#define RT5671_ANC_CS_MASK			(0x1 << 7)
-#define RT5671_ANC_CS_SFT			7
-#define RT5671_ANC_CS_DIS			(0x0 << 7)
-#define RT5671_ANC_CS_EN			(0x1 << 7)
-#define RT5671_ANC_SW_MASK			(0x1 << 6)
-#define RT5671_ANC_SW_SFT			6
-#define RT5671_ANC_SW_NOR			(0x0 << 6)
-#define RT5671_ANC_SW_AUTO			(0x1 << 6)
-#define RT5671_ANC_CO_L_MASK			(0x3f)
-#define RT5671_ANC_CO_L_SFT			0
-
-/* ANC Control 2 (0xb6) */
-#define RT5671_ANC_FG_R_MASK			(0xf << 12)
-#define RT5671_ANC_FG_R_SFT			12
-#define RT5671_ANC_FG_L_MASK			(0xf << 8)
-#define RT5671_ANC_FG_L_SFT			8
-#define RT5671_ANC_CG_R_MASK			(0xf << 4)
-#define RT5671_ANC_CG_R_SFT			4
-#define RT5671_ANC_CG_L_MASK			(0xf)
-#define RT5671_ANC_CG_L_SFT			0
-
-/* ANC Control 3 (0xb6) */
-#define RT5671_ANC_CD_MASK			(0x1 << 6)
-#define RT5671_ANC_CD_SFT			6
-#define RT5671_ANC_CD_BOTH			(0x0 << 6)
-#define RT5671_ANC_CD_IND			(0x1 << 6)
-#define RT5671_ANC_CO_R_MASK			(0x3f)
-#define RT5671_ANC_CO_R_SFT			0
-
 /* Jack Detect Control (0xbb) */
 #define RT5671_JD_MASK				(0x7 << 13)
 #define RT5671_JD_SFT				13
@@ -1621,28 +1538,6 @@
 #define RT5671_JD2_IN4N_SFT			0
 #define RT5671_JD2_IN4N_DIS			(0x0)
 #define RT5671_JD2_IN4N_EN			(0x1)
-
-/* Jack detect for ANC (0xbc) */
-#define RT5671_ANC_DET_MASK			(0x3 << 4)
-#define RT5671_ANC_DET_SFT			4
-#define RT5671_ANC_DET_DIS			(0x0 << 4)
-#define RT5671_ANC_DET_MB1			(0x1 << 4)
-#define RT5671_ANC_DET_MB2			(0x2 << 4)
-#define RT5671_ANC_DET_JD			(0x3 << 4)
-#define RT5671_AD_TRG_MASK			(0x1 << 3)
-#define RT5671_AD_TRG_SFT			3
-#define RT5671_AD_TRG_LO			(0x0 << 3)
-#define RT5671_AD_TRG_HI			(0x1 << 3)
-#define RT5671_ANCM_DET_MASK			(0x3 << 4)
-#define RT5671_ANCM_DET_SFT			4
-#define RT5671_ANCM_DET_DIS			(0x0 << 4)
-#define RT5671_ANCM_DET_MB1			(0x1 << 4)
-#define RT5671_ANCM_DET_MB2			(0x2 << 4)
-#define RT5671_ANCM_DET_JD			(0x3 << 4)
-#define RT5671_AMD_TRG_MASK			(0x1 << 3)
-#define RT5671_AMD_TRG_SFT			3
-#define RT5671_AMD_TRG_LO			(0x0 << 3)
-#define RT5671_AMD_TRG_HI			(0x1 << 3)
 
 /* IRQ Control 1 (0xbd) */
 #define RT5671_IRQ_JD_MASK			(0x1 << 15)
@@ -1726,10 +1621,18 @@
 #define RT5671_GPIO_M_SFT			9
 #define RT5671_GPIO_M_FLT			(0x0 << 9)
 #define RT5671_GPIO_M_PH			(0x1 << 9)
+#define RT5671_I2S2_PIN_MASK			(0x1 << 8)
+#define RT5671_I2S2_PIN_SFT			8
+#define RT5671_I2S2_PIN_I2S			(0x0 << 8)
+#define RT5671_I2S2_PIN_GPIO			(0x1 << 8)
 #define RT5671_GP5_PIN_MASK			(0x1 << 7)
 #define RT5671_GP5_PIN_SFT			7
 #define RT5671_GP5_PIN_GPIO5			(0x0 << 7)
 #define RT5671_GP5_PIN_DMIC3_SCL		(0x1 << 7)
+#define RT5671_GP6_PIN_MASK			(0x1 << 6)
+#define RT5671_GP6_PIN_SFT			6
+#define RT5671_GP6_PIN_GPIO6			(0x0 << 6)
+#define RT5671_GP6_PIN_DMIC1_SDA		(0x1 << 6)
 #define RT5671_GP7_PIN_MASK			(0x3 << 4)
 #define RT5671_GP7_PIN_SFT			4
 #define RT5671_GP7_PIN_GPIO7			(0x0 << 4)
@@ -1798,54 +1701,6 @@
 #define RT5671_GP1_P_SFT			0
 #define RT5671_GP1_P_NOR			(0x0)
 #define RT5671_GP1_P_INV			(0x1)
-
-/* Programmable Register Array Control 1 (0xc8) */
-#define RT5671_REG_SEQ_MASK			(0xf << 12)
-#define RT5671_REG_SEQ_SFT			12
-#define RT5671_SEQ1_ST_MASK			(0x1 << 11) /*RO*/
-#define RT5671_SEQ1_ST_SFT			11
-#define RT5671_SEQ1_ST_RUN			(0x0 << 11)
-#define RT5671_SEQ1_ST_FIN			(0x1 << 11)
-#define RT5671_SEQ2_ST_MASK			(0x1 << 10) /*RO*/
-#define RT5671_SEQ2_ST_SFT			10
-#define RT5671_SEQ2_ST_RUN			(0x0 << 10)
-#define RT5671_SEQ2_ST_FIN			(0x1 << 10)
-#define RT5671_REG_LV_MASK			(0x1 << 9)
-#define RT5671_REG_LV_SFT			9
-#define RT5671_REG_LV_MX			(0x0 << 9)
-#define RT5671_REG_LV_PR			(0x1 << 9)
-#define RT5671_SEQ_2_PT_MASK			(0x1 << 8)
-#define RT5671_SEQ_2_PT_BIT			8
-#define RT5671_REG_IDX_MASK			(0xff)
-#define RT5671_REG_IDX_SFT			0
-
-/* Programmable Register Array Control 2 (0xc9) */
-#define RT5671_REG_DAT_MASK			(0xffff)
-#define RT5671_REG_DAT_SFT			0
-
-/* Programmable Register Array Control 3 (0xca) */
-#define RT5671_SEQ_DLY_MASK			(0xff << 8)
-#define RT5671_SEQ_DLY_SFT			8
-#define RT5671_PROG_MASK			(0x1 << 7)
-#define RT5671_PROG_SFT				7
-#define RT5671_PROG_DIS				(0x0 << 7)
-#define RT5671_PROG_EN				(0x1 << 7)
-#define RT5671_SEQ1_PT_RUN			(0x1 << 6)
-#define RT5671_SEQ1_PT_RUN_BIT			6
-#define RT5671_SEQ2_PT_RUN			(0x1 << 5)
-#define RT5671_SEQ2_PT_RUN_BIT			5
-
-/* Programmable Register Array Control 4 (0xcb) */
-#define RT5671_SEQ1_START_MASK			(0xf << 8)
-#define RT5671_SEQ1_START_SFT			8
-#define RT5671_SEQ1_END_MASK			(0xf)
-#define RT5671_SEQ1_END_SFT			0
-
-/* Programmable Register Array Control 5 (0xcc) */
-#define RT5671_SEQ2_START_MASK			(0xf << 8)
-#define RT5671_SEQ2_START_SFT			8
-#define RT5671_SEQ2_END_MASK			(0xf)
-#define RT5671_SEQ2_END_SFT			0
 
 /* Scramble Function (0xcd) */
 #define RT5671_SCB_KEY_MASK			(0xff)
