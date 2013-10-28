@@ -740,7 +740,6 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 			snd_soc_write(codec, RT5671_GLB_CLK, reg80);
 
 		snd_soc_write(codec, RT5671_DIG_MISC, regfa);
-		snd_soc_write(codec, RT5671_PWR_DIG1, reg61);
 		snd_soc_write(codec, RT5671_PWR_ANLG2, reg64);
 		snd_soc_write(codec, RT5671_PWR_ANLG1, reg63);
 		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x4);
@@ -3873,7 +3872,6 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 		break;
 
 	case SND_SOC_BIAS_STANDBY:
-		snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x1);
 		if (SND_SOC_BIAS_OFF == codec->dapm.bias_level) {
 			snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
 				RT5671_PWR_VREF1 | RT5671_PWR_MB |
