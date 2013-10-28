@@ -58,8 +58,6 @@ module_param(hp_amp_time, int, 0644);
 #define JD1_FUNC
 /* #define ALC_DRC_FUNC */
 
-/* #define RT5671_PUSH_BUTTON */
-
 /* remove this define when merged to SOC
  * #define VAD_CAPTURE_TEST
  */
@@ -80,7 +78,6 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 static struct rt5671_init_reg init_list[] = {
 	{RT5671_IN1_IN2		, 0x0648},	/* Oder 20130321 mic gain increase to 44 dB */
 	{RT5671_LOUT1		, 0xc888},	/* For LOUT output (130318 Oder) */
-	{RT5671_IL_CMD2		, 0x0010}, 	/* set Inline Command Window */
 	{RT5671_DIG_MISC	, 0xc011},	/* fa[0]=1, fa[3]=0'b disabled MCLK det, fa[15:14]=11'b for pdm */
 	{RT5671_ADDA_CLK1	, 0x0000},	/* 73[2] = 1'b */
 	{RT5671_PRIV_INDEX	, 0x0014},	/* PR3d[12] = 0'b; PR3d[9] = 1'b */
@@ -703,11 +700,11 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 		snd_soc_write(codec, RT5671_GPIO_CTRL2, 0x0004);
 		snd_soc_update_bits(codec, RT5671_GPIO_CTRL1,
 			RT5671_GP1_PIN_MASK, RT5671_GP1_PIN_IRQ);
-*/
 		reg61 = snd_soc_read(codec, RT5671_PWR_DIG1);
 		snd_soc_update_bits(codec, RT5671_PWR_DIG1,
 			RT5671_PWR_DAC_L1 | RT5671_PWR_DAC_R1,
 			RT5671_PWR_DAC_L1 | RT5671_PWR_DAC_R1);
+*/
 		snd_soc_update_bits(codec, RT5671_IRQ_CTRL2, 0x80, 0x80);
 		if (SND_SOC_BIAS_OFF == codec->dapm.bias_level) {
 			reg80 = snd_soc_read(codec, RT5671_GLB_CLK);
@@ -726,15 +723,13 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 		pr_debug("val=%d\n",val);
 		if (val == 0x1 || val == 0x2) {
 			jack_type = SND_JACK_HEADSET;
-#ifdef RT5671_PUSH_BUTTON
 			/* for push button */
 			reg63 &= 0xfffc;
 			reg63 |= (RT5671_PWR_MB | 0x3);
-			reg64 |= RT5671_PWR_JD1;
+			reg64 |= RT5671_PWR_JD1 | RT5671_PWR_MB2;
 			snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x8, 0x8);
 			snd_soc_update_bits(codec, RT5671_IL_CMD, 0x40, 0x40);
 			snd_soc_read(codec, RT5671_IL_CMD);
-#endif
 		} else {
 			jack_type = SND_JACK_HEADPHONE;
 			snd_soc_update_bits(codec, RT5671_PWR_VOL,
@@ -799,7 +794,6 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 			return RT5671_J_IN_EVENT;
 		}
 		event_type = 0;
-#ifdef RT5671_PUSH_BUTTON
 		if (snd_soc_read(codec, RT5671_INT_IRQ_ST) & 0x4) {
 			/* button event */
 			event_type |= RT5671_BTN_EVENT;
@@ -816,7 +810,6 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 			snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x1, 0x1);
 		else
 			snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x1, 0x0);
-#endif
 		return (event_type == 0 ? RT5671_UN_EVENT : event_type);
 	case 0x70:
 	case 0x10:
@@ -2477,8 +2470,8 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 #ifdef JD1_FUNC
 	SND_SOC_DAPM_SUPPLY("JD Power", SND_SOC_NOPM,
 		0, 0, NULL, 0),
-	SND_SOC_DAPM_SUPPLY("Mic Det Power", RT5671_PWR_VOL,
-		RT5671_PWR_MIC_DET_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("Mic Det Power", SND_SOC_NOPM,
+		0, 0, NULL, 0),
 #else
 	SND_SOC_DAPM_SUPPLY("JD Power", SND_SOC_NOPM,
 		0, 0, NULL, 0),
@@ -2490,8 +2483,8 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	/* micbias */
 	SND_SOC_DAPM_MICBIAS("micbias1", RT5671_PWR_ANLG2,
 			RT5671_PWR_MB1_BIT, 0),
-	SND_SOC_DAPM_MICBIAS("micbias2", RT5671_PWR_ANLG2,
-			RT5671_PWR_MB2_BIT, 0),
+	SND_SOC_DAPM_MICBIAS("micbias2", SND_SOC_NOPM,
+			0, 0),
 	/* Input Lines */
 	SND_SOC_DAPM_INPUT("DMIC L1"),
 	SND_SOC_DAPM_INPUT("DMIC R1"),
@@ -3957,31 +3950,25 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			/* Oder 130701 update end */
 #endif
 		} else {
-		snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
-		snd_soc_write(codec, RT5671_PWR_DIG2, 0x0001);
-		snd_soc_write(codec, RT5671_PWR_VOL, 0x0000);
-		snd_soc_write(codec, RT5671_PWR_MIXER, 0x0001);
-		snd_soc_write(codec, RT5671_PWR_ANLG1, 0x2001);
-		snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0004);
-		snd_soc_update_bits(codec, RT5671_GLB_CLK,
-			RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_MCLK);
-		snd_soc_write(codec, RT5671_ADDA_CLK1, 0x7770);
-		snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
-#ifdef RT5671_PUSH_BUTTON
-		if (rt5671->jack_type == SND_JACK_HEADSET) {
-			snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
-				0x0003, 0x0003);
-			snd_soc_update_bits(codec, RT5671_PWR_DIG1,
-				0x1800, 0x1800);
-			snd_soc_update_bits(codec, RT5671_PWR_VOL,
-				0x0020, 0x0020);
-			snd_soc_write(codec, RT5671_JD_CTRL3, 0x00f0);
-			snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
-				RT5671_CBJ_MN_JD, RT5671_CBJ_MN_JD);
-			snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
-				RT5671_CBJ_MN_JD, 0);
-		}
-#endif
+			if (rt5671->jack_type == SND_JACK_HEADSET) {
+				snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
+				snd_soc_write(codec, RT5671_PWR_DIG2, 0x0001);
+				snd_soc_write(codec, RT5671_PWR_VOL, 0x0020);
+				snd_soc_write(codec, RT5671_PWR_MIXER, 0x0001);
+				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x2003);
+				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0404);
+			} else {
+				snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
+				snd_soc_write(codec, RT5671_PWR_DIG2, 0x0001);
+				snd_soc_write(codec, RT5671_PWR_VOL, 0x0000);
+				snd_soc_write(codec, RT5671_PWR_MIXER, 0x0001);
+				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x2001);
+				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0004);
+			}
+			snd_soc_update_bits(codec, RT5671_GLB_CLK,
+				RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_MCLK);
+			snd_soc_write(codec, RT5671_ADDA_CLK1, 0x7770);
+			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 		}
 		break;
 
