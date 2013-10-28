@@ -2046,12 +2046,12 @@ enum {
 };
 
 enum {
-	RT5671_BTN_EVENT = BIT(0), /* Jack evulse */
+	RT5671_BTN_EVENT = BIT(0), /* Button Push */
 	RT5671_BR_EVENT = BIT(1), /* Button Release */
 	RT5671_J_IN_EVENT = BIT(2), /* Jack insert */
 	RT5671_J_OUT_EVENT = BIT(3), /* Jack evulse */
-	RT5671_UN_EVENT = BIT(4), /* Unknown */
-	RT5671_VAD_EVENT = BIT(5), /* VAD Triggered */
+	RT5671_VAD_EVENT = BIT(4), /* VAD Triggered */
+	RT5671_UN_EVENT = BIT(5), /* Unknown */
 };
 
 #define RT5671_U_IF1 (0x1)
