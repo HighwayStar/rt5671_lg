@@ -13,6 +13,8 @@
  * published by the Free Software Foundation.
  */
 
+#include <sound/rt5671.h>
+
 #ifndef __RT5671_H__
 #define __RT5671_H__
 #define REALTEK_USE_AMIC	0
@@ -2077,6 +2079,7 @@ struct rt5671_priv {
 	struct snd_soc_codec *codec;
 	struct delayed_work patch_work;
 	struct regmap *regmap;
+	struct rt5671_platform_data *pdata;
 
 	int aif_pu;
 	int sysclk;
@@ -2098,9 +2101,6 @@ struct rt5671_priv {
 	int stream;
 	int jack_type;
 };
-
-int rt5671_conn_mux_path(struct snd_soc_codec *codec,
-		char *widget_name, char *path_name);
 
 #endif /* __RT5671_H__ */
 /* LGE_CHANGE_E */

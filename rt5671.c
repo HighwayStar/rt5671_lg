@@ -3357,6 +3357,7 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_codec *codec = rtd->codec;
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+	struct rt5671_platform_data *pdata = rt5671->pdata;
 	unsigned int val_len = 0, val_clk, mask_clk;
 	int pre_div, bclk_ms, frame_size;
 
@@ -3395,7 +3396,9 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 
 	switch (dai->id) {
 	case RT5671_AIF1:
-		bclk_ms = 1;
+		if (pdata)
+			bclk_ms = pdata->if1_force_64fs ? 1 : 0;
+
  		mask_clk = RT5671_I2S_BCLK_MS1_MASK | RT5671_I2S_PD1_MASK;
 		val_clk = bclk_ms << RT5671_I2S_BCLK_MS1_SFT |
 			pre_div << RT5671_I2S_PD1_SFT;
@@ -3408,7 +3411,9 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 			snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x4000);
 		break;
 	case RT5671_AIF2:
-		bclk_ms = 1;
+		if (pdata)
+			bclk_ms = pdata->if2_force_64fs ? 1 : 0;
+
 		mask_clk = RT5671_I2S_BCLK_MS2_MASK | RT5671_I2S_PD2_MASK;
 		val_clk = bclk_ms << RT5671_I2S_BCLK_MS2_SFT |
 			pre_div << RT5671_I2S_PD2_SFT;
@@ -4245,6 +4250,9 @@ static int rt5671_i2c_probe(struct i2c_client *i2c,
 		    const struct i2c_device_id *id)
 {
 	struct rt5671_priv *rt5671;
+	struct rt5671_platform_data *pdata =
+		(struct rt5671_platform_data *) dev_get_platdata(&i2c->dev);
+
 	int ret;
 
 	printk("hyunsoo dbg: %s %d\n",__FUNCTION__, __LINE__);
@@ -4257,8 +4265,13 @@ static int rt5671_i2c_probe(struct i2c_client *i2c,
 	printk("hyunsoo dbg: %s %d\n",__FUNCTION__, __LINE__);
 	ret = snd_soc_register_codec(&i2c->dev, &soc_codec_dev_rt5671,
 			rt5671_dai, ARRAY_SIZE(rt5671_dai));
-	if (ret < 0)
+	if (ret < 0) {
 		kfree(rt5671);
+		return ret;
+	}
+
+	if (pdata)
+		rt5671->pdata = pdata;
 
 	return ret;
 }
