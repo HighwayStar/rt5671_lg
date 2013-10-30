@@ -2099,8 +2099,5 @@ struct rt5671_priv {
 	int jack_type;
 };
 
-int rt5671_conn_mux_path(struct snd_soc_codec *codec,
-		char *widget_name, char *path_name);
-
 #endif /* __RT5671_H__ */
 /* LGE_CHANGE_E */

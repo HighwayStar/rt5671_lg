@@ -141,12 +141,12 @@ static struct rt5671_init_reg init_list[] = {
 
 #ifdef ALC_DRC_FUNC
 static struct rt5671_init_reg alc_drc_list[] = {
-	{RT5671_ALC_DRC_CTRL1	, 0x0000},
-	{RT5671_ALC_DRC_CTRL2	, 0x0000},
-	{RT5671_ALC_CTRL_2	, 0x0000},
-	{RT5671_ALC_CTRL_3	, 0x0000},
-	{RT5671_ALC_CTRL_4	, 0x0000},
-	{RT5671_ALC_CTRL_1	, 0x0000},
+	{ RT5671_ALC_DRC_CTRL1	, 0x0000 },
+	{ RT5671_ALC_DRC_CTRL2	, 0x0000 },
+	{ RT5671_ALC_CTRL_2	, 0x0000 },
+	{ RT5671_ALC_CTRL_3	, 0x0000 },
+	{ RT5671_ALC_CTRL_4	, 0x0000 },
+	{ RT5671_ALC_CTRL_1	, 0x0000 },
 };
 #define RT5671_ALC_DRC_REG_LEN ARRAY_SIZE(alc_drc_list)
 #endif
@@ -208,7 +208,7 @@ static const u16 rt5671_reg[RT5671_VENDOR_ID2 + 1] = {
 	[RT5671_HPO_MIXER] = 0xe00f,
 	[RT5671_MONO_MIXER] = 0x5380,
 	[RT5671_OUT_L1_MIXER] = 0x0073,
- 	[RT5671_OUT_R1_MIXER] = 0x00d3,
+	[RT5671_OUT_R1_MIXER] = 0x00d3,
 	[RT5671_LOUT_MIXER] = 0xf0f0,
 	[RT5671_PWR_DIG2] = 0x0001,
 	[RT5671_PWR_ANLG1] = 0x00c3,
@@ -372,7 +372,7 @@ static unsigned rt5671_pdm1_read(struct snd_soc_codec *codec,
 		dev_err(codec->dev, "Failed to set private value: %d\n", ret);
 		goto err;
 	}
-	do{
+	do {
 		ret = snd_soc_read(codec, RT5671_PDM_DATA_CTRL1);
 	} while (ret & 0x0100);
 	return snd_soc_read(codec, RT5671_PDM1_DATA_CTRL4);
@@ -405,7 +405,7 @@ static int rt5671_pdm1_write(struct snd_soc_codec *codec,
 		dev_err(codec->dev, "Failed to set private value: %d\n", ret);
 		goto err;
 	}
-	do{
+	do {
 		ret = snd_soc_read(codec, RT5671_PDM_DATA_CTRL1);
 	} while (ret & 0x0100);
 	return 0;
@@ -429,7 +429,7 @@ static unsigned rt5671_pdm2_read(struct snd_soc_codec *codec,
 		dev_err(codec->dev, "Failed to set private value: %d\n", ret);
 		goto err;
 	}
-	do{
+	do {
 		ret = snd_soc_read(codec, RT5671_PDM_DATA_CTRL1);
 	} while (ret & 0x0001);
 	return snd_soc_read(codec, RT5671_PDM2_DATA_CTRL4);
@@ -462,7 +462,7 @@ static int rt5671_pdm2_write(struct snd_soc_codec *codec,
 		dev_err(codec->dev, "Failed to set private value: %d\n", ret);
 		goto err;
 	}
-	do{
+	do {
 		ret = snd_soc_read(codec, RT5671_PDM_DATA_CTRL1);
 	} while (ret & 0x0001);
 
@@ -720,7 +720,7 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 			RT5671_CBJ_MN_JD, 0);
 		msleep(500);
 		val = snd_soc_read(codec, RT5671_CJ_CTRL3) & 0x7;
-		pr_debug("val=%d\n",val);
+		pr_debug("val=%d\n", val);
 		if (val == 0x1 || val == 0x2) {
 			jack_type = SND_JACK_HEADSET;
 			/* for push button */
@@ -748,7 +748,7 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 		jack_type = 0;
 	}
 
-	pr_debug("jack_type=%d\n",jack_type);
+	pr_debug("jack_type=%d\n", jack_type);
 	return jack_type;
 }
 EXPORT_SYMBOL(rt5671_headset_detect);
@@ -1464,7 +1464,7 @@ static const SOC_ENUM_SINGLE_DECL(
 static const struct snd_kcontrol_new rt5671_dac_r2_mux =
 	SOC_DAPM_ENUM("DAC2 R source", rt5671_dac2r_enum);
 
-/*RxDP source*/ /* MX-2D [15:13] */
+/* RxDP source */ /* MX-2D [15:13] */
 static const char * const rt5671_rxdp_src[] = {
 	"IF2 DAC", "IF1 DAC", "STO1 ADC Mixer", "STO2 ADC Mixer",
 	"Mono ADC Mixer L", "Mono ADC Mixer R", "DAC1"
@@ -1993,7 +1993,7 @@ static int rt5671_mono_adcr_event(struct snd_soc_dapm_widget *w,
 
 void hp_amp_power(struct snd_soc_codec *codec, int on)
 {
-	if(on) {
+	if (on) {
 		snd_soc_update_bits(codec, RT5671_CHARGE_PUMP,
 			RT5671_PM_HP_MASK, RT5671_PM_HP_HV);
 		snd_soc_update_bits(codec, RT5671_GEN_CTRL2,
@@ -2010,6 +2010,9 @@ void hp_amp_power(struct snd_soc_codec *codec, int on)
 		pr_debug("hp_amp_time=%d\n",hp_amp_time);
 		mdelay(hp_amp_time);
 		snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
+	} else {
+		snd_soc_write(codec, RT5671_DEPOP_M1, 0x0004);
+		msleep(30);
 	}
 }
 
@@ -2045,10 +2048,6 @@ static void rt5671_pmd_depop(struct snd_soc_codec *codec)
 	snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 	snd_soc_write(codec, RT5671_DEPOP_M3, 0x0707);
 	rt5671_index_write(codec, RT5671_MAMP_INT_REG2, 0xfc00);
-	/* Avoid turn off the lout */
-	if (!(snd_soc_read(codec, RT5671_PWR_ANLG1) & RT5671_PWR_LM))
-		snd_soc_write(codec, RT5671_DEPOP_M1, 0x0004);
-	msleep(30);
 }
 
 static int rt5671_hp_power_event(struct snd_soc_dapm_widget *w,
@@ -2124,8 +2123,6 @@ static int rt5671_lout_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
-		snd_soc_write(codec, RT5671_DEPOP_M1, 0x0019);
-		snd_soc_write(codec, RT5671_DEPOP_M2, 0x3100);
 		snd_soc_update_bits(codec, RT5671_CHARGE_PUMP,
 			RT5671_PM_HP_MASK, RT5671_PM_HP_HV);
 		snd_soc_update_bits(codec, RT5671_LOUT1,
@@ -2160,13 +2157,9 @@ static int rt5671_set_dmic1_event(struct snd_soc_dapm_widget *w,
 			RT5671_DMIC_1_DP_MASK,
 			RT5671_DMIC_1L_LH_FALLING | RT5671_DMIC_1R_LH_RISING |
 			RT5671_DMIC_1_DP_GPIO7);
-		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
-			RT5671_DMIC_1_EN_MASK, RT5671_DMIC_1_EN);
 		break;
 
 	case SND_SOC_DAPM_POST_PMD:
-		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
-			RT5671_DMIC_1_EN_MASK, RT5671_DMIC_1_DIS);
 		break;
 
 	default:
@@ -2191,13 +2184,9 @@ static int rt5671_set_dmic2_event(struct snd_soc_dapm_widget *w,
 			RT5671_DMIC_2_DP_MASK,
 			RT5671_DMIC_2L_LH_FALLING | RT5671_DMIC_2R_LH_RISING |
 			RT5671_DMIC_2_DP_IN1N);
-		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
-			RT5671_DMIC_2_EN_MASK, RT5671_DMIC_2_EN);
 		break;
 
 	case SND_SOC_DAPM_POST_PMD:
-		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
-			RT5671_DMIC_2_EN_MASK, RT5671_DMIC_2_DIS);
 		break;
 
 	default:
@@ -2222,13 +2211,9 @@ static int rt5671_set_dmic3_event(struct snd_soc_dapm_widget *w,
 			RT5671_DMIC_2_DP_MASK,
 			RT5671_DMIC_2L_LH_FALLING | RT5671_DMIC_2R_LH_RISING |
 			RT5671_DMIC_2_DP_IN1N);
-		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
-			RT5671_DMIC_3_EN_MASK, RT5671_DMIC_3_EN);
 		break;
 
 	case SND_SOC_DAPM_POST_PMD:
-		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
-			RT5671_DMIC_3_EN_MASK, RT5671_DMIC_3_DIS);
 		break;
 
 	default:
@@ -2247,13 +2232,13 @@ static int rt5671_bst1_event(struct snd_soc_dapm_widget *w,
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
 		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x0);
-		snd_soc_update_bits(codec,RT5671_CHARGE_PUMP,
+		snd_soc_update_bits(codec, RT5671_CHARGE_PUMP,
 			RT5671_OSW_L_MASK | RT5671_OSW_R_MASK,
 			RT5671_OSW_L_DIS | RT5671_OSW_R_DIS);
 
 		snd_soc_update_bits(codec, RT5671_PWR_ANLG2,
 			RT5671_PWR_BST1_P, RT5671_PWR_BST1_P);
-		if(rt5671->combo_jack_en) {
+		if (rt5671->combo_jack_en) {
 			snd_soc_update_bits(codec, RT5671_PWR_VOL,
 				RT5671_PWR_MIC_DET, RT5671_PWR_MIC_DET);
 		}
@@ -2500,17 +2485,28 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_INPUT("IN3N"),
 	SND_SOC_DAPM_INPUT("IN4P"),
 	SND_SOC_DAPM_INPUT("IN4N"),
+
 	SND_SOC_DAPM_PGA_E("DMIC1", SND_SOC_NOPM,
-		0, 0, NULL, 0, rt5671_set_dmic1_event,
+		0, 0, NULL, 0, NULL,
 		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
 	SND_SOC_DAPM_PGA_E("DMIC2", SND_SOC_NOPM,
-		0, 0, NULL, 0, rt5671_set_dmic2_event,
+		0, 0, NULL, 0, NULL,
 		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
 	SND_SOC_DAPM_PGA_E("DMIC3", SND_SOC_NOPM,
-		0, 0, NULL, 0, rt5671_set_dmic3_event,
+		0, 0, NULL, 0, NULL,
 		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
 	SND_SOC_DAPM_SUPPLY("DMIC CLK", SND_SOC_NOPM, 0, 0,
 		set_dmic_clk, SND_SOC_DAPM_PRE_PMU),
+	SND_SOC_DAPM_SUPPLY("DMIC1 Power", RT5671_DMIC_CTRL1,
+		RT5671_DMIC_1_EN_SFT, 0, rt5671_set_dmic1_event,
+		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
+	SND_SOC_DAPM_SUPPLY("DMIC2 Power", RT5671_DMIC_CTRL1,
+		RT5671_DMIC_2_EN_SFT, 0, rt5671_set_dmic2_event,
+		SND_SOC_DAPM_PRE_PMU),
+	SND_SOC_DAPM_SUPPLY("DMIC3 Power", RT5671_DMIC_CTRL1,
+		RT5671_DMIC_3_EN_SFT, 0, rt5671_set_dmic3_event,
+		SND_SOC_DAPM_PRE_PMU),
+
 	/* Boost */
 	SND_SOC_DAPM_PGA_E("BST1", RT5671_PWR_ANLG2,
 		RT5671_PWR_BST1_BIT, 0, NULL, 0, rt5671_bst1_event,
@@ -2534,11 +2530,11 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_MUX("INR Mux", SND_SOC_NOPM, 0, 0, &rt5671_inr_mux),
 	/* REC Mixer */
 	SND_SOC_DAPM_MIXER("RECMIXL", RT5671_PWR_MIXER, RT5671_PWR_RM_L_BIT, 0,
-			rt5671_rec_l_mix, ARRAY_SIZE(rt5671_rec_l_mix)),
+		rt5671_rec_l_mix, ARRAY_SIZE(rt5671_rec_l_mix)),
 	SND_SOC_DAPM_MIXER("RECMIXR", RT5671_PWR_MIXER, RT5671_PWR_RM_R_BIT, 0,
-			rt5671_rec_r_mix, ARRAY_SIZE(rt5671_rec_r_mix)),
+		rt5671_rec_r_mix, ARRAY_SIZE(rt5671_rec_r_mix)),
 	SND_SOC_DAPM_MIXER("RECMIXM", RT5671_PWR_MIXER, RT5671_PWR_RM_M_BIT, 0,
-			rt5671_rec_m_mix, ARRAY_SIZE(rt5671_rec_m_mix)),
+		rt5671_rec_m_mix, ARRAY_SIZE(rt5671_rec_m_mix)),
 	/* ADCs */
 	SND_SOC_DAPM_ADC("ADC 1", NULL, SND_SOC_NOPM, 0, 0),
 	SND_SOC_DAPM_ADC("ADC 2", NULL, SND_SOC_NOPM, 0, 0),
@@ -2546,58 +2542,58 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 
 	SND_SOC_DAPM_PGA("ADC 1_2", SND_SOC_NOPM, 0, 0, NULL, 0),
 
-	SND_SOC_DAPM_SUPPLY("ADC 1 power",RT5671_PWR_DIG1,
-			RT5671_PWR_ADC_L_BIT, 0, NULL, 0),
-	SND_SOC_DAPM_SUPPLY("ADC 2 power",RT5671_PWR_DIG1,
-			RT5671_PWR_ADC_R_BIT, 0, NULL, 0),
-	SND_SOC_DAPM_SUPPLY("ADC 3 power",RT5671_PWR_DIG1,
-			RT5671_PWR_ADC_3_BIT, 0, NULL, 0),
-	SND_SOC_DAPM_SUPPLY("ADC clock",SND_SOC_NOPM, 0, 0,
+	SND_SOC_DAPM_SUPPLY("ADC 1 power", RT5671_PWR_DIG1,
+		RT5671_PWR_ADC_L_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("ADC 2 power", RT5671_PWR_DIG1,
+		RT5671_PWR_ADC_R_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("ADC 3 power", RT5671_PWR_DIG1,
+		RT5671_PWR_ADC_3_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("ADC clock", SND_SOC_NOPM, 0, 0,
 		rt5671_adc_clk_event, SND_SOC_DAPM_POST_PMD |
 		SND_SOC_DAPM_POST_PMU),
 	/* ADC Mux */
 	SND_SOC_DAPM_MUX("Stereo1 ADC Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto_adc_mux),
+		&rt5671_sto_adc_mux),
 	SND_SOC_DAPM_MUX("Stereo1 DMIC Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto1_dmic_mux),
+		&rt5671_sto1_dmic_mux),
 	SND_SOC_DAPM_MUX("Stereo1 ADC L2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto_adc_l2_mux),
+		&rt5671_sto_adc_l2_mux),
 	SND_SOC_DAPM_MUX("Stereo1 ADC R2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto_adc_r2_mux),
+		&rt5671_sto_adc_r2_mux),
 	SND_SOC_DAPM_MUX("Stereo1 ADC L1 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto_adc_l1_mux),
+		&rt5671_sto_adc_l1_mux),
 	SND_SOC_DAPM_MUX("Stereo1 ADC R1 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto_adc_r1_mux),
+		&rt5671_sto_adc_r1_mux),
 	SND_SOC_DAPM_MUX("Stereo2 ADC Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto2_adc_mux),
+		&rt5671_sto2_adc_mux),
 	SND_SOC_DAPM_MUX("Stereo2 DMIC Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto2_dmic_mux),
+		&rt5671_sto2_dmic_mux),
 	SND_SOC_DAPM_MUX("Stereo2 ADC L2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto2_adc_l2_mux),
+		&rt5671_sto2_adc_l2_mux),
 	SND_SOC_DAPM_MUX("Stereo2 ADC R2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto2_adc_r2_mux),
+		&rt5671_sto2_adc_r2_mux),
 	SND_SOC_DAPM_MUX("Stereo2 ADC L1 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto2_adc_l1_mux),
+		&rt5671_sto2_adc_l1_mux),
 	SND_SOC_DAPM_MUX("Stereo2 ADC R1 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto2_adc_r1_mux),
+		&rt5671_sto2_adc_r1_mux),
 	SND_SOC_DAPM_MUX("Stereo2 ADC LR Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sto2_adc_lr_mux),
+		&rt5671_sto2_adc_lr_mux),
 	SND_SOC_DAPM_MUX("Mono ADC L Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_adc_l_mux),
+		&rt5671_mono_adc_l_mux),
 	SND_SOC_DAPM_MUX("Mono ADC R Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_adc_r_mux),
+		&rt5671_mono_adc_r_mux),
 	SND_SOC_DAPM_MUX("Mono DMIC L Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_dmic_l_mux),
+		&rt5671_mono_dmic_l_mux),
 	SND_SOC_DAPM_MUX("Mono DMIC R Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_dmic_r_mux),
+		&rt5671_mono_dmic_r_mux),
 	SND_SOC_DAPM_MUX("Mono ADC L2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_adc_l2_mux),
+		&rt5671_mono_adc_l2_mux),
 	SND_SOC_DAPM_MUX("Mono ADC L1 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_adc_l1_mux),
+		&rt5671_mono_adc_l1_mux),
 	SND_SOC_DAPM_MUX("Mono ADC R1 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_adc_r1_mux),
+		&rt5671_mono_adc_r1_mux),
 	SND_SOC_DAPM_MUX("Mono ADC R2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_mono_adc_r2_mux),
+		&rt5671_mono_adc_r2_mux),
 	/* ADC Mixer */
 	SND_SOC_DAPM_SUPPLY("adc stereo1 filter", RT5671_PWR_DIG2,
 		RT5671_PWR_ADC_S1F_BIT, 0, NULL, 0),
@@ -2689,7 +2685,7 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA("IF2 ADC R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_SUPPLY("I2S3", RT5671_PWR_DIG1,
 		RT5671_PWR_I2S3_BIT, 0, NULL, 0),
- 	SND_SOC_DAPM_PGA("IF3 DAC", SND_SOC_NOPM, 0, 0, NULL, 0),
+	SND_SOC_DAPM_PGA("IF3 DAC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 DAC L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 DAC R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 ADC", SND_SOC_NOPM, 0, 0, NULL, 0),
@@ -2739,26 +2735,26 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 
 	/* DAC2 channel Mux */
 	SND_SOC_DAPM_MUX("DAC L2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_dac_l2_mux),
+		&rt5671_dac_l2_mux),
 	SND_SOC_DAPM_MUX("DAC R2 Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_dac_r2_mux),
+		&rt5671_dac_r2_mux),
 	SND_SOC_DAPM_PGA("DAC L2 Volume", RT5671_PWR_DIG1,
-			RT5671_PWR_DAC_L2_BIT, 0, NULL, 0),
+		RT5671_PWR_DAC_L2_BIT, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("DAC R2 Volume", RT5671_PWR_DIG1,
-			RT5671_PWR_DAC_R2_BIT, 0, NULL, 0),
+		RT5671_PWR_DAC_R2_BIT, 0, NULL, 0),
 
 	SND_SOC_DAPM_MUX("DAC1 L Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_dac1l_mux),
+		&rt5671_dac1l_mux),
 	SND_SOC_DAPM_MUX("DAC1 R Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_dac1r_mux),
+		&rt5671_dac1r_mux),
 
 	/* Sidetone */
 	SND_SOC_DAPM_MUX("Sidetone Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_sidetone_mux),
+		&rt5671_sidetone_mux),
 	SND_SOC_DAPM_MUX("ANC Mux", SND_SOC_NOPM, 0, 0,
-				&rt5671_anc_mux),
+		&rt5671_anc_mux),
 	SND_SOC_DAPM_PGA("SNC", SND_SOC_NOPM,
-			0, 0, NULL, 0),
+		0, 0, NULL, 0),
 	/* DAC Mixer */
 	SND_SOC_DAPM_SUPPLY("dac stereo1 filter", RT5671_PWR_DIG2,
 		RT5671_PWR_DAC_S1F_BIT, 0, NULL, 0),
@@ -2790,7 +2786,7 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		RT5671_PWR_DAC_L2_BIT, 0),
 
 	SND_SOC_DAPM_DAC("DAC R2", NULL, RT5671_PWR_DIG1,
-			RT5671_PWR_DAC_R2_BIT, 0),
+		RT5671_PWR_DAC_R2_BIT, 0),
 	/* OUT Mixer */
 
 	SND_SOC_DAPM_MIXER("OUT MIXL", RT5671_PWR_MIXER, RT5671_PWR_OM_L_BIT,
@@ -2930,6 +2926,13 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "DMIC R2", NULL, "DMIC CLK" },
 	{ "DMIC L3", NULL, "DMIC CLK" },
 	{ "DMIC R3", NULL, "DMIC CLK" },
+
+	{ "DMIC L1", NULL, "DMIC1 Power" },
+	{ "DMIC R1", NULL, "DMIC1 Power" },
+	{ "DMIC L2", NULL, "DMIC2 Power" },
+	{ "DMIC R2", NULL, "DMIC2 Power" },
+	{ "DMIC L3", NULL, "DMIC3 Power" },
+	{ "DMIC R3", NULL, "DMIC3 Power" },
 
 	{ "Stereo1 DMIC Mux", "DMIC1", "DMIC1" },
 	{ "Stereo1 DMIC Mux", "DMIC2", "DMIC2" },
@@ -3325,6 +3328,8 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "LOUT Amp", NULL, "LOUT MIX" },
 	{ "LOUTL", NULL, "LOUT Amp" },
 	{ "LOUTR", NULL, "LOUT Amp" },
+	{ "LOUTL", NULL, "Improve HP Amp Drv" },
+	{ "LOUTR", NULL, "Improve HP Amp Drv" },
 
 	{ "Mono Amp", NULL, "MONOAmp MIX" },
 	{ "MonoP", NULL, "Mono Amp" },
@@ -3650,16 +3655,16 @@ static int rt5671_set_dai_pll(struct snd_soc_dai *dai, int pll_id, int source,
 			RT5671_PLL1_SRC_MASK, RT5671_PLL1_SRC_MCLK);
 		break;
 	case RT5671_PLL1_S_BCLK1:
-			snd_soc_update_bits(codec, RT5671_GLB_CLK,
-				RT5671_PLL1_SRC_MASK, RT5671_PLL1_SRC_BCLK1);
+		snd_soc_update_bits(codec, RT5671_GLB_CLK,
+			RT5671_PLL1_SRC_MASK, RT5671_PLL1_SRC_BCLK1);
 		break;
 	case RT5671_PLL1_S_BCLK2:
-			snd_soc_update_bits(codec, RT5671_GLB_CLK,
-				RT5671_PLL1_SRC_MASK, RT5671_PLL1_SRC_BCLK2);
+		snd_soc_update_bits(codec, RT5671_GLB_CLK,
+			RT5671_PLL1_SRC_MASK, RT5671_PLL1_SRC_BCLK2);
 		break;
 	case RT5671_PLL1_S_BCLK3:
-			snd_soc_update_bits(codec, RT5671_GLB_CLK,
-				RT5671_PLL1_SRC_MASK, RT5671_PLL1_SRC_BCLK3);
+		snd_soc_update_bits(codec, RT5671_GLB_CLK,
+			RT5671_PLL1_SRC_MASK, RT5671_PLL1_SRC_BCLK3);
 		break;
 	case RT5671_PLL1_S_BCLK4:
 		snd_soc_update_bits(codec, RT5671_GLB_CLK,
@@ -3735,35 +3740,35 @@ static ssize_t rt5671_index_store(struct device *dev,
 	struct i2c_client *client = to_i2c_client(dev);
 	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
 	struct snd_soc_codec *codec = rt5671->codec;
-	unsigned int val=0,addr=0;
+	unsigned int val = 0, addr = 0;
 	int i;
 
 	for (i = 0; i < count; i++) {
-		if(*(buf+i) <= '9' && *(buf+i)>='0')
-			addr = (addr << 4) | (*(buf+i)-'0');
-		else if(*(buf+i) <= 'f' && *(buf+i)>='a')
-			addr = (addr << 4) | ((*(buf+i)-'a')+0xa);
-		else if(*(buf+i) <= 'F' && *(buf+i)>='A')
-			addr = (addr << 4) | ((*(buf+i)-'A')+0xa);
+		if (*(buf+i) <= '9' && *(buf + i) >= '0')
+			addr = (addr << 4) | (*(buf + i) - '0');
+		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
+			addr = (addr << 4) | ((*(buf + i) - 'a')+0xa);
+		else if (*(buf+i) <= 'F' && *(buf+i) >= 'A')
+			addr = (addr << 4) | ((*(buf + i) - 'A')+0xa);
 		else
 			break;
-		}
+	}
 
 	for (i = i + 1; i < count; i++) {
-		if(*(buf+i) <= '9' && *(buf+i)>='0')
-			val = (val << 4) | (*(buf+i)-'0');
-		else if(*(buf+i) <= 'f' && *(buf+i)>='a')
-			val = (val << 4) | ((*(buf+i)-'a')+0xa);
-		else if(*(buf+i) <= 'F' && *(buf+i)>='A')
-			val = (val << 4) | ((*(buf+i)-'A')+0xa);
+		if (*(buf+i) <= '9' && *(buf+i) >= '0')
+			val = (val << 4) | (*(buf + i) - '0');
+		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
+			val = (val << 4) | ((*(buf + i)-'a')+0xa);
+		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
+			val = (val << 4) | ((*(buf + i) - 'A')+0xa);
 		else
 			break;
-		}
+	}
 	pr_debug("addr=0x%x val=0x%x\n", addr, val);
-	if(addr > RT5671_VENDOR_ID2 || val > 0xffff || val < 0)
+	if (addr > RT5671_VENDOR_ID2 || val > 0xffff || val < 0)
 		return count;
 
-	if(i==count)
+	if (i == count)
 		pr_debug("0x%02x = 0x%04x\n", addr,
 			rt5671_index_read(codec, addr));
 	else
@@ -3807,36 +3812,36 @@ static ssize_t rt5671_codec_store(struct device *dev,
 	struct i2c_client *client = to_i2c_client(dev);
 	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
 	struct snd_soc_codec *codec = rt5671->codec;
-	unsigned int val=0,addr=0;
+	unsigned int val = 0, addr = 0;
 	int i;
 
 	pr_debug("register \"%s\" count=%d\n", buf, count);
 	for (i = 0; i < count; i++) {
-		if(*(buf+i) <= '9' && *(buf+i)>='0')
-			addr = (addr << 4) | (*(buf+i)-'0');
-		else if(*(buf+i) <= 'f' && *(buf+i)>='a')
-			addr = (addr << 4) | ((*(buf+i)-'a')+0xa);
-		else if(*(buf+i) <= 'F' && *(buf+i)>='A')
-			addr = (addr << 4) | ((*(buf+i)-'A')+0xa);
+		if (*(buf+i) <= '9' && *(buf + i) >= '0')
+			addr = (addr << 4) | (*(buf + i) - '0');
+		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
+			addr = (addr << 4) | ((*(buf + i) - 'a')+0xa);
+		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
+			addr = (addr << 4) | ((*(buf + i) - 'A')+0xa);
 		else
 			break;
-		}
+	}
 
 	for (i = i+1; i < count; i++) {
-		if(*(buf+i) <= '9' && *(buf+i)>='0')
-			val = (val << 4) | (*(buf+i)-'0');
-		else if(*(buf+i) <= 'f' && *(buf+i)>='a')
-			val = (val << 4) | ((*(buf+i)-'a')+0xa);
-		else if(*(buf+i) <= 'F' && *(buf+i)>='A')
-			val = (val << 4) | ((*(buf+i)-'A')+0xa);
+		if (*(buf+i) <= '9' && *(buf + i) >= '0')
+			val = (val << 4) | (*(buf + i) - '0');
+		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
+			val = (val << 4) | ((*(buf + i) - 'a')+0xa);
+		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
+			val = (val << 4) | ((*(buf + i) - 'A')+0xa);
 		else
 			break;
-		}
+	}
 	pr_debug("addr=0x%x val=0x%x\n", addr, val);
-	if(addr > RT5671_VENDOR_ID2 || val > 0xffff || val < 0)
+	if (addr > RT5671_VENDOR_ID2 || val > 0xffff || val < 0)
 		return count;
 
-	if(i==count)
+	if (i == count)
 		pr_debug("0x%02x = 0x%04x\n", addr,
 			snd_soc_read(codec, addr));
 	else
