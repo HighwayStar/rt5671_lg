@@ -3397,7 +3397,8 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 	switch (dai->id) {
 	case RT5671_AIF1:
 		if (pdata)
-			bclk_ms = pdata->if1_force_64fs ? 1 : 0;
+			if (pdata->if1_force_64fs)
+				bclk_ms = 1;
 
  		mask_clk = RT5671_I2S_BCLK_MS1_MASK | RT5671_I2S_PD1_MASK;
 		val_clk = bclk_ms << RT5671_I2S_BCLK_MS1_SFT |
@@ -3412,7 +3413,8 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 		break;
 	case RT5671_AIF2:
 		if (pdata)
-			bclk_ms = pdata->if2_force_64fs ? 1 : 0;
+			if (pdata->if2_force_64fs)
+				bclk_ms = 1;
 
 		mask_clk = RT5671_I2S_BCLK_MS2_MASK | RT5671_I2S_PD2_MASK;
 		val_clk = bclk_ms << RT5671_I2S_BCLK_MS2_SFT |
