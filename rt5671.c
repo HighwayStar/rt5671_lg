@@ -795,15 +795,12 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 		event_type = 0;
 		if (snd_soc_read(codec, RT5671_INT_IRQ_ST) & 0x4) {
 			/* button event */
-			event_type |= RT5671_BTN_EVENT;
+			event_type = RT5671_BTN_EVENT;
 			*data = rt5671_button_detect(codec);
 		}
-		msleep(20);
-		if (*data == 0 || 
-			((snd_soc_read(codec, RT5671_IL_CMD) & 0xff80) == 0)) {
+		if (*data == 0) {
 			pr_debug("button release\n");
 			event_type = RT5671_BR_EVENT;
-			*data = 0;
 		}
 		if (*data & 0x2480)
 			snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x1, 0x1);
