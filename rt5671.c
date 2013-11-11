@@ -12,8 +12,9 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-
-#define DEBUG 1
+/*
+#define DEBUG
+*/
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/init.h>
@@ -761,7 +762,7 @@ int rt5671_button_detect(struct snd_soc_codec *codec)
 		
 	val = snd_soc_read(codec, RT5671_IL_CMD);
 	btn_type = val & 0xff80;
-	printk("btn_type=0x%x\n",btn_type);
+	pr_debug("btn_type = 0x%x\n",btn_type);
 	snd_soc_write(codec, RT5671_IL_CMD, val);
 	return btn_type;
 }
@@ -772,13 +773,11 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	int val, jack_type, event_type;
 
-	printk("%s\n", __func__);
-
 	if (snd_soc_read(codec, 0xbe) & 0x0080)
 		return RT5671_VAD_EVENT;
 
 	val = snd_soc_read(codec, RT5671_A_JD_CTRL1) & 0x0070;
-	printk("val = 0x%x rt5671->jack_type=0x%x\n", val, rt5671->jack_type);
+	pr_debug("val = 0x%x rt5671->jack_type = 0x%x\n", val, rt5671->jack_type);
 	*data = 0;
 	switch (val) {
 	case 0x30:
@@ -2057,11 +2056,9 @@ static int rt5671_hp_power_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
-		printk("%s SND_SOC_DAPM_POST_PMU\n",__func__);
 		hp_amp_power(codec, 1);
 		break;
 	case SND_SOC_DAPM_PRE_PMD:
-		printk("%s SND_SOC_DAPM_PRE_PMD\n",__func__);
 		hp_amp_power(codec, 0);
 		break;
 	default:
@@ -3378,9 +3375,9 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 	}
 	bclk_ms = frame_size > 32 ? 1 : 0;
 	rt5671->bclk[dai->id] = rt5671->lrck[dai->id] * (32 << bclk_ms);
-	dev_info(dai->dev, "bclk is %dHz and lrck is %dHz\n",
+	dev_dbg(dai->dev, "bclk is %dHz and lrck is %dHz\n",
 		rt5671->bclk[dai->id], rt5671->lrck[dai->id]);
-	dev_info(dai->dev, "bclk_ms is %d and pre_div is %d for iis %d\n",
+	dev_dbg(dai->dev, "bclk_ms is %d and pre_div is %d for iis %d\n",
 				bclk_ms, pre_div, dai->id);
 	switch (params_format(params)) {
 	case SNDRV_PCM_FORMAT_S16_LE:
