@@ -120,7 +120,7 @@ static struct rt5671_init_reg init_list[] = {
 #else
 	{RT5671_DMIC_CTRL1	, 0x1105}, /* Oder 130619 set GPIO8 */
 	{RT5671_GPIO_CTRL3	, 0x0100}, /* Oder 130619 set GPIO8 OUTPUT */
-	{RT5671_GPIO_CTRL2	, 0x0004}, /* Oder 130619 */
+	{RT5671_GPIO_CTRL2	, 0x8004},
 	{RT5671_GPIO_CTRL1	, 0x8000},
 	{RT5671_IRQ_CTRL2	, 0x0280}, /* hyunsoo 130710 0x0200->0x0280 */
 	{RT5671_JD_CTRL3	, 0x0088},
@@ -2151,13 +2151,12 @@ static int rt5671_set_dmic1_event(struct snd_soc_dapm_widget *w,
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
 		snd_soc_update_bits(codec, RT5671_GPIO_CTRL1,
-			RT5671_GP2_PIN_MASK | RT5671_GP7_PIN_MASK,
-			RT5671_GP2_PIN_DMIC1_SCL | RT5671_GP7_PIN_DMIC1_SDA);
+			RT5671_GP2_PIN_MASK, RT5671_GP2_PIN_DMIC1_SCL);
 		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
 			RT5671_DMIC_1L_LH_MASK | RT5671_DMIC_1R_LH_MASK |
 			RT5671_DMIC_1_DP_MASK,
 			RT5671_DMIC_1L_LH_FALLING | RT5671_DMIC_1R_LH_RISING |
-			RT5671_DMIC_1_DP_GPIO7);
+			RT5671_DMIC_1_DP_IN2P);
 		break;
 
 	case SND_SOC_DAPM_POST_PMD:
@@ -3947,12 +3946,12 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_write(codec, RT5671_PLL_CTRL1, 0x2a82);/* 19.2M --> 48k*512 */
 			snd_soc_write(codec, RT5671_PLL_CTRL2, 0xf000);/* 19.2M --> 48K*512 */
 #endif
-			snd_soc_update_bits(codec, RT5671_GPIO_CTRL1, 0x4030, 0x4010);
+			snd_soc_update_bits(codec, RT5671_GPIO_CTRL1, 0x4000, 0x4000);
 			snd_soc_write(codec, RT5671_PWR_DIG2, 0x8001);
 			snd_soc_write(codec, RT5671_PWR_DIG1, 0x8000);
 #ifndef SWITCH_FS_FOR_VAD
 			snd_soc_write(codec, RT5671_ADDA_CLK1, 0x2770);
-			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x9146);
+			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x9145);
 #endif
 			snd_soc_write(codec, RT5671_STO1_ADC_MIXER, 0x5860);
 			snd_soc_write(codec, RT5671_DIG_INF1_DATA, 0x9002);
