@@ -64,8 +64,9 @@ module_param(hp_amp_time, int, 0644);
  */
 
 /* use this define when switching 16khz fs for vad */
+/*
 #define SWITCH_FS_FOR_VAD
-
+*/
 #define VERSION "0.0.3 alsa 1.0.25"
 
 struct rt5671_init_reg {
@@ -2582,7 +2583,7 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_MUX("Stereo1 ADC2 Mux", SND_SOC_NOPM, 0, 0,
 		&rt5671_sto_adc2_mux),
 	SND_SOC_DAPM_MUX("Stereo1 ADC1 Mux", SND_SOC_NOPM, 0, 0,
-		&rt5671_sto_adc1_mux),		
+		&rt5671_sto_adc1_mux),
 	SND_SOC_DAPM_MUX("Stereo2 ADC Mux", SND_SOC_NOPM, 0, 0,
 		&rt5671_sto2_adc_mux),
 	SND_SOC_DAPM_MUX("Stereo2 DMIC Mux", SND_SOC_NOPM, 0, 0,
@@ -3916,14 +3917,12 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 /* Oder 130620 start */
 		if (rt5671->vad_en) {
 			snd_soc_update_bits(codec, RT5671_GLB_CLK,
-				RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_PLL1);
+				RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_MCLK);
 			snd_soc_update_bits(codec, RT5671_I2S1_SDP,
 				RT5671_I2S_MS_MASK, RT5671_I2S_MS_M);
 #if REALTEK_USE_AMIC
 			snd_soc_update_bits(codec, RT5671_STO1_ADC_DIG_VOL, RT5671_L_MUTE, RT5671_L_MUTE);
 			snd_soc_write(codec, RT5671_PWR_ANLG1, 0xe81b);
-			snd_soc_write(codec, RT5671_PWR_DIG2, 0x8801);
-			rt5671_index_write(codec, RT5671_HP_DCC_INT1, 0xdf00);
 			snd_soc_write(codec, RT5671_PWR_DIG2, 0x8001);
 			snd_soc_write(codec, RT5671_PWR_DIG1, 0x8008);
 			snd_soc_write(codec, RT5671_PWR_ANLG2, 0x4224);
@@ -3949,13 +3948,11 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_write(codec, RT5671_PLL_CTRL2, 0xf000);/* 19.2M --> 48K*512 */
 #endif
 			snd_soc_update_bits(codec, RT5671_GPIO_CTRL1, 0x4030, 0x4010);
-			snd_soc_write(codec, RT5671_PWR_DIG2, 0x8801);
-			rt5671_index_write(codec, RT5671_HP_DCC_INT1, 0xdf00);
 			snd_soc_write(codec, RT5671_PWR_DIG2, 0x8001);
 			snd_soc_write(codec, RT5671_PWR_DIG1, 0x8000);
-			snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0204); /* Oder 2013071 */
 #ifndef SWITCH_FS_FOR_VAD
-			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x9586);
+			snd_soc_write(codec, RT5671_ADDA_CLK1, 0x2770);
+			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x9146);
 #endif
 			snd_soc_write(codec, RT5671_STO1_ADC_MIXER, 0x5860);
 			snd_soc_write(codec, RT5671_DIG_INF1_DATA, 0x9002);
