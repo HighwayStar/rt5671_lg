@@ -134,6 +134,8 @@ static struct rt5671_init_reg init_list[] = {
 /*
 	{RT5671_ASRC_10		, 0x3007},
 */
+	{RT5671_IL_CMD3		, 0x001b},
+
 #if 0 /* DMIC2 */
 	{RT5671_STO1_ADC_MIXER	, 0x5940},
 #endif
@@ -3216,7 +3218,7 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "Audio DSP", NULL, "DAC1 MIXL" },
 	{ "Audio DSP", NULL, "DAC1 MIXR" },
 
-	{ "DAC L2 Mux", "IF1 DAC", "IF1 DAC1 L" },
+	{ "DAC L2 Mux", "IF1 DAC", "IF1 DAC2 L" },
 	{ "DAC L2 Mux", "IF2 DAC", "IF2 DAC L" },
 	{ "DAC L2 Mux", "IF3 DAC", "IF3 DAC L" },
 	{ "DAC L2 Mux", "IF4 DAC", "IF4 DAC L" },
@@ -3225,7 +3227,7 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "DAC L2 Volume", NULL, "DAC L2 Mux" },
 	{ "DAC L2 Volume", NULL, "dac mono left filter" },
 
-	{ "DAC R2 Mux", "IF1 DAC", "IF1 DAC1 R" },
+	{ "DAC R2 Mux", "IF1 DAC", "IF1 DAC2 R" },
 	{ "DAC R2 Mux", "IF2 DAC", "IF2 DAC R" },
 	{ "DAC R2 Mux", "IF3 DAC", "IF3 DAC R" },
 	{ "DAC R2 Mux", "IF4 DAC", "IF4 DAC R" },
