@@ -103,7 +103,7 @@ static struct rt5671_init_reg init_list[] = {
 /*	{RT5671_REC_R2_MIXER	, 0x0077},	Mic3 -> RECMIXR */
 	{RT5671_REC_L2_MIXER	, 0x007d},	/* Mic1 -> RECMIXL */
 	{RT5671_REC_R2_MIXER	, 0x007d},	/* Mic1 -> RECMIXR */
-	{RT5671_STO1_ADC_MIXER	, 0x3820},	/* ADC -> Sto ADC mixer */
+	{RT5671_STO1_ADC_MIXER	, 0x3920},	/* ADC -> Sto ADC mixer */
 	{RT5671_STO1_ADC_DIG_VOL, 0xafaf},	/* Mute STO1 ADC for depop */
 /*	{RT5671_DD_MIXER	, 0x1414}, */
 	{RT5671_PDM_OUT_CTRL	, 0xff00},
@@ -118,7 +118,6 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_IRQ_CTRL2	, 0x0280},
 	{RT5671_JD_CTRL3	, 0x0088},
 #else
-	{RT5671_DMIC_CTRL1	, 0x1105}, /* Oder 130619 set GPIO8 */
 	{RT5671_GPIO_CTRL3	, 0x0100}, /* Oder 130619 set GPIO8 OUTPUT */
 	{RT5671_GPIO_CTRL2	, 0x8004},
 	{RT5671_GPIO_CTRL1	, 0x8000},
@@ -2179,13 +2178,12 @@ static int rt5671_set_dmic2_event(struct snd_soc_dapm_widget *w,
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
 		snd_soc_update_bits(codec, RT5671_GPIO_CTRL1,
-			RT5671_GP2_PIN_MASK | RT5671_GP4_PIN_MASK,
-			RT5671_GP2_PIN_DMIC1_SCL | RT5671_GP4_PIN_DMIC2_SDA);
+			RT5671_GP2_PIN_MASK, RT5671_GP2_PIN_DMIC1_SCL);
 		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
 			RT5671_DMIC_2L_LH_MASK | RT5671_DMIC_2R_LH_MASK |
 			RT5671_DMIC_2_DP_MASK,
 			RT5671_DMIC_2L_LH_FALLING | RT5671_DMIC_2R_LH_RISING |
-			RT5671_DMIC_2_DP_IN1N);
+			RT5671_DMIC_2_DP_IN3N);
 		break;
 
 	case SND_SOC_DAPM_POST_PMD:
@@ -2206,13 +2204,10 @@ static int rt5671_set_dmic3_event(struct snd_soc_dapm_widget *w,
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
 		snd_soc_update_bits(codec, RT5671_GPIO_CTRL1,
-			RT5671_GP2_PIN_MASK | RT5671_GP4_PIN_MASK,
-			RT5671_GP2_PIN_DMIC1_SCL | RT5671_GP4_PIN_DMIC2_SDA);
+			RT5671_GP2_PIN_MASK, RT5671_GP2_PIN_DMIC1_SCL);
 		snd_soc_update_bits(codec, RT5671_DMIC_CTRL1,
-			RT5671_DMIC_2L_LH_MASK | RT5671_DMIC_2R_LH_MASK |
-			RT5671_DMIC_2_DP_MASK,
-			RT5671_DMIC_2L_LH_FALLING | RT5671_DMIC_2R_LH_RISING |
-			RT5671_DMIC_2_DP_IN1N);
+			RT5671_DMIC_2L_LH_MASK | RT5671_DMIC_2R_LH_MASK,
+			RT5671_DMIC_2L_LH_FALLING | RT5671_DMIC_2R_LH_RISING);
 		break;
 
 	case SND_SOC_DAPM_POST_PMD:
@@ -3950,9 +3945,9 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_write(codec, RT5671_PWR_DIG1, 0x8000);
 #ifndef SWITCH_FS_FOR_VAD
 			snd_soc_write(codec, RT5671_ADDA_CLK1, 0x2770);
-			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x9145);
+			snd_soc_write(codec, RT5671_DMIC_CTRL1, 0x5545);
 #endif
-			snd_soc_write(codec, RT5671_STO1_ADC_MIXER, 0x5860);
+			snd_soc_write(codec, RT5671_STO1_ADC_MIXER, 0x5960);
 			snd_soc_write(codec, RT5671_DIG_INF1_DATA, 0x9002);
 			/* snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x4200); */
 			snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x0e00);
