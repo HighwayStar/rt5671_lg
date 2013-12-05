@@ -1019,7 +1019,7 @@
 #define RT5671_DMIC_1_DP_MASK			(0x3 << 0)
 #define RT5671_DMIC_1_DP_SFT			0
 #define RT5671_DMIC_1_DP_GPIO6			(0x0 << 0)
-#define RT5671_DMIC_1_DP_IN2P			(0x1 << 0)
+#define RT5671_DMIC_1_DP_IN3P			(0x1 << 0)
 #define RT5671_DMIC_1_DP_GPIO7			(0x2 << 0)
 #endif
 

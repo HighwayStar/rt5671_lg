@@ -2158,7 +2158,7 @@ static int rt5671_set_dmic1_event(struct snd_soc_dapm_widget *w,
 			RT5671_DMIC_1L_LH_MASK | RT5671_DMIC_1R_LH_MASK |
 			RT5671_DMIC_1_DP_MASK,
 			RT5671_DMIC_1L_LH_FALLING | RT5671_DMIC_1R_LH_RISING |
-			RT5671_DMIC_1_DP_IN2P);
+			RT5671_DMIC_1_DP_IN3P);
 		break;
 
 	case SND_SOC_DAPM_POST_PMD:
@@ -2550,9 +2550,6 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		RT5671_PWR_IN_L_BIT, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("INR VOL", RT5671_PWR_VOL,
 		RT5671_PWR_IN_R_BIT, 0, NULL, 0),
-	/* IN Mux */
-	SND_SOC_DAPM_MUX("INL Mux", SND_SOC_NOPM, 0, 0, &rt5671_inl_mux),
-	SND_SOC_DAPM_MUX("INR Mux", SND_SOC_NOPM, 0, 0, &rt5671_inr_mux),
 	/* REC Mixer */
 	SND_SOC_DAPM_MIXER("RECMIXL", RT5671_PWR_MIXER, RT5671_PWR_RM_L_BIT, 0,
 		rt5671_rec_l_mix, ARRAY_SIZE(rt5671_rec_l_mix)),
@@ -4057,7 +4054,7 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x1);
 
-	codec->dapm.bias_level = SND_SOC_BIAS_STANDBY;
+	codec->dapm.bias_level = SND_SOC_BIAS_OFF;
 	rt5671->codec = codec;
 	rt5671->combo_jack_en = true; /* enable combo jack */
 
