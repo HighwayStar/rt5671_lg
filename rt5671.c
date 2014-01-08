@@ -80,7 +80,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 static struct rt5671_init_reg init_list[] = {
 	{RT5671_IN1_IN2		, 0x0648},	/* Oder 20130321 mic gain increase to 44 dB */
 	{RT5671_LOUT1		, 0xc888},	/* For LOUT output (130318 Oder) */
-	{RT5671_DIG_MISC	, 0xc011},	/* fa[0]=1, fa[3]=0'b disabled MCLK det, fa[15:14]=11'b for pdm */
+	{RT5671_DIG_MISC	, 0x8011},	/* fa[0]=1, fa[3]=0'b disabled MCLK det, fa[15:14]=11'b for pdm */
 	{RT5671_ADDA_CLK1	, 0x0000},	/* 73[2] = 1'b */
 	{RT5671_PRIV_INDEX	, 0x0014},	/* PR3d[12] = 0'b; PR3d[9] = 1'b */
 	{RT5671_PRIV_DATA	, 0x9a8a},
@@ -90,7 +90,6 @@ static struct rt5671_init_reg init_list[] = {
 /*	{RT5671_STO_DAC_MIXER	, 0x1616},	Dig inf 1 -> Sto DAC mixer -> DACL */
 	{RT5671_OUT_L1_MIXER	, 0x0072},	/* DACL1 -> OUTMIXL */
 	{RT5671_OUT_R1_MIXER	, 0x00d2},	/* DACR1 -> OUTMIXR */
-	{RT5671_LOUT_MIXER	, 0xc000},
 	{RT5671_HP_VOL		, 0x8888},	/* OUTMIX -> HPVOL */
 	{RT5671_HPO_MIXER	, 0xf00a},	/* Oder 20130321 a00a -> e00a change the path */
 /*	{RT5671_HPO_MIXER	, 0xa000},	DAC1 -> HPOLMIX */
@@ -2867,11 +2866,14 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_OUTPUT("LOUTR"),
 	SND_SOC_DAPM_OUTPUT("MonoP"),
 	SND_SOC_DAPM_OUTPUT("MonoN"),
+/*
 	SND_SOC_DAPM_OUTPUT("PDM1L"),
+*/
 	SND_SOC_DAPM_OUTPUT("PDM1R"),
+/*
 	SND_SOC_DAPM_OUTPUT("PDM2L"),
 	SND_SOC_DAPM_OUTPUT("PDM2R"),
-
+*/
 	SND_SOC_DAPM_POST("DAPM_POST", rt5671_post_event),
 	SND_SOC_DAPM_PRE("DAPM_PRE", rt5671_pre_event),
 };
