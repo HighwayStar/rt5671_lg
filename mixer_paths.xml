@@ -77,21 +77,21 @@
         <ctl name="Stereo DAC MIXL DAC L1 Switch" val="0" />
         <ctl name="Stereo DAC MIXR DAC R1 Switch" val="0" />
       </path>
-          
+
       <device name="headphone">
         <path name="on">
           <ctl name="HPOVOL MIXL DAC1 Switch" val="1" />
           <ctl name="HPOVOL MIXR DAC1 Switch" val="1" />
           <ctl name="HPO MIX HPVOL Switch" val="1" />
         </path>
-        <path name="off">     
+        <path name="off">
           <ctl name="HPO MIX HPVOL Switch" val="0" />
           <ctl name="HPOVOL MIXL DAC1 Switch" val="0" />
           <ctl name="HPOVOL MIXR DAC1 Switch" val="0" />
         </path>
       </device>
       <device name="speaker">
-        <path name="on">      
+        <path name="on">
           <ctl name="OUT MIXL DAC L1 Switch" val="1" />
           <ctl name="OUT MIXR DAC R1 Switch" val="1" />
           <ctl name="LOUT MIX OUTMIX L Switch" val="1" />
@@ -125,12 +125,13 @@
       <path name="on">
         <ctl name="IF1 ADC1 IN1 Mux" val="IF_ADC1" />
         <ctl name="IF1 ADC1 IN2 Mux" val="IF1_ADC1_IN1" />
-      </path>    
+      </path>
       <path name="off">
-      </path>          
-      
+      </path>
+
       <device name="builtin-mic">
         <path name="on">
+           <ctl name="ADC Capture Volume" val="47" />
            <ctl name="Stereo1 DMIC Mux" val="DMIC1" />
            <ctl name="Stereo1 ADC2 Mux" val="DMIC" />
            <ctl name="Sto1 ADC MIXL ADC2 Switch" val="1" />
@@ -143,6 +144,7 @@
       </device>
       <device name="headset-mic">
         <path name="on">
+           <ctl name="ADC Capture Volume" val="47" />
            <ctl name="Stereo1 ADC Mux" val="ADC1L ADC2R" />
            <ctl name="Stereo1 ADC1 Mux" val="ADC" />
            <ctl name="Sto1 ADC MIXL ADC1 Switch" val="1" />
@@ -191,7 +193,7 @@
             stop_threshold="4096"
             silence_threshold="0"
             avail_min="1"/>
-    
+
     <call>
       <path name="on">
         <!--playback paths-->
@@ -206,7 +208,7 @@
         <ctl name="Stereo DAC MIXR DAC R2 Switch" val="0" />
         <ctl name="Voice Call" val="0"/>
       </path>
-      
+
       <device name="headphone">
         <path name="on">
           <ctl name="HPOVOL MIXL DAC1 Switch" val="1" />
@@ -224,13 +226,13 @@
           <ctl name="OUT MIXL DAC L1 Switch" val="1" />
           <ctl name="OUT MIXR DAC R1 Switch" val="1" />
           <ctl name="LOUT MIX OUTMIX L Switch" val="1" />
-          <ctl name="LOUT MIX OUTMIX R Switch" val="1" />  
+          <ctl name="LOUT MIX OUTMIX R Switch" val="1" />
         </path>
         <path name="off">
           <ctl name="OUT MIXL DAC L1 Switch" val="0" />
           <ctl name="OUT MIXR DAC R1 Switch" val="0" />
           <ctl name="LOUT MIX OUTMIX L Switch" val="0" />
-          <ctl name="LOUT MIX OUTMIX R Switch" val="0" /> 
+          <ctl name="LOUT MIX OUTMIX R Switch" val="0" />
         </path>
       </device>
       <device name="earpiece">
@@ -253,13 +255,13 @@
     <call>
       <path name="on">
         <!--capture paths-->
-        <ctl name="IF2 ADC Mux" val="IF_ADC2" />  
+        <ctl name="IF2 ADC Mux" val="IF_ADC2" />
         <ctl name="Voice Call" val="1"/>
       </path>
       <path name="off">
         <ctl name="Voice Call" val="0"/>
       </path>
-          
+
       <device name="builtin-mic">
         <path name="on">
            <ctl name="Mono DMIC L Mux" val="DMIC1" />
@@ -268,7 +270,7 @@
            <ctl name="Mono ADC R2 Mux" val="DMIC" />
            <ctl name="Mono ADC MIXL ADC2 Switch" val="1" />
            <ctl name="Mono ADC MIXR ADC2 Switch" val="1" />
-           <!-- call recording to AIF1 path -->     
+           <!-- call recording to AIF1 path -->
            <ctl name="DAC MIXR Sto DAC Mix R Switch" val="1" />
            <ctl name="DAC MIXL Sto DAC Mix L Switch" val="1" />
            <ctl name="Stereo1 ADC1 Mux" val="DAC MIX" />
@@ -278,7 +280,7 @@
         <path name="off">
            <ctl name="Mono ADC MIXL ADC2 Switch" val="0" />
            <ctl name="Mono ADC MIXR ADC2 Switch" val="0" />
-           <!-- call recording to AIF1 path -->     
+           <!-- call recording to AIF1 path -->
            <ctl name="DAC MIXR Sto DAC Mix R Switch" val="0" />
            <ctl name="DAC MIXL Sto DAC Mix L Switch" val="0" />
            <ctl name="Sto1 ADC MIXL ADC1 Switch" val="0" />
@@ -295,7 +297,7 @@
            <ctl name="Mono ADC MIXR ADC1 Switch" val="1" />
            <ctl name="RECMIXL BST1 Switch" val="1" />
            <ctl name="RECMIXR BST1 Switch" val="1" />
-           <!-- call recording to AIF1 path -->     
+           <!-- call recording to AIF1 path -->
            <ctl name="DAC MIXR Sto DAC Mix R Switch" val="1" />
            <ctl name="DAC MIXL Sto DAC Mix L Switch" val="1" />
            <ctl name="Stereo1 ADC2 Mux" val="DAC MIX" />
@@ -307,7 +309,7 @@
            <ctl name="Mono ADC MIXR ADC1 Switch" val="0" />
            <ctl name="RECMIXL BST1 Switch" val="0" />
            <ctl name="RECMIXR BST1 Switch" val="0" />
-           <!-- call recording to AIF1 path --> 
+           <!-- call recording to AIF1 path -->
            <ctl name="DAC MIXR Sto DAC Mix R Switch" val="0" />
            <ctl name="DAC MIXL Sto DAC Mix L Switch" val="0" />
            <ctl name="Sto1 ADC MIXL ADC2 Switch" val="0" />
@@ -315,7 +317,7 @@
        </path>
       </device>
     </call>
-  </alsa_device>  
+  </alsa_device>
 
   <alsa_device name ="bt-voice-call"
            card_id="0"
@@ -400,6 +402,6 @@
         </path>
       </device>
     </call>
-  </alsa_device>  
-  
+  </alsa_device>
+
 </AudioConfigs>
