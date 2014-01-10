@@ -145,6 +145,7 @@ static struct rt5671_init_reg init_list[] = {
 	/* {RT5671_DSP_PATH1	, 0xc003}, bypass dsp */
 	{RT5671_DAC_CTRL	, 0x0033},
 #endif
+	{RT5671_GEN_CTRL3	, 0x0084},
 };
 #define RT5671_INIT_REG_LEN ARRAY_SIZE(init_list)
 
@@ -1483,7 +1484,7 @@ static const SOC_ENUM_SINGLE_DECL(
 	RT5671_RXDP_SEL_SFT, rt5671_rxdp_src);
 
 static const struct snd_kcontrol_new rt5671_rxdp_mux =
-	SOC_DAPM_ENUM("DAC2 L source", rt5671_rxdp_enum);
+	SOC_DAPM_ENUM("DSP RXDP source", rt5671_rxdp_enum);
 
 /* MX-2D [1] [0] */
 static const char * const rt5671_dsp_bypass_src[] = {
