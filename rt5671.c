@@ -899,11 +899,15 @@ static const char * const rt5671_input_mode[] = {
 };
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_in1_mode_enum, RT5671_IN1_IN2,
+	rt5671_in2_mode_enum, RT5671_IN1_IN2,
+	RT5671_IN_SFT2, rt5671_input_mode);
+
+static const SOC_ENUM_SINGLE_DECL(
+	rt5671_in3_mode_enum, RT5671_IN3,
 	RT5671_IN_SFT1, rt5671_input_mode);
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_in2_mode_enum, RT5671_IN3,
+	rt5671_in4_mode_enum, RT5671_IN3,
 	RT5671_IN_SFT2, rt5671_input_mode);
 
 /* Interface data select */
@@ -1057,19 +1061,18 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	/* Headphone Output Volume */
 	SOC_DOUBLE("HP Playback Switch", RT5671_HP_VOL,
 		RT5671_L_MUTE_SFT, RT5671_R_MUTE_SFT, 1, 1),
-	SOC_DOUBLE_EXT_TLV("HP Playback Volume", RT5671_HP_VOL,
-		RT5671_L_VOL_SFT, RT5671_R_VOL_SFT, RT5671_VOL_RSCL_RANGE, 0,
-		rt5671_vol_rescale_get, rt5671_vol_rescale_put, out_vol_tlv),
+	SOC_DOUBLE_TLV("HP Playback Volume", RT5671_HP_VOL,
+		RT5671_L_VOL_SFT, RT5671_R_VOL_SFT, 39, 1, out_vol_tlv),
 	/* OUTPUT Control */
 	SOC_DOUBLE("OUT Playback Switch", RT5671_LOUT1,
 		RT5671_L_MUTE_SFT, RT5671_R_MUTE_SFT, 1, 1),
-	SOC_DOUBLE("OUT Channel Switch", RT5671_LOUT1,
-		RT5671_VOL_L_SFT, RT5671_VOL_R_SFT, 1, 1),
 	SOC_DOUBLE_TLV("OUT Playback Volume", RT5671_LOUT1,
 		RT5671_L_VOL_SFT, RT5671_R_VOL_SFT, 39, 1, out_vol_tlv),
 	/* MONO Output Control */
 	SOC_SINGLE("Mono Playback Switch", RT5671_MONO_OUT,
 				RT5671_L_MUTE_SFT, 1, 1),
+	SOC_SINGLE_TLV("Mono Playback Volume", RT5671_MONO_OUT,
+		RT5671_L_VOL_SFT, 39, 1, out_vol_tlv),
 	/* DAC Digital Volume */
 	SOC_DOUBLE("DAC2 Playback Switch", RT5671_DAC_CTRL,
 		RT5671_M_DAC_L2_VOL_SFT, RT5671_M_DAC_R2_VOL_SFT, 1, 1),
@@ -1080,41 +1083,42 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT,
 			175, 0, dac_vol_tlv),
 	/* IN1/IN2 Control */
-	SOC_ENUM("IN1 Mode Control", rt5671_in1_mode_enum),
-	SOC_SINGLE_TLV("IN1 Boost", RT5671_IN1_IN2,
+	SOC_SINGLE_TLV("IN1 Boost", RT5671_CJ_CTRL1,
 		RT5671_BST_SFT1, 8, 0, bst_tlv),
 	SOC_ENUM("IN2 Mode Control", rt5671_in2_mode_enum),
-	SOC_SINGLE_TLV("IN2 Boost", RT5671_IN3,
+	SOC_SINGLE_TLV("IN2 Boost", RT5671_IN1_IN2,
+		RT5671_BST_SFT2, 8, 0, bst_tlv),
+	SOC_ENUM("IN3 Mode Control", rt5671_in3_mode_enum),
+	SOC_SINGLE_TLV("IN3 Boost", RT5671_IN3,
+		RT5671_BST_SFT1, 8, 0, bst_tlv),
+	SOC_ENUM("IN4 Mode Control", rt5671_in4_mode_enum),
+	SOC_SINGLE_TLV("IN4 Boost", RT5671_IN3,
 		RT5671_BST_SFT2, 8, 0, bst_tlv),
 	/* INL/INR Volume Control */
 	SOC_DOUBLE_TLV("IN Capture Volume", RT5671_INL1_INR1_VOL,
 			RT5671_INL_VOL_SFT, RT5671_INR_VOL_SFT,
 			31, 1, in_vol_tlv),
 	/* ADC Digital Volume Control */
-	SOC_DOUBLE("ADC Capture Switch", RT5671_STO1_ADC_DIG_VOL,
-		RT5671_L_MUTE_SFT, RT5671_R_MUTE_SFT, 1, 1),
-	SOC_DOUBLE_TLV("ADC Capture Volume", RT5671_STO1_ADC_DIG_VOL,
+	SOC_DOUBLE_TLV("STO1 ADC Capture Volume", RT5671_STO1_ADC_DIG_VOL,
 			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT,
 			127, 0, adc_vol_tlv),
-
 	SOC_DOUBLE_TLV("Mono ADC Capture Volume", RT5671_MONO_ADC_DIG_VOL,
 			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT,
 			127, 0, adc_vol_tlv),
-
+	SOC_DOUBLE_TLV("STO2 ADC Capture Volume", RT5671_STO2_ADC_DIG_VOL,
+			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT,
+			127, 0, adc_vol_tlv),
 	/* ADC Boost Volume Control */
 	SOC_DOUBLE_TLV("STO1 ADC Boost Gain", RT5671_ADC_BST_VOL1,
 			RT5671_STO1_ADC_L_BST_SFT, RT5671_STO1_ADC_R_BST_SFT,
 			3, 0, adc_bst_tlv),
-
 	SOC_DOUBLE_TLV("STO2 ADC Boost Gain", RT5671_ADC_BST_VOL1,
 			RT5671_STO2_ADC_L_BST_SFT, RT5671_STO2_ADC_R_BST_SFT,
 			3, 0, adc_bst_tlv),
 	SOC_ENUM_EXT("VAD Switch", rt5671_vad_enum,
 		rt5671_vad_get, rt5671_vad_put),
-
 	SOC_ENUM_EXT("Voice Call", rt5671_voice_call_enum,
 		rt5671_voice_call_get, rt5671_voice_call_put),
-
 	SOC_ENUM_EXT("BT Call", rt5671_bt_call_enum,
 		rt5671_bt_call_get, rt5671_bt_call_put),
 };
@@ -3370,8 +3374,7 @@ static int get_clk_info(int sclk, int rate)
 static int rt5671_hw_params(struct snd_pcm_substream *substream,
 	struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
 {
-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_codec *codec = dai->codec;
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	unsigned int val_len = 0, val_clk, mask_clk;
 	int pre_div, bclk_ms, frame_size;
@@ -3802,13 +3805,13 @@ static ssize_t rt5671_codec_show(struct device *dev,
 	for (i = 0; i <= RT5671_VENDOR_ID2; i++) {
 		if (cnt + RT5671_REG_DISP_LEN >= PAGE_SIZE)
 			break;
-		val = snd_soc_read(codec, i);
-/*
-		if (!val)
-			continue;
-*/
-		cnt += snprintf(buf + cnt, RT5671_REG_DISP_LEN,
-				"#rng%02x  #rv%04x  #rd0\n", i, val);
+
+		if (rt5671_readable_register(codec, i)) {
+			val = snd_soc_read(codec, i);
+
+			cnt += snprintf(buf + cnt, RT5671_REG_DISP_LEN,
+					"%02x: %04x\n", i, val);
+		}
 	}
 
 	if (cnt >= PAGE_SIZE)
