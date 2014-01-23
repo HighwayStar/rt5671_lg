@@ -992,8 +992,8 @@
 #define RT5671_DMIC_1R_LH_RISING		(0x1 << 12)
 #define RT5671_DMIC_2_DP_MASK			(0x1 << 10)
 #define RT5671_DMIC_2_DP_SFT			10
-#define RT5671_DMIC_2_DP_GPIO4			(0x0 << 10)
-#define RT5671_DMIC_2_DP_IN1N			(0x1 << 10)
+#define RT5671_DMIC_2_DP_GPIO8			(0x0 << 10)
+#define RT5671_DMIC_2_DP_IN3N			(0x1 << 10)
 #define RT5671_DMIC_2L_LH_MASK			(0x1 << 9)
 #define RT5671_DMIC_2L_LH_SFT			9
 #define RT5671_DMIC_2L_LH_FALLING		(0x0 << 9)
@@ -1019,7 +1019,7 @@
 #define RT5671_DMIC_1_DP_MASK			(0x3 << 0)
 #define RT5671_DMIC_1_DP_SFT			0
 #define RT5671_DMIC_1_DP_GPIO6			(0x0 << 0)
-#define RT5671_DMIC_1_DP_IN2P			(0x1 << 0)
+#define RT5671_DMIC_1_DP_IN3P			(0x1 << 0)
 #define RT5671_DMIC_1_DP_GPIO7			(0x2 << 0)
 #endif
 
