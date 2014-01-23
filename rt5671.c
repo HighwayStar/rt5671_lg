@@ -753,6 +753,8 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x4);
 	} else {
 		snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x8, 0x0);
+		snd_soc_update_bits(codec, RT5671_CJ_CTRL2, RT5671_CBJ_DET_MODE,
+			RT5671_CBJ_DET_MODE);
 		jack_type = 0;
 	}
 
