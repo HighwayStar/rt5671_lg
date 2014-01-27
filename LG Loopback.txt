@@ -52,3 +52,24 @@ tinymix "DAC MIXR Sto DAC Mix R Switch" 1
 tinymix "Stereo2 ADC2 Mux" 0
 tinymix "Sto2 ADC MIXL ADC2 Switch" 1
 tinymix "Sto2 ADC MIXR ADC2 Switch" 1
+
+5. Headset(earjack) Mic Input --> Receiver spk output
+tinymix "Stereo1 ADC Mux" 0
+tinymix "Stereo1 ADC1 Mux" 1
+tinymix "Sto1 ADC MIXL ADC1 Switch" 1
+tinymix "RECMIXL BST1 Switch" 1
+tinymix "DAC1 MIXL Stereo ADC Switch" 1
+tinymix "Mono DAC MIXL DAC L1 Switch" 1
+tinymix "MONOVOL MIX DAC L2 Switch" 1
+tinymix "MONOAmp MIX MONOVOL Switch" 1
+
+6. Main Mic(DMIC) input --> spk output
+tinymix "Mono DMIC L Mux" 1
+tinymix "Mono ADC L2 Mux" 1
+tinymix "Mono ADC MIXL ADC2 Switch" 1
+tinymix "RxDP Mux" 4
+tinymix "DSP DL Mux" 1
+tinymix "DAC L2 Mux" 3
+tinymix "Stereo DAC MIXL DAC L2 Switch" 1
+tinymix "OUT MIXL DAC L1 Switch" 1
+tinymix "LOUT MIX OUTMIX L Switch" 1
