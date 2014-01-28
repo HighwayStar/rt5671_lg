@@ -929,6 +929,45 @@ static const SOC_ENUM_SINGLE_DECL(rt5671_if3_dac_enum, RT5671_DIG_INF1_DATA,
 static const SOC_ENUM_SINGLE_DECL(rt5671_if3_adc_enum, RT5671_DIG_INF1_DATA,
 				RT5671_IF3_ADC_SEL_SFT, rt5671_data_select);
 
+static const SOC_ENUM_SINGLE_DECL(rt5671_if4_dac_enum, RT5671_DIG_INF2_DATA,
+				RT5671_IF4_DAC_SEL_SFT, rt5671_data_select);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_if4_adc_enum, RT5671_DIG_INF2_DATA,
+				RT5671_IF4_ADC_SEL_SFT, rt5671_data_select);
+
+static const char * const rt5671_asrc_clk_source[] = {
+	"clk_sysy_div_out", "clk_i2s1_track", "clk_i2s2_track",
+	"clk_i2s3_track", "clk_i2s4_track", "clk_sys2", "clk_sys3",
+	"clk_sys4", "clk_sys5"
+};
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_dc_sto_asrc_enum, RT5671_ASRC_2,
+				12, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_dc_monol_asrc_enum, RT5671_ASRC_2,
+				8, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_dc_monor_asrc_enum, RT5671_ASRC_2,
+				4, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_ad_sto1_asrc_enum, RT5671_ASRC_2,
+				0, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_up_filter_asrc_enum, RT5671_ASRC_3,
+				12, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_down_filter_asrc_enum, RT5671_ASRC_3,
+				8, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_ad_monol_asrc_enum, RT5671_ASRC_3,
+				4, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_ad_monor_asrc_enum, RT5671_ASRC_3,
+				0, rt5671_asrc_clk_source);
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_ad_sto2_asrc_enum, RT5671_ASRC_10,
+				12, rt5671_asrc_clk_source);
+
 static int rt5671_vol_rescale_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
@@ -1120,6 +1159,24 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	SOC_DOUBLE_TLV("STO2 ADC Boost Gain", RT5671_ADC_BST_VOL1,
 			RT5671_STO2_ADC_L_BST_SFT, RT5671_STO2_ADC_R_BST_SFT,
 			3, 0, adc_bst_tlv),
+
+	SOC_ENUM("ADC IF2 Data Switch", rt5671_if2_adc_enum),
+	SOC_ENUM("DAC IF2 Data Switch", rt5671_if2_dac_enum),
+	SOC_ENUM("ADC IF3 Data Switch", rt5671_if3_adc_enum),
+	SOC_ENUM("DAC IF3 Data Switch", rt5671_if3_dac_enum),
+	SOC_ENUM("ADC IF4 Data Switch", rt5671_if4_adc_enum),
+	SOC_ENUM("DAC IF4 Data Switch", rt5671_if4_dac_enum),
+
+	SOC_ENUM("DA STO ASRC Switch", rt5671_dc_sto_asrc_enum),
+	SOC_ENUM("DA MONOL ASRC Switch", rt5671_dc_monol_asrc_enum),
+	SOC_ENUM("DA MONOR ASRC Switch", rt5671_dc_monor_asrc_enum),
+	SOC_ENUM("AD STO1 ASRC Switch", rt5671_ad_sto1_asrc_enum),
+	SOC_ENUM("AD STO2 ASRC Switch", rt5671_ad_sto2_asrc_enum),
+	SOC_ENUM("AD MONOL ASRC Switch", rt5671_ad_monol_asrc_enum),
+	SOC_ENUM("AD MONOR ASRC Switch", rt5671_ad_monor_asrc_enum),
+	SOC_ENUM("UP ASRC Switch", rt5671_up_filter_asrc_enum),
+	SOC_ENUM("DOWN ASRC Switch", rt5671_down_filter_asrc_enum),
+
 	SOC_ENUM_EXT("VAD Switch", rt5671_vad_enum,
 		rt5671_vad_get, rt5671_vad_put),
 	SOC_ENUM_EXT("Voice Call", rt5671_voice_call_enum,
@@ -3797,6 +3854,51 @@ static ssize_t rt5671_index_store(struct device *dev,
 	return count;
 }
 static DEVICE_ATTR(index_reg, 0666, rt5671_index_show, rt5671_index_store);
+static ssize_t rt5671_index_adb_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
+	struct snd_soc_codec *codec = rt5671->codec;
+	unsigned int val;
+	int cnt = 0;
+
+	val = rt5671_index_read(codec, rt5671->adb_register);
+
+	cnt += snprintf(buf + cnt, 5, "%04x", val);
+
+	return cnt;
+}
+
+static ssize_t rt5671_index_adb_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
+	unsigned int addr = 0;
+	int i;
+
+	for (i = 0; i < count; i++) {
+		if (*(buf+i) <= '9' && *(buf + i) >= '0')
+			addr = (addr << 4) | (*(buf + i) - '0');
+		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
+			addr = (addr << 4) | ((*(buf + i) - 'a')+0xa);
+		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
+			addr = (addr << 4) | ((*(buf + i) - 'A')+0xa);
+		else
+			break;
+	}
+
+	if (addr > RT5671_VENDOR_ID2)
+		return count;
+
+	rt5671->adb_register = addr;
+
+	return count;
+}
+
+static DEVICE_ATTR(index_reg_adb, 0666, rt5671_index_adb_show, rt5671_index_adb_store);
+
 
 static ssize_t rt5671_codec_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
@@ -3870,6 +3972,23 @@ static ssize_t rt5671_codec_store(struct device *dev,
 }
 
 static DEVICE_ATTR(codec_reg, 0666, rt5671_codec_show, rt5671_codec_store);
+static ssize_t rt5671_codec_adb_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
+	struct snd_soc_codec *codec = rt5671->codec;
+	unsigned int val;
+	int cnt = 0;
+
+	val = snd_soc_read(codec, rt5671->adb_register);
+
+	cnt += snprintf(buf + cnt, 5, "%04x", val);
+
+	return cnt;
+}
+
+static DEVICE_ATTR(codec_reg_adb, 0666, rt5671_codec_adb_show, rt5671_index_adb_store);
 
 static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			enum snd_soc_bias_level level)
@@ -4092,7 +4211,21 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 	ret = device_create_file(codec->dev, &dev_attr_codec_reg);
 	if (ret != 0) {
 		dev_err(codec->dev,
-			"Failed to create codex_reg sysfs files: %d\n", ret);
+			"Failed to create codec_reg sysfs files: %d\n", ret);
+		return ret;
+	}
+
+	ret = device_create_file(codec->dev, &dev_attr_codec_reg_adb);
+	if (ret != 0) {
+		dev_err(codec->dev,
+			"Failed to create codec_reg_adb sysfs files: %d\n", ret);
+		return ret;
+	}
+
+	ret = device_create_file(codec->dev, &dev_attr_index_reg_adb);
+	if (ret != 0) {
+		dev_err(codec->dev,
+			"Failed to create index_reg_adb sysfs files: %d\n", ret);
 		return ret;
 	}
 

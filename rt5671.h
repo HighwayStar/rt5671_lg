@@ -532,6 +532,10 @@
 /* Digital Interface Data Control (0x30) */
 #define RT5671_IF4_ADC_IN_MASK			(0x3 << 4)
 #define RT5671_IF4_ADC_IN_SFT			4
+#define RT5671_IF4_DAC_SEL_MASK			(0x3 << 2)
+#define RT5671_IF4_DAC_SEL_SFT			2
+#define RT5671_IF4_ADC_SEL_MASK			(0x3 << 0)
+#define RT5671_IF4_ADC_SEL_SFT			0
 
 /* PDM Output Control (0x31) */
 #define RT5671_PDM1_L_MASK			(0x1 << 15)

@@ -8,7 +8,9 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+/*
 #define DEBUG
+*/
 #include <linux/delay.h>
 #include <linux/i2c.h>
 #include <linux/platform_device.h>
@@ -1292,6 +1294,48 @@ static ssize_t dsp_reg_store(struct device *dev,
 }
 static DEVICE_ATTR(dsp_reg, 0666, rt5671_dsp_show, dsp_reg_store);
 
+static ssize_t rt5671_dsp_adb_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
+	struct snd_soc_codec *codec = rt5671->codec;
+	unsigned int val;
+	int cnt = 0;
+
+	val = rt5671_dsp_read(codec, rt5671->adb_register);
+
+	cnt += snprintf(buf + cnt, 5, "%04x", val);
+
+	return cnt;
+}
+
+static ssize_t rt5671_dsp_adb_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
+	unsigned int addr = 0;
+	int i;
+
+	for (i = 0; i < count; i++) {
+		if (*(buf+i) <= '9' && *(buf + i) >= '0')
+			addr = (addr << 4) | (*(buf + i) - '0');
+		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
+			addr = (addr << 4) | ((*(buf + i) - 'a')+0xa);
+		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
+			addr = (addr << 4) | ((*(buf + i) - 'A')+0xa);
+		else
+			break;
+	}
+
+	rt5671->adb_register = addr;
+
+	return count;
+}
+
+static DEVICE_ATTR(dsp_reg_adb, 0666, rt5671_dsp_adb_show, rt5671_dsp_adb_store);
+
 /**
  * rt5671_dsp_probe - register DSP for rt5671
  * @codec: audio codec
@@ -1333,7 +1377,14 @@ int rt5671_dsp_probe(struct snd_soc_codec *codec)
 	ret = device_create_file(codec->dev, &dev_attr_dsp_reg);
 	if (ret != 0) {
 		dev_err(codec->dev,
-			"Failed to create index_reg sysfs files: %d\n", ret);
+			"Failed to create dsp_reg sysfs files: %d\n", ret);
+		return ret;
+	}
+
+	ret = device_create_file(codec->dev, &dev_attr_dsp_reg_adb);
+	if (ret != 0) {
+		dev_err(codec->dev,
+			"Failed to create dsp_reg_adb sysfs files: %d\n", ret);
 		return ret;
 	}
 
