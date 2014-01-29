@@ -968,6 +968,20 @@ static const SOC_ENUM_SINGLE_DECL(rt5671_ad_monor_asrc_enum, RT5671_ASRC_3,
 static const SOC_ENUM_SINGLE_DECL(rt5671_ad_sto2_asrc_enum, RT5671_ASRC_10,
 				12, rt5671_asrc_clk_source);
 
+static const char * const rt5671_tdm_select[] = {
+	"1_2_3_4", "3_4_1_2", "2_1_4_3", "4_3_2_1"
+};
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_if1_tdm_enum, RT5671_TDM_CTRL_1,
+				8, rt5671_tdm_select);
+
+static const char * const rt5671_tdm_txdp_select[] = {
+	"0_1", "2_3", "4_5", "6_7"
+};
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_txdp_tdm_enum, RT5671_DSP_PATH1,
+				2, rt5671_tdm_txdp_select);
+
 static int rt5671_vol_rescale_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
@@ -1176,6 +1190,9 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	SOC_ENUM("AD MONOR ASRC Switch", rt5671_ad_monor_asrc_enum),
 	SOC_ENUM("UP ASRC Switch", rt5671_up_filter_asrc_enum),
 	SOC_ENUM("DOWN ASRC Switch", rt5671_down_filter_asrc_enum),
+
+	SOC_ENUM("IF1 ADC TDM Switch", rt5671_if1_tdm_enum),
+	SOC_ENUM("DSP TxDP TDM Switch", rt5671_txdp_tdm_enum),
 
 	SOC_ENUM_EXT("VAD Switch", rt5671_vad_enum,
 		rt5671_vad_get, rt5671_vad_put),
@@ -3181,9 +3198,8 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "IF1 ADC", NULL, "IF1_ADC1" },
 	{ "IF1 ADC", NULL, "IF1_ADC2" },
 	{ "IF1 ADC", NULL, "IF_ADC3" },
-#ifdef IF1_DSP
 	{ "IF1 ADC", NULL, "TxDP_ADC" },
-#endif
+
 	{ "IF2 ADC Mux", "IF_ADC1", "IF_ADC1" },
 	{ "IF2 ADC Mux", "IF_ADC2", "IF_ADC2" },
 	{ "IF2 ADC Mux", "IF_ADC3", "IF_ADC3" },

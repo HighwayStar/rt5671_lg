@@ -2102,6 +2102,8 @@ struct rt5671_priv {
 	bool vad_en;
 	int stream;
 	int jack_type;
+
+	int adb_register;
 };
 
 #endif /* __RT5671_H__ */
