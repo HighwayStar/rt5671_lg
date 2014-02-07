@@ -78,7 +78,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			enum snd_soc_bias_level level);
 
 static struct rt5671_init_reg init_list[] = {
-	{RT5671_IN1_IN2		, 0x0648},	/* Oder 20130321 mic gain increase to 44 dB */
+	{RT5671_IN2_CTRL	, 0x0648},	/* Oder 20130321 mic gain increase to 44 dB */
 	{RT5671_LOUT1		, 0xc888},	/* For LOUT output (130318 Oder) */
 	{RT5671_DIG_MISC	, 0xc011},	/* fa[0]=1, fa[3]=0'b disabled MCLK det, fa[15:14]=11'b for pdm */
 	{RT5671_ADDA_CLK1	, 0x0000},	/* 73[2] = 1'b */
@@ -97,8 +97,8 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_CHARGE_PUMP	, 0x0c00},
 /*	{RT5671_I2S1_SDP	, 0xD000},	change IIS1 and IIS2 */
 	/*record*/
-/*	{RT5671_IN1_IN2		, 0x5080},	IN1 boost 40db and differential mode */
-/*	{RT5671_IN3		, 0x0500},	IN2 boost 40db and signal ended mode */
+/*	{RT5671_IN2_CTRL	, 0x5080},	IN1 boost 40db and differential mode */
+/*	{RT5671_IN3_IN4_CTRL	, 0x0500},	IN2 boost 40db and signal ended mode */
 /*	{RT5671_REC_L2_MIXER	, 0x0077},	Mic3 -> RECMIXL */
 /*	{RT5671_REC_R2_MIXER	, 0x0077},	Mic3 -> RECMIXR */
 	{RT5671_REC_L2_MIXER	, 0x007d},	/* Mic1 -> RECMIXL */
@@ -138,7 +138,7 @@ static struct rt5671_init_reg init_list[] = {
 #if 0 /* DMIC2 */
 	{RT5671_STO1_ADC_MIXER	, 0x5940},
 #endif
-/* 	{RT5671_CJ_CTRL1	, 0x1001}, BST1 20db */
+/* 	{RT5671_IN1_CTRL1	, 0x1001}, BST1 20db */
 #if 0 /* test DSP */
 	{RT5671_STO_DAC_MIXER	, 0x4646},
 	{RT5671_DSP_PATH1	, 0xc000},
@@ -191,9 +191,9 @@ static const u16 rt5671_reg[RT5671_VENDOR_ID2 + 1] = {
 	[RT5671_HP_VOL] = 0x8888,
 	[RT5671_LOUT1] = 0x8888,
 	[RT5671_MONO_OUT] = 0x8800,
-	[RT5671_CJ_CTRL1] = 0x0001,
-	[RT5671_CJ_CTRL2] = 0x0827,
-	[RT5671_IN1_IN2] = 0x0008,
+	[RT5671_IN1_CTRL1] = 0x0001,
+	[RT5671_IN1_CTRL2] = 0x0827,
+	[RT5671_IN2_CTRL] = 0x0008,
 	[RT5671_INL1_INR1_VOL] = 0x0808,
 	[RT5671_SIDETONE_CTRL] = 0x018b,
 	[RT5671_DAC1_DIG_VOL] = 0xafaf,
@@ -493,9 +493,9 @@ static int rt5671_volatile_register(
 	case RT5671_PDM2_DATA_CTRL4:
 	case RT5671_PRIV_DATA:
 	case RT5671_ASRC_5:
-	case RT5671_CJ_CTRL1:
-	case RT5671_CJ_CTRL2:
-	case RT5671_CJ_CTRL3:
+	case RT5671_IN1_CTRL1:
+	case RT5671_IN1_CTRL2:
+	case RT5671_IN1_CTRL3:
 	case RT5671_A_JD_CTRL1:
 	case RT5671_A_JD_CTRL2:
 	case RT5671_VAD_CTRL5:
@@ -528,11 +528,11 @@ static int rt5671_readable_register(
 	case RT5671_HP_VOL:
 	case RT5671_LOUT1:
 	case RT5671_MONO_OUT:
-	case RT5671_CJ_CTRL1:
-	case RT5671_CJ_CTRL2:
-	case RT5671_CJ_CTRL3:
-	case RT5671_IN1_IN2:
-	case RT5671_IN3:
+	case RT5671_IN1_CTRL1:
+	case RT5671_IN1_CTRL2:
+	case RT5671_IN1_CTRL3:
+	case RT5671_IN2_CTRL:
+	case RT5671_IN3_IN4_CTRL:
 	case RT5671_INL1_INR1_VOL:
 	case RT5671_SIDETONE_CTRL:
 	case RT5671_DAC1_DIG_VOL:
@@ -692,7 +692,7 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 
 	if(jack_insert) {
 		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x0);
-		snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
+		snd_soc_update_bits(codec, RT5671_IN1_CTRL2,
 			RT5671_CBJ_DET_MODE | RT5671_CBJ_MN_JD,
 			RT5671_CBJ_MN_JD);
 		reg63 = snd_soc_read(codec, RT5671_PWR_ANLG1);
@@ -721,15 +721,15 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 			snd_soc_update_bits(codec, RT5671_GLB_CLK,
 				RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_RCCLK);
 		}
-		snd_soc_update_bits(codec, RT5671_CJ_CTRL1,
+		snd_soc_update_bits(codec, RT5671_IN1_CTRL1,
 			RT5671_CBJ_BST1_EN, RT5671_CBJ_BST1_EN);
 		snd_soc_write(codec, RT5671_JD_CTRL3, 0x00f0);
-		snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
+		snd_soc_update_bits(codec, RT5671_IN1_CTRL2,
 			RT5671_CBJ_MN_JD, RT5671_CBJ_MN_JD);
-		snd_soc_update_bits(codec, RT5671_CJ_CTRL2,
+		snd_soc_update_bits(codec, RT5671_IN1_CTRL2,
 			RT5671_CBJ_MN_JD, 0);
 		msleep(500);
-		val = snd_soc_read(codec, RT5671_CJ_CTRL3) & 0x7;
+		val = snd_soc_read(codec, RT5671_IN1_CTRL3) & 0x7;
 		pr_debug("val=%d\n", val);
 		if (val == 0x1 || val == 0x2) {
 			jack_type = SND_JACK_HEADSET;
@@ -755,7 +755,7 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x4);
 	} else {
 		snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x8, 0x0);
-		snd_soc_update_bits(codec, RT5671_CJ_CTRL2, RT5671_CBJ_DET_MODE,
+		snd_soc_update_bits(codec, RT5671_IN1_CTRL2, RT5671_CBJ_DET_MODE,
 			RT5671_CBJ_DET_MODE);
 		jack_type = 0;
 	}
@@ -901,15 +901,15 @@ static const char * const rt5671_input_mode[] = {
 };
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_in2_mode_enum, RT5671_IN1_IN2,
+	rt5671_in2_mode_enum, RT5671_IN2_CTRL,
 	RT5671_IN_SFT2, rt5671_input_mode);
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_in3_mode_enum, RT5671_IN3,
+	rt5671_in3_mode_enum, RT5671_IN3_IN4_CTRL,
 	RT5671_IN_SFT1, rt5671_input_mode);
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_in4_mode_enum, RT5671_IN3,
+	rt5671_in4_mode_enum, RT5671_IN3_IN4_CTRL,
 	RT5671_IN_SFT2, rt5671_input_mode);
 
 /* Interface data select */
@@ -1138,16 +1138,16 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT,
 			175, 0, dac_vol_tlv),
 	/* IN1/IN2 Control */
-	SOC_SINGLE_TLV("IN1 Boost", RT5671_CJ_CTRL1,
+	SOC_SINGLE_TLV("IN1 Boost", RT5671_IN1_CTRL1,
 		RT5671_BST_SFT1, 8, 0, bst_tlv),
 	SOC_ENUM("IN2 Mode Control", rt5671_in2_mode_enum),
-	SOC_SINGLE_TLV("IN2 Boost", RT5671_IN1_IN2,
+	SOC_SINGLE_TLV("IN2 Boost", RT5671_IN2_CTRL,
 		RT5671_BST_SFT2, 8, 0, bst_tlv),
 	SOC_ENUM("IN3 Mode Control", rt5671_in3_mode_enum),
-	SOC_SINGLE_TLV("IN3 Boost", RT5671_IN3,
+	SOC_SINGLE_TLV("IN3 Boost", RT5671_IN3_IN4_CTRL,
 		RT5671_BST_SFT1, 8, 0, bst_tlv),
 	SOC_ENUM("IN4 Mode Control", rt5671_in4_mode_enum),
-	SOC_SINGLE_TLV("IN4 Boost", RT5671_IN3,
+	SOC_SINGLE_TLV("IN4 Boost", RT5671_IN3_IN4_CTRL,
 		RT5671_BST_SFT2, 8, 0, bst_tlv),
 	/* INL/INR Volume Control */
 	SOC_DOUBLE_TLV("IN Capture Volume", RT5671_INL1_INR1_VOL,
@@ -1168,7 +1168,7 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 			RT5671_STO1_ADC_L_BST_SFT, RT5671_STO1_ADC_R_BST_SFT,
 			3, 0, adc_bst_tlv),
 	SOC_DOUBLE_TLV("Mono ADC Boost Gain", RT5671_ADC_BST_VOL2,
-			RT5671_STO1_ADC_L_BST_SFT, RT5671_STO1_ADC_R_BST_SFT,
+			RT5671_MONO_ADC_L_BST_SFT, RT5671_MONO_ADC_R_BST_SFT,
 			3, 0, adc_bst_tlv),
 	SOC_DOUBLE_TLV("STO2 ADC Boost Gain", RT5671_ADC_BST_VOL1,
 			RT5671_STO2_ADC_L_BST_SFT, RT5671_STO2_ADC_R_BST_SFT,
@@ -1193,6 +1193,13 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 
 	SOC_ENUM("IF1 ADC TDM Switch", rt5671_if1_tdm_enum),
 	SOC_ENUM("DSP TxDP TDM Switch", rt5671_txdp_tdm_enum),
+
+	SOC_SINGLE("STO1 ADC Comp Gain", RT5671_ADC_BST_VOL1,
+			RT5671_STO1_ADC_COMP_SFT, 3, 0),
+	SOC_SINGLE("STO2 ADC Comp Gain", RT5671_ADC_BST_VOL1,
+			RT5671_STO2_ADC_COMP_SFT, 3, 0),
+	SOC_SINGLE("MONO ADC Comp Gain", RT5671_ADC_BST_VOL2,
+			RT5671_MONO_ADC_COMP_SFT, 3, 0),
 
 	SOC_ENUM_EXT("VAD Switch", rt5671_vad_enum,
 		rt5671_vad_get, rt5671_vad_put),
@@ -4070,7 +4077,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_write(codec, RT5671_DIG_INF1_DATA, 0x9002);
 			/* snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x4200); */
 			snd_soc_write(codec, RT5671_TDM_CTRL_1, 0x0e00);
-			/* snd_soc_write(codec, RT5671_CJ_CTRL2, 0x08a7); */
+			/* snd_soc_write(codec, RT5671_IN1_CTRL2, 0x08a7); */
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x279c);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x273c);

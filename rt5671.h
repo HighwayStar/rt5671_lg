@@ -26,11 +26,11 @@
 #define RT5671_LOUT1				0x03
 #define RT5671_MONO_OUT				0x04
 /* I/O - Input */
-#define RT5671_CJ_CTRL1				0x0a
-#define RT5671_CJ_CTRL2				0x0b
-#define RT5671_CJ_CTRL3				0x0c
-#define RT5671_IN1_IN2				0x0d
-#define RT5671_IN3				0x0e
+#define RT5671_IN1_CTRL1			0x0a
+#define RT5671_IN1_CTRL2			0x0b
+#define RT5671_IN1_CTRL3			0x0c
+#define RT5671_IN2_CTRL				0x0d
+#define RT5671_IN3_IN4_CTRL			0x0e
 #define RT5671_INL1_INR1_VOL			0x0f
 /* I/O - ADC/DAC/DMIC */
 #define RT5671_SIDETONE_CTRL			0x18
@@ -330,6 +330,14 @@
 #define RT5671_STO2_ADC_R_BST_SFT		6
 #define RT5671_STO2_ADC_COMP_MASK		(0x3 << 4)
 #define RT5671_STO2_ADC_COMP_SFT		4
+
+/* MONO ADC Boost Volume Control (0x20) */
+#define RT5671_MONO_ADC_L_BST_MASK		(0x3 << 14)
+#define RT5671_MONO_ADC_L_BST_SFT		14
+#define RT5671_MONO_ADC_R_BST_MASK		(0x3 << 12)
+#define RT5671_MONO_ADC_R_BST_SFT		12
+#define RT5671_MONO_ADC_COMP_MASK		(0x3 << 10)
+#define RT5671_MONO_ADC_COMP_SFT		10
 
 /* Stereo2 ADC Mixer Control (0x26) */
 #define RT5671_STO2_ADC_SRC_MASK		(0x1 << 15)
