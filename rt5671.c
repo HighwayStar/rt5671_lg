@@ -2039,8 +2039,6 @@ static int rt5671_mono_adcl_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
-		snd_soc_update_bits(codec, RT5671_ASRC_1,
-			0x1002, 0x1002);
 		snd_soc_update_bits(codec, RT5671_MONO_ADC_DIG_VOL,
 			RT5671_L_MUTE, 0);
 		break;
@@ -2048,8 +2046,6 @@ static int rt5671_mono_adcl_event(struct snd_soc_dapm_widget *w,
 		snd_soc_update_bits(codec, RT5671_MONO_ADC_DIG_VOL,
 			RT5671_L_MUTE,
 			RT5671_L_MUTE);
-		snd_soc_update_bits(codec, RT5671_ASRC_1,
-			0x1002, 0);
 		break;
 
 	default:
@@ -2066,8 +2062,6 @@ static int rt5671_mono_adcr_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
-		snd_soc_update_bits(codec, RT5671_ASRC_1,
-			0x1001, 0x1001);
 		snd_soc_update_bits(codec, RT5671_MONO_ADC_DIG_VOL,
 			RT5671_R_MUTE, 0);
 		break;
@@ -2075,8 +2069,6 @@ static int rt5671_mono_adcr_event(struct snd_soc_dapm_widget *w,
 		snd_soc_update_bits(codec, RT5671_MONO_ADC_DIG_VOL,
 			RT5671_R_MUTE,
 			RT5671_R_MUTE);
-		snd_soc_update_bits(codec, RT5671_ASRC_1,
-			0x1001, 0x0);
 		break;
 
 	default:
@@ -2506,29 +2498,6 @@ static int rt5671_pdm2_r_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
-static int rt5671_sto2_adc_filter_event(struct snd_soc_dapm_widget *w,
-	struct snd_kcontrol *kcontrol, int event)
-{
-	struct snd_soc_codec *codec = w->codec;
-
-	switch (event) {
-	case SND_SOC_DAPM_POST_PMU:
-		snd_soc_update_bits(codec, RT5671_ASRC_1,
-			0x2004, 0x2004);
-		break;
-
-	case SND_SOC_DAPM_PRE_PMD:
-		snd_soc_update_bits(codec, RT5671_ASRC_1,
-			0x2004, 0x0);
-		break;
-
-	default:
-		return 0;
-	}
-
-	return 0;
-}
-
 static int rt5671_post_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *kcontrol, int event)
 {
@@ -2573,6 +2542,38 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_SUPPLY("Mic Det Power", SND_SOC_NOPM,
 		0, 0, NULL, 0),
 #endif
+
+	/* ASRC */
+	SND_SOC_DAPM_SUPPLY_S("I2S1 ASRC", 1, RT5671_ASRC_1,
+		11, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("I2S2 ASRC", 1, RT5671_ASRC_1,
+		12, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("I2S3 ASRC", 1, RT5671_ASRC_1,
+		13, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("I2S4 ASRC", 1, RT5671_ASRC_1,
+		14, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("DAC STO ASRC", 1, RT5671_ASRC_1,
+		10, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("DAC MONO L ASRC", 1, RT5671_ASRC_1,
+		9, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("DAC MONO R ASRC", 1, RT5671_ASRC_1,
+		8, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("DMIC STO1 ASRC", 1, RT5671_ASRC_1,
+		7, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("DMIC STO2 ASRC", 1, RT5671_ASRC_1,
+		6, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("DMIC MONO L ASRC", 1, RT5671_ASRC_1,
+		5, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("DMIC MONO R ASRC", 1, RT5671_ASRC_1,
+		4, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("ADC STO1 ASRC", 1, RT5671_ASRC_1,
+		3, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("ADC STO2 ASRC", 1, RT5671_ASRC_1,
+		2, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("ADC MONO L ASRC", 1, RT5671_ASRC_1,
+		1, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY_S("ADC MONO R ASRC", 1, RT5671_ASRC_1,
+		0, 0, NULL, 0),
 
 	/* Input Side */
 	/* micbias */
@@ -2698,8 +2699,7 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_SUPPLY("adc stereo1 filter", RT5671_PWR_DIG2,
 		RT5671_PWR_ADC_S1F_BIT, 0, NULL, 0),
 	SND_SOC_DAPM_SUPPLY("adc stereo2 filter", RT5671_PWR_DIG2,
-		RT5671_PWR_ADC_S2F_BIT, 0, rt5671_sto2_adc_filter_event,
-		SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMU),
+		RT5671_PWR_ADC_S2F_BIT, 0, NULL, 0),
 	SND_SOC_DAPM_MIXER_E("Sto1 ADC MIXL", SND_SOC_NOPM, 0, 0,
 		rt5671_sto1_adc_l_mix, ARRAY_SIZE(rt5671_sto1_adc_l_mix),
 		rt5671_sto1_adcl_event, SND_SOC_DAPM_PRE_PMD |
@@ -2968,6 +2968,23 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 };
 
 static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
+	{ "Stereo1 DMIC Mux", NULL, "DMIC STO1 ASRC" },
+	{ "Stereo2 DMIC Mux", NULL, "DMIC STO2 ASRC" },
+	{ "Mono DMIC L Mux", NULL, "DMIC MONO L ASRC" },
+	{ "Mono DMIC R Mux", NULL, "DMIC MONO R ASRC" },
+	{ "adc stereo1 filter", NULL, "ADC STO1 ASRC" },
+	{ "adc stereo2 filter", NULL, "ADC STO2 ASRC" },
+	{ "adc mono left filter", NULL, "ADC MONO L ASRC" },
+	{ "adc mono right filter", NULL, "ADC MONO R ASRC" },
+	{ "dac mono left filter", NULL, "DAC MONO L ASRC" },
+	{ "dac mono right filter", NULL, "DAC MONO R ASRC" },
+	{ "dac stereo1 filter", NULL, "DAC STO ASRC" },
+
+	{ "I2S1", NULL, "I2S1 ASRC" },
+	{ "I2S2", NULL, "I2S2 ASRC" },
+	{ "I2S3", NULL, "I2S3 ASRC" },
+	{ "I2S4", NULL, "I2S4 ASRC" },
+
 	{ "micbias1", NULL, "DAC L1 Power" },
 	{ "micbias1", NULL, "DAC R1 Power" },
 	{ "micbias2", NULL, "DAC L1 Power" },
