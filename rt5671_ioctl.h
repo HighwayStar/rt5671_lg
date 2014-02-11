@@ -34,11 +34,11 @@ enum {
 };
 
 #define EQ_REG_NUM 28
-struct  hweq_t {
+typedef struct  hweq_s {
 	unsigned int reg[EQ_REG_NUM];
 	unsigned int value[EQ_REG_NUM];
 	unsigned int ctrl;
-};
+} hweq_t;
 
 int rt5671_ioctl_common(struct snd_hwdep *hw, struct file *file,
 			unsigned int cmd, unsigned long arg);

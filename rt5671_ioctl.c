@@ -20,7 +20,7 @@
 #include "rt5671.h"
 #include "rt5671-dsp.h"
 
-struct hweq_t hweq_param[] = {
+hweq_t hweq_param[] = {
 	{/* NORMAL */
 		{0},
 		{0},
@@ -28,16 +28,18 @@ struct hweq_t hweq_param[] = {
 	},
 	{/* SPK */
 		{0},
-		{0x1c10, 0x01f4, 0xc5e9, 0x1a98, 0x1d2c, 0xc882, 0x1c10,
-		0x01f4, 0xe904, 0x1c10, 0x01f4, 0xe904, 0x1c10, 0x01f4,
-		0x1c10, 0x01f4, 0x2000, 0x0000, 0x2000},
+		{0x1bbc, 0x0c73, 0x030b, 0xff24, 0x1ea6, 0xe4d9, 0x1c98, 0x589d,
+		 0x01bd, 0xd344, 0x01ca, 0x2940, 0xd8cb, 0x1bbc, 0x0000, 0xef01,
+		 0x1bbc, 0x0000, 0xef01, 0x1bbc, 0x0000, 0x0257, 0x0000, 0x1cc9,
+		 0x02eb, 0x1cee, 0x0800, 0x0800},
 		0x0000,
 	},
 	{/* HP */
 		{0},
-		{0x1c10, 0x01f4, 0xc5e9, 0x1a98, 0x1d2c, 0xc882, 0x1c10,
-		0x01f4, 0xe904, 0x1c10, 0x01f4, 0xe904, 0x1c10, 0x01f4,
-		0x1c10, 0x01f4, 0x2000, 0x0000, 0x2000},
+		{0x1bbc, 0x0c73, 0x030b, 0xff24, 0x1ea6, 0xe4d9, 0x1c98, 0x589d,
+		 0x01bd, 0xd344, 0x01ca, 0x2940, 0xd8cb, 0x1bbc, 0x0000, 0xef01,
+		 0x1bbc, 0x0000, 0xef01, 0x1bbc, 0x0000, 0x0257, 0x0000, 0x1cc9,
+		 0x02eb, 0x1cee, 0x0800, 0x0800},
 		0x0000,
 	},
 };
@@ -58,28 +60,49 @@ int rt5671_update_eqmode(
 	struct snd_soc_codec *codec, int channel, int mode)
 {
 	struct rt_codec_ops *ioctl_ops = rt_codec_get_ioctl_ops();
-	int i;
+	int i, upd_reg, reg, mask;
 
 	if (codec == NULL ||  mode >= RT5671_HWEQ_LEN)
 		return -EINVAL;
 
 	dev_dbg(codec->dev, "%s(): mode=%d\n", __func__, mode);
+	if (mode != NORMAL) {
+		for (i = 0; i <= EQ_REG_NUM; i++) {
+			hweq_param[mode].reg[i] = eqreg[channel][i];
+		}
 
-	for (i = 0; i <= EQ_REG_NUM; i++)
-		hweq_param[mode].reg[i] = eqreg[channel][i];
-
-	for (i = 0; i <= EQ_REG_NUM; i++) {
-		if (hweq_param[mode].reg[i])
-			ioctl_ops->index_write(codec, hweq_param[mode].reg[i],
-					hweq_param[mode].value[i]);
-		else
-			break;
+		for (i = 0; i <= EQ_REG_NUM; i++) {
+			if (hweq_param[mode].reg[i])
+				ioctl_ops->index_write(codec, hweq_param[mode].reg[i],
+						hweq_param[mode].value[i]);
+			else
+				break;
+		}
 	}
-	snd_soc_update_bits(codec, RT5671_EQ_CTRL2, RT5671_EQ_CTRL_MASK,
-					hweq_param[mode].ctrl);
-	snd_soc_update_bits(codec, RT5671_EQ_CTRL1,
+	switch (channel) {
+	case EQ_CH_DACL:
+		reg = RT5671_EQ_CTRL2;
+		mask = 0x11fe;
+		upd_reg = RT5671_EQ_CTRL1;
+		break;
+	case EQ_CH_DACR:
+		reg = RT5671_EQ_CTRL2;
+		mask = 0x22fe;
+		upd_reg = RT5671_EQ_CTRL1;
+		break;
+	case EQ_CH_ADC:
+		reg = RT5671_ADC_EQ_CTRL2;
+		mask = 0x01bf;
+		upd_reg = RT5671_ADC_EQ_CTRL1;
+		break;
+	default:
+		printk(KERN_ERR "Invalid EQ channel\n");
+		return -EINVAL;
+	}
+	snd_soc_update_bits(codec, reg, mask, hweq_param[mode].ctrl);
+	snd_soc_update_bits(codec, upd_reg,
 		RT5671_EQ_UPD, RT5671_EQ_UPD);
-	snd_soc_update_bits(codec, RT5671_EQ_CTRL1, RT5671_EQ_UPD, 0);
+	snd_soc_update_bits(codec, upd_reg, RT5671_EQ_UPD, 0);
 
 	return 0;
 }

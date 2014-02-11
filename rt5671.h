@@ -2112,6 +2112,7 @@ struct rt5671_priv {
 	int jack_type;
 
 	int adb_register;
+	int eq_mode;
 };
 
 #endif /* __RT5671_H__ */

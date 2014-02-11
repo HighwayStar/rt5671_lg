@@ -1112,6 +1112,34 @@ static int rt5671_bt_call_put(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
+static const char *rt5671_eq_mode[] = {
+	"Normal", "Speaker", "Headphone"
+};
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_eq_mode_enum, 0, 0, rt5671_eq_mode);
+
+static int rt5671_eq_mode_get(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	ucontrol->value.integer.value[0] = rt5671->eq_mode;
+
+	return 0;
+}
+
+static int rt5671_eq_mode_put(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	rt5671->eq_mode = ucontrol->value.integer.value[0];
+
+	return 0;
+}
+
 static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	/* Headphone Output Volume */
 	SOC_DOUBLE("HP Playback Switch", RT5671_HP_VOL,
@@ -1207,6 +1235,8 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 		rt5671_voice_call_get, rt5671_voice_call_put),
 	SOC_ENUM_EXT("BT Call", rt5671_bt_call_enum,
 		rt5671_bt_call_get, rt5671_bt_call_put),
+	SOC_ENUM_EXT("EQ Mode", rt5671_eq_mode_enum,
+		rt5671_eq_mode_get, rt5671_eq_mode_put),
 };
 
 /**
@@ -2529,6 +2559,50 @@ static int rt5671_sto2_adc_filter_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+static int rt5671_dac_l_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		rt5671_update_eqmode(codec, EQ_CH_DACL, rt5671->eq_mode);
+		break;
+
+	case SND_SOC_DAPM_PRE_PMD:
+		rt5671_update_eqmode(codec, EQ_CH_DACL, NORMAL);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_dac_r_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		rt5671_update_eqmode(codec, EQ_CH_DACR, rt5671->eq_mode);
+		break;
+
+	case SND_SOC_DAPM_PRE_PMD:
+		rt5671_update_eqmode(codec, EQ_CH_DACR, NORMAL);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
 static int rt5671_post_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *kcontrol, int event)
 {
@@ -2828,10 +2902,14 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 
 	/* Output Side */
 	/* DAC mixer before sound effect */
-	SND_SOC_DAPM_MIXER("DAC1 MIXL", SND_SOC_NOPM, 0, 0,
-		rt5671_dac_l_mix, ARRAY_SIZE(rt5671_dac_l_mix)),
-	SND_SOC_DAPM_MIXER("DAC1 MIXR", SND_SOC_NOPM, 0, 0,
-		rt5671_dac_r_mix, ARRAY_SIZE(rt5671_dac_r_mix)),
+	SND_SOC_DAPM_MIXER_E("DAC1 MIXL", SND_SOC_NOPM, 0, 0,
+		rt5671_dac_l_mix, ARRAY_SIZE(rt5671_dac_l_mix),
+		rt5671_dac_l_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_MIXER_E("DAC1 MIXR", SND_SOC_NOPM, 0, 0,
+		rt5671_dac_r_mix, ARRAY_SIZE(rt5671_dac_r_mix),
+		rt5671_dac_r_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
 	SND_SOC_DAPM_PGA("DAC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 
 	/* DAC2 channel Mux */
