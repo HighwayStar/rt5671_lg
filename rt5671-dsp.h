@@ -48,16 +48,8 @@
 
 
 enum {
-	RT5671_DSP_DIS,
-	RT5671_DSP_NS,
-	RT5671_DSP_AEC,
-	RT5671_DSP_VT,
-	RT5671_DSP_VR,
-	RT5671_DSP_FFP_NS,
-	RT5671_DSP_48K_STO_FFP,
-	RT5671_DSP_2MIC_HANDSET,
-	RT5671_DSP_2MIC_HANDSFREE,
-	RT5671_DSP_AEC_HANDSFREE,
+	RT5671_DSP_HANDSET,
+	RT5671_DSP_HANDFREE,
 };
 
 struct rt5671_dsp_param {
@@ -68,6 +60,7 @@ struct rt5671_dsp_param {
 };
 
 int rt5671_dsp_probe(struct snd_soc_codec *codec);
+int rt5671_dsp_set_data_source(struct snd_soc_codec *codec, int src);
 int rt5671_dsp_ioctl_common(struct snd_hwdep *hw,
 	struct file *file, unsigned int cmd, unsigned long arg);
 #ifdef CONFIG_PM

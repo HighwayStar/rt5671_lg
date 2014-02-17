@@ -416,14 +416,32 @@ static unsigned short rt5671_dsp_patch[][2] = {
 
 /* DSP init */
 static unsigned short rt5671_dsp_init[][2] = {
-	{0x2260, 0x30d9}, {0x2261, 0x30d9}, {0x2289, 0x7fff}, {0x2290, 0x7fff},
+	{0x2260, 0x30d9}, /*{0x2261, 0x30d9},*/ {0x2289, 0x7fff}, {0x2290, 0x7fff},
 	{0x2288, 0x0002}, {0x22b2, 0x0002}, {0x2295, 0x0001}, {0x22b3, 0x0001},
-	{0x22d7, 0x0008}, {0x22d8, 0x0009}, {0x22d9, 0x0000}, {0x22da, 0x0001},
+	/*{0x22d7, 0x0008}, {0x22d8, 0x0009},*/ {0x22d9, 0x0000}, {0x22da, 0x0001},
 	{0x22fd, 0x009e}, {0x22c1, 0x1006}, {0x22c2, 0x1006}, {0x22c3, 0x1007},
 	{0x22c4, 0x1007}
 };
 #define RT5671_DSP_INIT_NUM \
 	(sizeof(rt5671_dsp_init) / sizeof(rt5671_dsp_init[0]))
+
+/* Data Source */
+#define RT5671_DSP_TDM_SRC_PAR_NUM 5
+
+static unsigned short rt5671_dsp_data_src[][2] = {
+	/*For Stereo ADC mixer*/
+	{0x2261, 0x30d9}, {0x2282, 0x0008}, {0x2283, 0x0009},
+	{0x22d7, 0x0008}, {0x22d8, 0x0009},
+	/*For Mono ADC mixer*/
+	{0x2261, 0x30df}, {0x2282, 0x000a}, {0x2283, 0x000b},
+	{0x22d7, 0x000a}, {0x22d8, 0x000b},
+};
+
+static unsigned short rt5671_dsp_rate_par[] = {
+	0x226c, 0x226d, 0x226e, 0x22f2, 0x2301,
+};
+#define RT5671_DSP_RATE_NUM \
+	(sizeof(rt5671_dsp_rate_par) / sizeof(rt5671_dsp_rate_par[0]))
 
 /* MCLK rate */
 static unsigned short rt5671_dsp_4096000[][2] = {
@@ -473,16 +491,7 @@ static unsigned short rt5671_dsp_8[][2] = {
 #define RT5671_DSP_8_NUM (sizeof(rt5671_dsp_8) / sizeof(rt5671_dsp_8[0]))
 
 /* DSP mode */
-static unsigned short rt5671_dsp_ns[][2] = {
-	{0x22f8, 0x8005}, {0x2375, 0x7ff0}, {0x2376, 0x7990}, {0x2377, 0x7332},
-	{0x2388, 0x7fff}, {0x2389, 0x6000}, {0x238a, 0x0000}, {0x238b, 0x1000},
-	{0x238c, 0x1000}, {0x23a1, 0x2000}, {0x2303, 0x0200}, {0x2304, 0x0032},
-	{0x2305, 0x0000}, {0x230c, 0x0200}, {0x22fb, 0x0000}
-};
-#define RT5671_DSP_NS_NUM \
-	(sizeof(rt5671_dsp_ns) / sizeof(rt5671_dsp_ns[0]))
-
-static unsigned short rt5671_dsp_aec[][2] = {
+static unsigned short rt5671_dsp_handset[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
 	{0x235b, 0x7fff}, {0x235c, 0x7fff}, {0x235d, 0x7fff}, {0x235e, 0x7fff},
@@ -498,77 +507,10 @@ static unsigned short rt5671_dsp_aec[][2] = {
 	{0x2303, 0x0710}, {0x2304, 0x0332}, {0x230c, 0x0200}, {0x230d, 0x0080},
 	{0x2310, 0x0010}, {0x22fb, 0x0000}
 };
-#define RT5671_DSP_AEC_NUM \
-	(sizeof(rt5671_dsp_aec) / sizeof(rt5671_dsp_aec[0]))
+#define RT5671_DSP_HANDSET_NUM \
+	(sizeof(rt5671_dsp_handset) / sizeof(rt5671_dsp_handset[0]))
 
-static unsigned short rt5671_dsp_vt[][2] = {
-	{0x22f8, 0x8003}, {0x2371, 0x000a}, {0x2373, 0x0000}, {0x2374, 0x7fff},
-	{0x2375, 0x7ff0}, {0x2376, 0x7990}, {0x2377, 0x7332}, {0x2379, 0x1000},
-	{0x237a, 0x1000}, {0x2388, 0x7fff}, {0x2389, 0x6000}, {0x238b, 0x1000},
-	{0x238c, 0x1000}, {0x23a1, 0x2000}, {0x2304, 0x0332}, {0x230c, 0x0200},
-	{0x22fb, 0x0000}
-};
-#define RT5671_DSP_VT_NUM (sizeof(rt5671_dsp_vt) / sizeof(rt5671_dsp_vt[0]))
-
-static unsigned short rt5671_dsp_vr[][2] = {
-	{0x22f8, 0x8003}, {0x2304, 0x0332}, {0x2305, 0x0000}, {0x2309, 0x0400},
-	{0x230c, 0x0200}, {0x230d, 0x0080}, {0x2310, 0x0004}, {0x232f, 0x0100},
-	{0x2371, 0x000a}, {0x2373, 0x3000}, {0x2374, 0x5000}, {0x2375, 0x7ff0},
-	{0x2376, 0x7990}, {0x2377, 0x7332}, {0x2379, 0x1000}, {0x237a, 0x1000},
-	{0x2386, 0x0200}, {0x2388, 0x4000}, {0x2389, 0x4000}, {0x238a, 0x0000},
-	{0x238b, 0x2000}, {0x238c, 0x1800}, {0x239b, 0x0000}, {0x239c, 0x0a00},
-	{0x239d, 0x0000}, {0x239e, 0x7fff}, {0x239f, 0x0001}, {0x23a1, 0x3000},
-	{0x23a2, 0x1000}, {0x23ad, 0x0000}, {0x23ae, 0x0000}, {0x23af, 0x0000},
-	{0x23c4, 0x2000}, {0x23b0, 0x0000}, {0x23b1, 0x0000}, {0x23b2, 0x0000},
-	{0x23b3, 0x0000}, {0x23b4, 0x0000}, {0x23b5, 0x0000}, {0x23b6, 0x0000},
-	{0x23b7, 0x0000}, {0x23b8, 0x0000}, {0x23b9, 0x0000}, {0x23ba, 0x0000},
-	{0x23bb, 0x0000}, {0x22fb, 0x0000}
-};
-#define RT5671_DSP_VR_NUM (sizeof(rt5671_dsp_vr) / sizeof(rt5671_dsp_vr[0]))
-
-static unsigned short rt5671_dsp_ffp_ns[][2] = {
-	{0x22f8, 0x8003}, {0x2304, 0x8332}, {0x2371, 0x000a}, {0x2373, 0x0000},
-	{0x2374, 0x7fff}, {0x2379, 0x1800}, {0x237a, 0x1800}, {0x230c, 0x0200},
-	{0x23a2, 0x1000}, {0x2388, 0x7000}, {0x238b, 0x2000}, {0x238c, 0x2000},
-	{0x23a8, 0x2000}, {0x23a9, 0x4000}, {0x23aa, 0x0100}, {0x23ab, 0x7800},
-	{0x22fb, 0x0000}
-};
-#define RT5671_DSP_FFP_NS_NUM \
-	(sizeof(rt5671_dsp_ffp_ns) / sizeof(rt5671_dsp_ffp_ns[0]))
-
-static unsigned short rt5671_dsp_48k_sto_ffp[][2] = {
-	{0x22c1, 0x1025}, {0x22c2, 0x1026}, {0x22f8, 0x8004}, {0x22ea, 0x0001},
-	{0x230c, 0x0100}, {0x230d, 0x0100}, {0x2301, 0x0010}, {0x2303, 0x0200},
-	{0x2304, 0x8000}, {0x2305, 0x0000}, {0x2388, 0x6500}, {0x238b, 0x4000},
-	{0x238c, 0x4000}, {0x23a9, 0x2000}, {0x23aa, 0x0200}, {0x23ab, 0x7c00},
-	{0x22fb, 0x0000}
-};
-#define RT5671_DSP_48K_STO_FFP_NUM \
-	(sizeof(rt5671_dsp_48k_sto_ffp) / sizeof(rt5671_dsp_48k_sto_ffp[0]))
-
-static unsigned short rt5671_dsp_2mic_handset[][2] = {
-	{0x22f8, 0x8002}, {0x2301, 0x0002}, {0x2302, 0x0002}, {0x2303, 0x0710},
-	{0x2304, 0x4332}, {0x2305, 0x206c}, {0x236e, 0x0000}, {0x236f, 0x0001},
-	{0x237e, 0x0001}, {0x237f, 0x3800}, {0x2380, 0x3000}, {0x2381, 0x0005},
-	{0x2382, 0x0040}, {0x2383, 0x7fff}, {0x2388, 0x2c00}, {0x2389, 0x2800},
-	{0x238b, 0x1800}, {0x238c, 0x1800}, {0x238f, 0x2000}, {0x239b, 0x0002},
-	{0x239c, 0x0a00}, {0x239f, 0x0001}, {0x230c, 0x0200}, {0x22fb, 0x0000}
-};
-#define RT5671_DSP_2MIC_HANDSET_NUM \
-	(sizeof(rt5671_dsp_2mic_handset) / sizeof(rt5671_dsp_2mic_handset[0]))
-
-static unsigned short rt5671_dsp_2mic_handsfree[][2] = {
-	{0x22f8, 0x8003}, {0x2371, 0x000a}, {0x2373, 0x0000}, {0x2374, 0x7fff}, 
-	{0x2375, 0x7ff0}, {0x2376, 0x7990}, {0x2377, 0x7332}, {0x2379, 0x1000},
-	{0x237a, 0x1000}, {0x2388, 0x7fff}, {0x2389, 0x6000}, {0x238b, 0x1000},
-	{0x238c, 0x1000}, {0x23a1, 0x2000}, {0x2304, 0x0332}, {0x230c, 0x0200},
-	{0x22fb, 0x0000}
-};
-#define RT5671_DSP_2MIC_HANDSFREE_NUM \
-	(sizeof(rt5671_dsp_2mic_handsfree) / \
-	sizeof(rt5671_dsp_2mic_handsfree[0]))
-
-static unsigned short rt5671_dsp_aec_handsfree[][2] = {
+static unsigned short rt5671_dsp_handfree[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
 	{0x235b, 0x7fff}, {0x235c, 0x7fff}, {0x235d, 0x7fff}, {0x235e, 0x7fff},
@@ -584,8 +526,8 @@ static unsigned short rt5671_dsp_aec_handsfree[][2] = {
 	{0x2303, 0x0710}, {0x2304, 0x0332}, {0x230c, 0x0200}, {0x230d, 0x0080},
 	{0x2310, 0x0010}, {0x22fb, 0x0000}
 };
-#define RT5671_DSP_AEC_HANDSFREE_NUM \
-	(sizeof(rt5671_dsp_aec_handsfree) / sizeof(rt5671_dsp_aec_handsfree[0]))
+#define RT5671_DSP_HANDFREE_NUM \
+	(sizeof(rt5671_dsp_handfree) / sizeof(rt5671_dsp_handfree[0]))
 
 /**
  * rt5671_dsp_done - Wait until DSP is ready.
@@ -780,7 +722,7 @@ static int rt5671_dsp_put(struct snd_kcontrol *kcontrol,
 
 /* DSP Path Control 1 */
 static const char * const rt5671_src_rxdp_mode[] = {
-	"Normal", "Divided by 3"
+	"Normal", "Divided by 2", "Divided by 3"
 };
 
 static const SOC_ENUM_SINGLE_DECL(
@@ -788,7 +730,7 @@ static const SOC_ENUM_SINGLE_DECL(
 	RT5671_RXDP_SRC_SFT, rt5671_src_rxdp_mode);
 
 static const char * const rt5671_src_txdp_mode[] = {
-	"Normal", "Multiplied by 3"
+	"Normal", "Multiplied by 2", "Multiplied by 3"
 };
 
 static const SOC_ENUM_SINGLE_DECL(
@@ -805,6 +747,8 @@ static const SOC_ENUM_SINGLE_DECL(rt5671_dsp_enum, 0, 0,
 	rt5671_dsp_mode);
 
 static const struct snd_kcontrol_new rt5671_dsp_snd_controls[] = {
+	SOC_ENUM("RxDP SRC Switch", rt5671_src_rxdp_enum),
+	SOC_ENUM("TxDP SRC Switch", rt5671_src_txdp_enum),
 	/* AEC */
 	SOC_ENUM_EXT("DSP Function Switch", rt5671_dsp_enum,
 		rt5671_dsp_get, rt5671_dsp_put),
@@ -959,6 +903,28 @@ patch_err:
 	return ret;
 }
 
+int rt5671_dsp_set_data_source(struct snd_soc_codec *codec, int src)
+{
+	int ret, i;
+
+	pr_debug("%s: src=%d\n", __func__, src);
+	for (i = src * RT5671_DSP_TDM_SRC_PAR_NUM;
+		i < (src + 1) * RT5671_DSP_TDM_SRC_PAR_NUM; i++) {
+		ret = rt5671_dsp_write(codec,
+			rt5671_dsp_data_src[i][0], rt5671_dsp_data_src[i][1]);
+		if (ret < 0)
+			goto src_err;
+	}
+
+	return 0;
+
+src_err:
+
+	dev_err(codec->dev, "Fail to set tdm source %d parameters: %d\n",
+								src, ret);
+	return ret;
+}
+
 /**
  * rt5671_dsp_set_mode - Set DSP mode parameters.
  *
@@ -977,61 +943,17 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 	unsigned short (*mode_tab)[2];
 
 	switch (mode) {
-	case RT5671_DSP_NS:
-		dev_info(codec->dev, "NS\n");
-		mode_tab = rt5671_dsp_ns;
-		tab_num = RT5671_DSP_NS_NUM;
+	case RT5671_DSP_HANDSET:
+		dev_info(codec->dev, "HANDSET\n");
+		mode_tab = rt5671_dsp_handset;
+		tab_num = RT5671_DSP_HANDSET_NUM;
 		break;
 
-	case RT5671_DSP_AEC:
-		dev_info(codec->dev, "AEC\n");
-		mode_tab = rt5671_dsp_aec;
-		tab_num = RT5671_DSP_AEC_NUM;
+	case RT5671_DSP_HANDFREE:
+		dev_info(codec->dev, "HANDFREE\n");
+		mode_tab = rt5671_dsp_handfree;
+		tab_num = RT5671_DSP_HANDFREE_NUM;
 		break;
-
-	case RT5671_DSP_VT:
-		dev_info(codec->dev, "VT\n");
-		mode_tab = rt5671_dsp_vt;
-		tab_num = RT5671_DSP_VT_NUM;
-		break;
-
-	case RT5671_DSP_VR:
-		dev_info(codec->dev, "VR\n");
-		mode_tab = rt5671_dsp_vr;
-		tab_num = RT5671_DSP_VR_NUM;
-		break;
-
-	case RT5671_DSP_FFP_NS:
-		dev_info(codec->dev, "FFP_NS\n");
-		mode_tab = rt5671_dsp_ffp_ns;
-		tab_num = RT5671_DSP_FFP_NS_NUM;
-		break;
-
-	case RT5671_DSP_48K_STO_FFP:
-		dev_info(codec->dev, "48K_STO_FFP\n");
-		mode_tab = rt5671_dsp_48k_sto_ffp;
-		tab_num = RT5671_DSP_48K_STO_FFP_NUM;
-		break;
-
-	case RT5671_DSP_2MIC_HANDSET:
-		dev_info(codec->dev, "2MIC_HANDSET\n");
-		mode_tab = rt5671_dsp_2mic_handset;
-		tab_num = RT5671_DSP_2MIC_HANDSET_NUM;
-		break;
-
-	case RT5671_DSP_2MIC_HANDSFREE:
-		dev_info(codec->dev, "2MIC_HANDSFREE\n");
-		mode_tab = rt5671_dsp_2mic_handsfree;
-		tab_num = RT5671_DSP_2MIC_HANDSFREE_NUM;
-		break;
-
-	case RT5671_DSP_AEC_HANDSFREE:
-		dev_info(codec->dev, "AEC_HANDSFREE\n");
-		mode_tab = rt5671_dsp_aec_handsfree;
-		tab_num = RT5671_DSP_AEC_HANDSFREE_NUM;
-		break;
-
-	case RT5671_DSP_DIS:
 	default:
 		dev_info(codec->dev, "Disable\n");
 		return 0;
@@ -1063,9 +985,9 @@ static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	int ret;
 
-	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP,
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, RT5671_RST_DSP,
 		RT5671_RST_DSP);
-	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP, 0);
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, RT5671_RST_DSP, 0);
 
 	mdelay(10);
 /*	Expend 1.6 seconds
@@ -1133,7 +1055,7 @@ static const struct snd_soc_dapm_route rt5671_dsp_dapm_routes[] = {
 	{"DSP Downstream", NULL, "Voice DSP"},
 	{"DSP Downstream", NULL, "RxDP Mux"},
 	{"DSP Upstream", NULL, "Voice DSP"},
-	{"DSP Upstream", NULL, "8CH TDM Data"},
+	{"DSP Upstream", NULL, "TDM Data Mux"},
 	{"DSP DL Mux", "DSP", "DSP Downstream"},
 	{"DSP UL Mux", "DSP", "DSP Upstream"},
 };
@@ -1159,61 +1081,18 @@ static ssize_t rt5671_dsp_show(struct device *dev,
 	int cnt = 0, i, tab_num;
 
 	switch (rt5671->dsp_sw) {
-	case RT5671_DSP_NS:
-		cnt += sprintf(buf, "[ RT5642 DSP 'NS' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_ns;
-		tab_num = RT5671_DSP_NS_NUM;
+	case RT5671_DSP_HANDSET:
+		cnt += sprintf(buf, "[ RT5642 DSP 'HANDSET' ]\n");
+		rt5671_dsp_tab = rt5671_dsp_handset;
+		tab_num = RT5671_DSP_HANDSET_NUM;
 		break;
 
-	case RT5671_DSP_AEC:
-		cnt += sprintf(buf, "[ RT5642 DSP 'AEC' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_aec;
-		tab_num = RT5671_DSP_AEC_NUM;
+	case RT5671_DSP_HANDFREE:
+		cnt += sprintf(buf, "[ RT5642 DSP 'HANDFRE ]\n");
+		rt5671_dsp_tab = rt5671_dsp_handfree;
+		tab_num = RT5671_DSP_HANDFREE_NUM;
 		break;
 
-	case RT5671_DSP_VT:
-		cnt += sprintf(buf, "[ RT5642 DSP 'VT' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_vt;
-		tab_num = RT5671_DSP_VT_NUM;
-		break;
-
-	case RT5671_DSP_VR:
-		cnt += sprintf(buf, "[ RT5642 DSP 'VR' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_vr;
-		tab_num = RT5671_DSP_VR_NUM;
-		break;
-
-	case RT5671_DSP_FFP_NS:
-		cnt += sprintf(buf, "[ RT5642 DSP 'FFP_NS' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_ffp_ns;
-		tab_num = RT5671_DSP_FFP_NS_NUM;
-		break;
-
-	case RT5671_DSP_48K_STO_FFP:
-		cnt += sprintf(buf, "[ RT5642 DSP '48K_STO_FFP' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_48k_sto_ffp;
-		tab_num = RT5671_DSP_48K_STO_FFP_NUM;
-		break;
-
-	case RT5671_DSP_2MIC_HANDSET:
-		cnt += sprintf(buf, "[ RT5642 DSP '2MIC_HANDSET' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_2mic_handset;
-		tab_num = RT5671_DSP_2MIC_HANDSET_NUM;
-		break;
-
-	case RT5671_DSP_2MIC_HANDSFREE:
-		cnt += sprintf(buf, "[ RT5642 DSP '2MIC_HANDSFREE' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_2mic_handsfree;
-		tab_num = RT5671_DSP_2MIC_HANDSFREE_NUM;
-		break;
-
-	case RT5671_DSP_AEC_HANDSFREE:
-		cnt += sprintf(buf, "[ RT5642 DSP 'AEC_HANDSFREE' ]\n");
-		rt5671_dsp_tab = rt5671_dsp_aec_handsfree;
-		tab_num = RT5671_DSP_AEC_HANDSFREE_NUM;
-		break;
-
-	case RT5671_DSP_DIS:
 	default:
 		cnt += sprintf(buf, "RT5642 DSP Disabled\n");
 		goto dsp_done;
@@ -1240,6 +1119,31 @@ static ssize_t rt5671_dsp_show(struct device *dev,
 		cnt += snprintf(buf + cnt, RT5671_DSP_REG_DISP_LEN,
 			"%04x: %04x\n",
 			rt5671_dsp_tab[i][0], val);
+	}
+	
+	rt5671_dsp_tab = rt5671_dsp_data_src;
+	tab_num = RT5671_DSP_TDM_SRC_PAR_NUM;
+	for (i = 0; i < tab_num; i++) {
+		if (cnt + RT5671_DSP_REG_DISP_LEN >= PAGE_SIZE)
+			break;
+		val = rt5671_dsp_read(codec, rt5671_dsp_tab[i][0]);
+		if (!val)
+			continue;
+		cnt += snprintf(buf + cnt, RT5671_DSP_REG_DISP_LEN,
+			"%04x: %04x\n",
+			rt5671_dsp_tab[i][0], val);
+	}
+
+	tab_num = RT5671_DSP_RATE_NUM;
+	for (i = 0; i < tab_num; i++) {
+		if (cnt + RT5671_DSP_REG_DISP_LEN >= PAGE_SIZE)
+			break;
+		val = rt5671_dsp_read(codec, rt5671_dsp_rate_par[i]);
+		if (!val)
+			continue;
+		cnt += snprintf(buf + cnt, RT5671_DSP_REG_DISP_LEN,
+			"%04x: %04x\n",
+			rt5671_dsp_rate_par[i], val);
 	}
 
 dsp_done:
@@ -1271,7 +1175,7 @@ static ssize_t dsp_reg_store(struct device *dev,
 			addr = (addr << 4) | ((*(buf + i) - 'A') + 0xa);
 		else
 			break;
-	 
+
 	/* Value*/
 	for (i = i + 1; i < count; i++)
 		if (*(buf + i) <= '9' && *(buf + i) >= '0')
@@ -1354,9 +1258,9 @@ int rt5671_dsp_probe(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, RT5671_PWR_DIG2,
 		RT5671_PWR_I2S_DSP, RT5671_PWR_I2S_DSP);
 
-	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP,
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, RT5671_RST_DSP,
 		RT5671_RST_DSP);
-	snd_soc_update_bits(codec, RT5671_DIG_MISC, RT5671_RST_DSP, 0);
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, RT5671_RST_DSP, 0);
 
 	mdelay(10);
 

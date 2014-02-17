@@ -55,9 +55,11 @@ static int hp_amp_time = 20;
 module_param(hp_amp_time, int, 0644);
 
 #define RT5671_DET_EXT_MIC 0
-/* #define USE_INT_CLK */
+/*#define USE_INT_CLK*/
+/*#define ALC_DRC_FUNC*/
+/*#define USE_TDM*/
 #define JD1_FUNC
-/* #define ALC_DRC_FUNC */
+
 
 /* remove this define when merged to SOC
  * #define VAD_CAPTURE_TEST
@@ -67,7 +69,7 @@ module_param(hp_amp_time, int, 0644);
 /*
 #define SWITCH_FS_FOR_VAD
 */
-#define VERSION "0.0.3 alsa 1.0.25"
+#define VERSION "0.0.4 LG alsa 1.0.25"
 
 struct rt5671_init_reg {
 	u8 reg;
@@ -80,7 +82,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 static struct rt5671_init_reg init_list[] = {
 	{RT5671_IN2_CTRL	, 0x0648},	/* Oder 20130321 mic gain increase to 44 dB */
 	{RT5671_LOUT1		, 0xc888},	/* For LOUT output (130318 Oder) */
-	{RT5671_DIG_MISC	, 0xc011},	/* fa[0]=1, fa[3]=0'b disabled MCLK det, fa[15:14]=11'b for pdm */
+	{RT5671_GEN_CTRL1	, 0xc011},	/* fa[0]=1, fa[3]=0'b disabled MCLK det, fa[15:14]=11'b for pdm */
 	{RT5671_ADDA_CLK1	, 0x0000},	/* 73[2] = 1'b */
 	{RT5671_PRIV_INDEX	, 0x0014},	/* PR3d[12] = 0'b; PR3d[9] = 1'b */
 	{RT5671_PRIV_DATA	, 0x9a8a},
@@ -105,7 +107,7 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_REC_R2_MIXER	, 0x007d},	/* Mic1 -> RECMIXR */
 	{RT5671_STO1_ADC_MIXER	, 0x3920},	/* ADC -> Sto ADC mixer */
 	{RT5671_STO1_ADC_DIG_VOL, 0xafaf},	/* Mute STO1 ADC for depop */
-/*	{RT5671_DD_MIXER	, 0x1414}, */
+/*	{RT5671_MONO_DAC_MIXER	, 0x1414}, */
 	{RT5671_PDM_OUT_CTRL	, 0xff00},
 #if 0 /* test IF_ADC3 */
 	{RT5671_DIG_INF1_DATA	, 0x2002}, /* IF_ADC3 -> IF2_ADC */
@@ -115,13 +117,13 @@ static struct rt5671_init_reg init_list[] = {
 #if REALTEK_USE_AMIC
 	{RT5671_GPIO_CTRL2	, 0x0024}, /* Oder 130618 */
 	{RT5671_GPIO_CTRL1	, 0x8000}, /* Oder 130806 */
-	{RT5671_IRQ_CTRL2	, 0x0280},
+	{RT5671_IRQ_CTRL1	, 0x0280},
 	{RT5671_JD_CTRL3	, 0x0088},
 #else
 	{RT5671_GPIO_CTRL3	, 0x0100}, /* Oder 130619 set GPIO8 OUTPUT */
 	{RT5671_GPIO_CTRL2	, 0x8004},
 	{RT5671_GPIO_CTRL1	, 0x8000},
-	{RT5671_IRQ_CTRL2	, 0x0280}, /* hyunsoo 130710 0x0200->0x0280 */
+	{RT5671_IRQ_CTRL1	, 0x0280}, /* hyunsoo 130710 0x0200->0x0280 */
 	{RT5671_JD_CTRL3	, 0x0088},
 #endif
 #endif
@@ -207,7 +209,7 @@ static const u16 rt5671_reg[RT5671_VENDOR_ID2 + 1] = {
 	[RT5671_MONO_ADC_MIXER] = 0x7871,
 	[RT5671_AD_DA_MIXER] = 0x8080,
 	[RT5671_STO_DAC_MIXER] = 0x5656,
-	[RT5671_DD_MIXER] = 0x5454,
+	[RT5671_MONO_DAC_MIXER] = 0x5454,
 	[RT5671_DIG_MIXER] = 0xaaa0,
 	[RT5671_DSP_PATH2] = 0x2f2f,
 	[RT5671_DIG_INF1_DATA] = 0x1002,
@@ -226,8 +228,8 @@ static const u16 rt5671_reg[RT5671_VENDOR_ID2 + 1] = {
 	[RT5671_I2S1_SDP] = 0x8000,
 	[RT5671_I2S2_SDP] = 0x8000,
 	[RT5671_I2S3_SDP] = 0x8000,
-	[RT5671_ADDA_CLK1] = 0x1110,
-	[RT5671_ADDA_CLK2] = 0x0e00,
+	[RT5671_ADDA_CLK1] = 0x7770,
+	[RT5671_ADDA_HPF] = 0x0e00,
 	[RT5671_DMIC_CTRL1] = 0x1505,
 	[RT5671_DMIC_CTRL2] = 0x0015,
 	[RT5671_TDM_CTRL_1] = 0x0c00,
@@ -235,7 +237,7 @@ static const u16 rt5671_reg[RT5671_VENDOR_ID2 + 1] = {
 	[RT5671_TDM_CTRL_3] = 0x0123,
 	[RT5671_DSP_CLK] = 0x1100,
 	[RT5671_ASRC_4] = 0x0008,
-	[RT5671_ASRC_10] = 0x0007,
+	[RT5671_ASRC_10] = 0x0003,
 	[RT5671_DEPOP_M1] = 0x0004,
 	[RT5671_DEPOP_M2] = 0x1100,
 	[RT5671_DEPOP_M3] = 0x0646,
@@ -246,23 +248,23 @@ static const u16 rt5671_reg[RT5671_VENDOR_ID2 + 1] = {
 	[RT5671_VAD_CTRL4] = 0x000c,
 	[RT5671_VAD_CTRL5] = 0x0400,
 	[RT5671_ADC_EQ_CTRL1] = 0x7000,
-	[RT5671_EQ_CTRL1] = 0x6000,
+	[RT5671_EQ_CTRL1] = 0x7000,
 	[RT5671_ALC_DRC_CTRL2] = 0x001f,
-	[RT5671_ALC_CTRL_1] = 0x2206,
+	[RT5671_ALC_CTRL_1] = 0x220c,
 	[RT5671_ALC_CTRL_2] = 0x1f00,
 	[RT5671_BASE_BACK] = 0x1813,
 	[RT5671_MP3_PLUS1] = 0x0690,
 	[RT5671_MP3_PLUS2] = 0x1c17,
-	[RT5671_ADJ_HPF1] = 0xb320,
+	[RT5671_ADJ_HPF1] = 0xa220,
 	[RT5671_HP_CALIB_AMP_DET] = 0x0400,
 	[RT5671_SV_ZCD1] = 0x0809,
-	[RT5671_IL_CMD] = 0x0001,
+	[RT5671_IL_CMD1] = 0x0001,
 	[RT5671_IL_CMD2] = 0x0049,
-	[RT5671_IL_CMD3] = 0x0009,
+	[RT5671_IL_CMD3] = 0x0024,
 	[RT5671_DRC_HL_CTRL1] = 0x8000,
-	[RT5671_ADC_MONO_HP_CTRL1] = 0xb300,
-	[RT5671_ADC_STO2_HP_CTRL1] = 0xb300,
-	[RT5671_DIG_MISC] = 0x8010,
+	[RT5671_ADC_MONO_HP_CTRL1] = 0xa200,
+	[RT5671_ADC_STO2_HP_CTRL1] = 0xa200,
+	[RT5671_GEN_CTRL1] = 0x8010,
 	[RT5671_GEN_CTRL2] = 0x0033,
 	[RT5671_GEN_CTRL3] = 0x0080,
 };
@@ -492,7 +494,6 @@ static int rt5671_volatile_register(
 	case RT5671_PDM1_DATA_CTRL4:
 	case RT5671_PDM2_DATA_CTRL4:
 	case RT5671_PRIV_DATA:
-	case RT5671_ASRC_5:
 	case RT5671_IN1_CTRL1:
 	case RT5671_IN1_CTRL2:
 	case RT5671_IN1_CTRL3:
@@ -502,10 +503,10 @@ static int rt5671_volatile_register(
 	case RT5671_ADC_EQ_CTRL1:
 	case RT5671_EQ_CTRL1:
 	case RT5671_ALC_CTRL_1:
+	case RT5671_IRQ_CTRL1:
 	case RT5671_IRQ_CTRL2:
 	case RT5671_IRQ_CTRL3:
-	case RT5671_INT_IRQ_ST:
-	case RT5671_IL_CMD:
+	case RT5671_IL_CMD1:
 	case RT5671_DSP_CTRL1:
 	case RT5671_DSP_CTRL2:
 	case RT5671_DSP_CTRL3:
@@ -548,7 +549,7 @@ static int rt5671_readable_register(
 	case RT5671_MONO_ADC_MIXER:
 	case RT5671_AD_DA_MIXER:
 	case RT5671_STO_DAC_MIXER:
-	case RT5671_DD_MIXER:
+	case RT5671_MONO_DAC_MIXER:
 	case RT5671_DIG_MIXER:
 	case RT5671_DSP_PATH1:
 	case RT5671_DSP_PATH2:
@@ -586,7 +587,7 @@ static int rt5671_readable_register(
 	case RT5671_I2S2_SDP:
 	case RT5671_I2S3_SDP:
 	case RT5671_ADDA_CLK1:
-	case RT5671_ADDA_CLK2:
+	case RT5671_ADDA_HPF:
 	case RT5671_DMIC_CTRL1:
 	case RT5671_DMIC_CTRL2:
 	case RT5671_TDM_CTRL_1:
@@ -630,11 +631,11 @@ static int rt5671_readable_register(
 	case RT5671_ALC_CTRL_1:
 	case RT5671_ALC_CTRL_2:
 	case RT5671_ALC_CTRL_3:
-	case RT5671_JD_CTRL:
+	case RT5671_JD_CTRL1:
+	case RT5671_JD_CTRL2:
 	case RT5671_IRQ_CTRL1:
 	case RT5671_IRQ_CTRL2:
 	case RT5671_IRQ_CTRL3:
-	case RT5671_INT_IRQ_ST:
 	case RT5671_GPIO_CTRL1:
 	case RT5671_GPIO_CTRL2:
 	case RT5671_GPIO_CTRL3:
@@ -648,7 +649,7 @@ static int rt5671_readable_register(
 	case RT5671_HP_CALIB_AMP_DET:
 	case RT5671_SV_ZCD1:
 	case RT5671_SV_ZCD2:
-	case RT5671_IL_CMD:
+	case RT5671_IL_CMD1:
 	case RT5671_IL_CMD2:
 	case RT5671_IL_CMD3:
 	case RT5671_DRC_HL_CTRL1:
@@ -659,7 +660,7 @@ static int rt5671_readable_register(
 	case RT5671_ADC_STO2_HP_CTRL2:
 	case RT5671_JD_CTRL3:
 	case RT5671_JD_CTRL4:
-	case RT5671_DIG_MISC:
+	case RT5671_GEN_CTRL1:
 	case RT5671_DSP_CTRL1:
 	case RT5671_DSP_CTRL2:
 	case RT5671_DSP_CTRL3:
@@ -704,8 +705,8 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 			RT5671_PWR_JD1, RT5671_PWR_JD1);
 		snd_soc_update_bits(codec, RT5671_PWR_VOL,
 			RT5671_PWR_MIC_DET, RT5671_PWR_MIC_DET);
-		regfa = snd_soc_read(codec, RT5671_DIG_MISC);
-		snd_soc_update_bits(codec, RT5671_DIG_MISC, 0x1, 0x1);
+		regfa = snd_soc_read(codec, RT5671_GEN_CTRL1);
+		snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x1);
 /*
 		snd_soc_write(codec, RT5671_GPIO_CTRL2, 0x0004);
 		snd_soc_update_bits(codec, RT5671_GPIO_CTRL1,
@@ -715,7 +716,7 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 			RT5671_PWR_DAC_L1 | RT5671_PWR_DAC_R1,
 			RT5671_PWR_DAC_L1 | RT5671_PWR_DAC_R1);
 */
-		snd_soc_update_bits(codec, RT5671_IRQ_CTRL2, 0x80, 0x80);
+		snd_soc_update_bits(codec, RT5671_IRQ_CTRL1, 0x80, 0x80);
 		if (SND_SOC_BIAS_OFF == codec->dapm.bias_level) {
 			reg80 = snd_soc_read(codec, RT5671_GLB_CLK);
 			snd_soc_update_bits(codec, RT5671_GLB_CLK,
@@ -737,9 +738,9 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 			reg63 &= 0xfffc;
 			reg63 |= (RT5671_PWR_MB | 0x3);
 			reg64 |= RT5671_PWR_JD1 | RT5671_PWR_MB2;
-			snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x8, 0x8);
-			snd_soc_update_bits(codec, RT5671_IL_CMD, 0x40, 0x40);
-			snd_soc_read(codec, RT5671_IL_CMD);
+			snd_soc_update_bits(codec, RT5671_IRQ_CTRL3, 0x8, 0x8);
+			snd_soc_update_bits(codec, RT5671_IL_CMD1, 0x40, 0x40);
+			snd_soc_read(codec, RT5671_IL_CMD1);
 		} else {
 			jack_type = SND_JACK_HEADPHONE;
 			snd_soc_update_bits(codec, RT5671_PWR_VOL,
@@ -749,12 +750,12 @@ int rt5671_headset_detect(struct snd_soc_codec *codec, int jack_insert)
 		if (SND_SOC_BIAS_OFF == codec->dapm.bias_level)
 			snd_soc_write(codec, RT5671_GLB_CLK, reg80);
 
-		snd_soc_write(codec, RT5671_DIG_MISC, regfa);
+		snd_soc_write(codec, RT5671_GEN_CTRL1, regfa);
 		snd_soc_write(codec, RT5671_PWR_ANLG2, reg64);
 		snd_soc_write(codec, RT5671_PWR_ANLG1, reg63);
 		snd_soc_update_bits(codec, RT5671_GEN_CTRL3, 0x4, 0x4);
 	} else {
-		snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x8, 0x0);
+		snd_soc_update_bits(codec, RT5671_IRQ_CTRL3, 0x8, 0x0);
 		snd_soc_update_bits(codec, RT5671_IN1_CTRL2, RT5671_CBJ_DET_MODE,
 			RT5671_CBJ_DET_MODE);
 		jack_type = 0;
@@ -769,12 +770,12 @@ int rt5671_button_detect(struct snd_soc_codec *codec)
 {
 	int btn_type, val;
 
-	snd_soc_update_bits(codec, RT5671_IL_CMD, 0x40, 0x40);
+	snd_soc_update_bits(codec, RT5671_IL_CMD1, 0x40, 0x40);
 		
-	val = snd_soc_read(codec, RT5671_IL_CMD);
+	val = snd_soc_read(codec, RT5671_IL_CMD1);
 	btn_type = val & 0xff80;
 	pr_debug("btn_type = 0x%x\n",btn_type);
-	snd_soc_write(codec, RT5671_IL_CMD, val);
+	snd_soc_write(codec, RT5671_IL_CMD1, val);
 	return btn_type;
 }
 EXPORT_SYMBOL(rt5671_button_detect);
@@ -797,13 +798,13 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 		if (rt5671->jack_type == 0) {
 			rt5671->jack_type = rt5671_headset_detect(codec, 1);
 			/* change jd polarity */
-			snd_soc_update_bits(codec, RT5671_IRQ_CTRL2, 
+			snd_soc_update_bits(codec, RT5671_IRQ_CTRL1, 
 				0x1 << 7, 0);
 			*data = rt5671->jack_type;
 			return RT5671_J_IN_EVENT;
 		}
 		event_type = 0;
-		if (snd_soc_read(codec, RT5671_INT_IRQ_ST) & 0x4) {
+		if (snd_soc_read(codec, RT5671_IRQ_CTRL3) & 0x4) {
 			/* button event */
 			event_type = RT5671_BTN_EVENT;
 			*data = rt5671_button_detect(codec);
@@ -813,15 +814,15 @@ int rt5671_check_interrupt_event(struct snd_soc_codec *codec, int *data)
 			event_type = RT5671_BR_EVENT;
 		}
 		if (*data & 0x2480)
-			snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x1, 0x1);
+			snd_soc_update_bits(codec, RT5671_IRQ_CTRL3, 0x1, 0x1);
 		else
-			snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x1, 0x0);
+			snd_soc_update_bits(codec, RT5671_IRQ_CTRL3, 0x1, 0x0);
 		return (event_type == 0 ? RT5671_UN_EVENT : event_type);
 	case 0x70:
 	case 0x10:
-		snd_soc_update_bits(codec, RT5671_INT_IRQ_ST, 0x1, 0x0);
+		snd_soc_update_bits(codec, RT5671_IRQ_CTRL3, 0x1, 0x0);
 		/* change jd polarity */
-		snd_soc_update_bits(codec, RT5671_IRQ_CTRL2,
+		snd_soc_update_bits(codec, RT5671_IRQ_CTRL1,
 			0x1 << 7, 0x1 << 7);
 		
 		rt5671->jack_type = rt5671_headset_detect(codec, 0);
@@ -941,13 +942,13 @@ static const char * const rt5671_asrc_clk_source[] = {
 	"clk_sys4", "clk_sys5"
 };
 
-static const SOC_ENUM_SINGLE_DECL(rt5671_dc_sto_asrc_enum, RT5671_ASRC_2,
+static const SOC_ENUM_SINGLE_DECL(rt5671_da_sto_asrc_enum, RT5671_ASRC_2,
 				12, rt5671_asrc_clk_source);
 
-static const SOC_ENUM_SINGLE_DECL(rt5671_dc_monol_asrc_enum, RT5671_ASRC_2,
+static const SOC_ENUM_SINGLE_DECL(rt5671_da_monol_asrc_enum, RT5671_ASRC_2,
 				8, rt5671_asrc_clk_source);
 
-static const SOC_ENUM_SINGLE_DECL(rt5671_dc_monor_asrc_enum, RT5671_ASRC_2,
+static const SOC_ENUM_SINGLE_DECL(rt5671_da_monor_asrc_enum, RT5671_ASRC_2,
 				4, rt5671_asrc_clk_source);
 
 static const SOC_ENUM_SINGLE_DECL(rt5671_ad_sto1_asrc_enum, RT5671_ASRC_2,
@@ -974,13 +975,6 @@ static const char * const rt5671_tdm_select[] = {
 
 static const SOC_ENUM_SINGLE_DECL(rt5671_if1_tdm_enum, RT5671_TDM_CTRL_1,
 				8, rt5671_tdm_select);
-
-static const char * const rt5671_tdm_txdp_select[] = {
-	"0_1", "2_3", "4_5", "6_7"
-};
-
-static const SOC_ENUM_SINGLE_DECL(rt5671_txdp_tdm_enum, RT5671_DSP_PATH1,
-				2, rt5671_tdm_txdp_select);
 
 static int rt5671_vol_rescale_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
@@ -1209,9 +1203,9 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	SOC_ENUM("ADC IF4 Data Switch", rt5671_if4_adc_enum),
 	SOC_ENUM("DAC IF4 Data Switch", rt5671_if4_dac_enum),
 
-	SOC_ENUM("DA STO ASRC Switch", rt5671_dc_sto_asrc_enum),
-	SOC_ENUM("DA MONOL ASRC Switch", rt5671_dc_monol_asrc_enum),
-	SOC_ENUM("DA MONOR ASRC Switch", rt5671_dc_monor_asrc_enum),
+	SOC_ENUM("DA STO ASRC Switch", rt5671_da_sto_asrc_enum),
+	SOC_ENUM("DA MONOL ASRC Switch", rt5671_da_monol_asrc_enum),
+	SOC_ENUM("DA MONOR ASRC Switch", rt5671_da_monor_asrc_enum),
 	SOC_ENUM("AD STO1 ASRC Switch", rt5671_ad_sto1_asrc_enum),
 	SOC_ENUM("AD STO2 ASRC Switch", rt5671_ad_sto2_asrc_enum),
 	SOC_ENUM("AD MONOL ASRC Switch", rt5671_ad_monol_asrc_enum),
@@ -1220,7 +1214,6 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	SOC_ENUM("DOWN ASRC Switch", rt5671_down_filter_asrc_enum),
 
 	SOC_ENUM("IF1 ADC TDM Switch", rt5671_if1_tdm_enum),
-	SOC_ENUM("DSP TxDP TDM Switch", rt5671_txdp_tdm_enum),
 
 	SOC_SINGLE("STO1 ADC Comp Gain", RT5671_ADC_BST_VOL1,
 			RT5671_STO1_ADC_COMP_SFT, 3, 0),
@@ -1383,22 +1376,22 @@ static const struct snd_kcontrol_new rt5671_sto_dac_r_mix[] = {
 };
 
 static const struct snd_kcontrol_new rt5671_mono_dac_l_mix[] = {
-	SOC_DAPM_SINGLE("DAC L1 Switch", RT5671_DD_MIXER,
+	SOC_DAPM_SINGLE("DAC L1 Switch", RT5671_MONO_DAC_MIXER,
 			RT5671_M_DAC_L1_MONO_L_SFT, 1, 1),
-	SOC_DAPM_SINGLE("DAC L2 Switch", RT5671_DD_MIXER,
+	SOC_DAPM_SINGLE("DAC L2 Switch", RT5671_MONO_DAC_MIXER,
 			RT5671_M_DAC_L2_MONO_L_SFT, 1, 1),
-	SOC_DAPM_SINGLE("DAC R2 Switch", RT5671_DD_MIXER,
+	SOC_DAPM_SINGLE("DAC R2 Switch", RT5671_MONO_DAC_MIXER,
 			RT5671_M_DAC_R2_MONO_L_SFT, 1, 1),
 	SOC_DAPM_SINGLE("Sidetone Switch", RT5671_SIDETONE_CTRL,
 			RT5671_M_ST_DACL2_SFT, 1, 1),
 };
 
 static const struct snd_kcontrol_new rt5671_mono_dac_r_mix[] = {
-	SOC_DAPM_SINGLE("DAC R1 Switch", RT5671_DD_MIXER,
+	SOC_DAPM_SINGLE("DAC R1 Switch", RT5671_MONO_DAC_MIXER,
 			RT5671_M_DAC_R1_MONO_R_SFT, 1, 1),
-	SOC_DAPM_SINGLE("DAC R2 Switch", RT5671_DD_MIXER,
+	SOC_DAPM_SINGLE("DAC R2 Switch", RT5671_MONO_DAC_MIXER,
 			RT5671_M_DAC_R2_MONO_R_SFT, 1, 1),
-	SOC_DAPM_SINGLE("DAC L2 Switch", RT5671_DD_MIXER,
+	SOC_DAPM_SINGLE("DAC L2 Switch", RT5671_MONO_DAC_MIXER,
 			RT5671_M_DAC_L2_MONO_R_SFT, 1, 1),
 	SOC_DAPM_SINGLE("Sidetone Switch", RT5671_SIDETONE_CTRL,
 			RT5671_M_ST_DACR2_SFT, 1, 1),
@@ -1595,7 +1588,7 @@ static const struct snd_kcontrol_new rt5671_dac_r2_mux =
 
 /* RxDP source */ /* MX-2D [15:13] */
 static const char * const rt5671_rxdp_src[] = {
-	"IF2 DAC", "IF1 DAC", "STO1 ADC Mixer", "STO2 ADC Mixer",
+	"IF2 DAC", "IF1 DAC2", "STO1 ADC Mixer", "STO2 ADC Mixer",
 	"Mono ADC Mixer L", "Mono ADC Mixer R", "DAC1"
 };
 
@@ -1674,14 +1667,14 @@ static const SOC_ENUM_SINGLE_DECL(
 
 static const struct snd_kcontrol_new rt5671_sto_adc1_mux =
 	SOC_DAPM_ENUM("Stereo1 ADC1 source", rt5671_stereo1_adc1_enum);
-	
+
 static const SOC_ENUM_SINGLE_DECL(
 	rt5671_stereo2_adc1_enum, RT5671_STO2_ADC_MIXER,
 	RT5671_ADC_1_SRC_SFT, rt5671_stereo_adc1_src);
 
 static const struct snd_kcontrol_new rt5671_sto2_adc1_mux =
 	SOC_DAPM_ENUM("Stereo2 ADC1 source", rt5671_stereo2_adc1_enum);
-	
+
 /* MX-27 MX-26 [11] */
 static const char * const rt5671_stereo_adc2_src[] = {
 	"DAC MIX", "DMIC"
@@ -1840,6 +1833,18 @@ static const SOC_ENUM_SINGLE_DECL(
 static const struct snd_kcontrol_new rt5671_mono_adc_r_mux =
 	SOC_DAPM_ENUM("Mono ADC Right source", rt5671_mono_adc_r_enum);
 
+/* MX-2D [3:2] */
+static const char * const rt5671_txdp_slot_src[] = {
+	"Slot 0-1", "Slot 2-3", "Slot 4-5", "Slot 6-7"
+};
+
+static const SOC_ENUM_SINGLE_DECL(
+	rt5671_txdp_slot_enum, RT5671_DSP_PATH1,
+	RT5671_TXDP_SLOT_SEL_SFT, rt5671_txdp_slot_src);
+
+static const struct snd_kcontrol_new rt5671_txdp_slot_mux =
+	SOC_DAPM_ENUM("TxDP Slot source", rt5671_txdp_slot_enum);
+
 /* MX-2F [15] */
 static const char * const rt5671_if1_adc2_in_src[] = {
 	"IF_ADC2", "VAD_ADC"
@@ -1927,7 +1932,7 @@ static const char * const rt5671_if1_adc1_in1_src[] = {
 };
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_if1_adc1_in1_enum, RT5671_DIG_MISC,
+	rt5671_if1_adc1_in1_enum, RT5671_GEN_CTRL1,
 	RT5671_IF1_ADC1_IN1_SFT, rt5671_if1_adc1_in1_src);
 
 static const struct snd_kcontrol_new rt5671_if1_adc1_in1_mux =
@@ -1939,7 +1944,7 @@ static const char * const rt5671_if1_adc1_in2_src[] = {
 };
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_if1_adc1_in2_enum, RT5671_DIG_MISC,
+	rt5671_if1_adc1_in2_enum, RT5671_GEN_CTRL1,
 	RT5671_IF1_ADC1_IN2_SFT, rt5671_if1_adc1_in2_src);
 
 static const struct snd_kcontrol_new rt5671_if1_adc1_in2_mux =
@@ -1951,7 +1956,7 @@ static const char * const rt5671_if1_adc2_in1_src[] = {
 };
 
 static const SOC_ENUM_SINGLE_DECL(
-	rt5671_if1_adc2_in1_enum, RT5671_DIG_MISC,
+	rt5671_if1_adc2_in1_enum, RT5671_GEN_CTRL1,
 	RT5671_IF1_ADC2_IN1_SFT, rt5671_if1_adc2_in1_src);
 
 static const struct snd_kcontrol_new rt5671_if1_adc2_in1_mux =
@@ -2198,7 +2203,6 @@ static int rt5671_hp_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *kcontrol, int event)
 {
 	struct snd_soc_codec *codec = w->codec;
-	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
@@ -2631,6 +2635,31 @@ static int rt5671_pre_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+static int rt5671_slot_sel_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	int ret, val, src = 0;
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		/*read MX-2d [3:2] to decide TDM source*/
+		/*currently, support slot 0/1 and 2/3 only*/
+		val = snd_soc_read(codec, RT5671_DSP_PATH1) & 0xc;
+		if (val == 0x4) /*slot 2/3*/
+			src = 1;
+
+		ret = rt5671_dsp_set_data_source(codec, src);
+		if (ret < 0)
+			pr_err("set DSP slot select error\n");
+		break;
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
 static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_SUPPLY("PLL1", RT5671_PWR_ANLG2,
 		RT5671_PWR_PLL_BIT, 0, NULL, 0),
@@ -2651,9 +2680,9 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	/* Input Side */
 	/* micbias */
 	SND_SOC_DAPM_MICBIAS("micbias1", RT5671_PWR_ANLG2,
-			RT5671_PWR_MB1_BIT, 0),
+		RT5671_PWR_MB1_BIT, 0),
 	SND_SOC_DAPM_MICBIAS("micbias2", RT5671_PWR_ANLG2,
-			RT5671_PWR_MB2_BIT, 0),
+		RT5671_PWR_MB2_BIT, 0),
 	/* Input Lines */
 	SND_SOC_DAPM_INPUT("DMIC L1"),
 	SND_SOC_DAPM_INPUT("DMIC R1"),
@@ -2710,6 +2739,7 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		RT5671_PWR_IN_L_BIT, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("INR VOL", RT5671_PWR_VOL,
 		RT5671_PWR_IN_R_BIT, 0, NULL, 0),
+
 	/* REC Mixer */
 	SND_SOC_DAPM_MIXER("RECMIXL", RT5671_PWR_MIXER, RT5671_PWR_RM_L_BIT, 0,
 		rt5671_rec_l_mix, ARRAY_SIZE(rt5671_rec_l_mix)),
@@ -2774,14 +2804,10 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_SUPPLY("adc stereo2 filter", RT5671_PWR_DIG2,
 		RT5671_PWR_ADC_S2F_BIT, 0, rt5671_sto2_adc_filter_event,
 		SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMU),
-	SND_SOC_DAPM_MIXER_E("Sto1 ADC MIXL", SND_SOC_NOPM, 0, 0,
-		rt5671_sto1_adc_l_mix, ARRAY_SIZE(rt5671_sto1_adc_l_mix),
-		rt5671_sto1_adcl_event, SND_SOC_DAPM_PRE_PMD |
-		SND_SOC_DAPM_POST_PMU),
-	SND_SOC_DAPM_MIXER_E("Sto1 ADC MIXR", SND_SOC_NOPM, 0, 0,
-		rt5671_sto1_adc_r_mix, ARRAY_SIZE(rt5671_sto1_adc_r_mix),
-		rt5671_sto1_adcr_event, SND_SOC_DAPM_PRE_PMD |
-		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_MIXER("Sto1 ADC MIXL", SND_SOC_NOPM, 0, 0,
+		rt5671_sto1_adc_l_mix, ARRAY_SIZE(rt5671_sto1_adc_l_mix)),
+	SND_SOC_DAPM_MIXER("Sto1 ADC MIXR", SND_SOC_NOPM, 0, 0,
+		rt5671_sto1_adc_r_mix, ARRAY_SIZE(rt5671_sto1_adc_r_mix)),
 	SND_SOC_DAPM_MIXER("Sto2 ADC MIXL", SND_SOC_NOPM, 0, 0,
 		rt5671_sto2_adc_l_mix, ARRAY_SIZE(rt5671_sto2_adc_l_mix)),
 	SND_SOC_DAPM_MIXER("Sto2 ADC MIXR", SND_SOC_NOPM, 0, 0,
@@ -2800,13 +2826,18 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		SND_SOC_DAPM_POST_PMU),
 
 	/* ADC PGA */
-	SND_SOC_DAPM_PGA("Stereo1 ADC MIXL", SND_SOC_NOPM, 0, 0, NULL, 0),
-	SND_SOC_DAPM_PGA("Stereo1 ADC MIXR", SND_SOC_NOPM, 0, 0, NULL, 0),
+	SND_SOC_DAPM_PGA_S("Stereo1 ADC MIXL", 1, SND_SOC_NOPM, 0, 0,
+		rt5671_sto1_adcl_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_PGA_S("Stereo1 ADC MIXR", 1, SND_SOC_NOPM, 0, 0,
+		rt5671_sto1_adcr_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
 	SND_SOC_DAPM_PGA("Stereo2 ADC MIXL", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("Stereo2 ADC MIXR", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("Sto2 ADC LR MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("Stereo1 ADC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("Stereo2 ADC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
+	SND_SOC_DAPM_PGA("Mono ADC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("VAD_ADC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF_ADC1", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF_ADC2", SND_SOC_NOPM, 0, 0, NULL, 0),
@@ -2822,7 +2853,9 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA("TxDP_ADC_R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("TxDC_DAC", SND_SOC_NOPM, 0, 0, NULL, 0),
 
-	SND_SOC_DAPM_PGA("8CH TDM Data", SND_SOC_NOPM, 0, 0, NULL, 0),
+	SND_SOC_DAPM_MUX_E("TDM Data Mux", SND_SOC_NOPM, 0, 0,
+		&rt5671_txdp_slot_mux, rt5671_slot_sel_event,
+		SND_SOC_DAPM_POST_PMU),
 
 	SND_SOC_DAPM_MUX("DSP UL Mux", SND_SOC_NOPM, 0, 0,
 		&rt5671_dsp_ul_mux),
@@ -2910,7 +2943,7 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		rt5671_dac_r_mix, ARRAY_SIZE(rt5671_dac_r_mix),
 		rt5671_dac_r_event, SND_SOC_DAPM_PRE_PMD |
 		SND_SOC_DAPM_POST_PMU),
-	SND_SOC_DAPM_PGA("DAC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
+	SND_SOC_DAPM_PGA("DAC1 MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 
 	/* DAC2 channel Mux */
 	SND_SOC_DAPM_MUX("DAC L2 Mux", SND_SOC_NOPM, 0, 0,
@@ -2953,6 +2986,7 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		rt5671_dig_l_mix, ARRAY_SIZE(rt5671_dig_l_mix)),
 	SND_SOC_DAPM_MIXER("DAC MIXR", SND_SOC_NOPM, 0, 0,
 		rt5671_dig_r_mix, ARRAY_SIZE(rt5671_dig_r_mix)),
+	SND_SOC_DAPM_PGA("DAC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 
 	/* DACs */
 	SND_SOC_DAPM_SUPPLY("DAC L1 Power", RT5671_PWR_DIG1,
@@ -3135,15 +3169,13 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "Stereo1 ADC Mux", "ADC1L ADC2R", "ADC 1_2" },
 	{ "Stereo1 ADC Mux", "ADC3", "ADC 3" },
 
-	{ "Stereo1 ADC2 Mux", "DMIC", "Stereo1 DMIC Mux" },
-	{ "Stereo1 ADC2 Mux", "DAC MIX", "DAC MIXL" },
-	{ "Stereo1 ADC1 Mux", "ADC", "Stereo1 ADC Mux" },
-	{ "Stereo1 ADC1 Mux", "DAC MIX", "DAC MIXL" },
+	{ "DAC MIX", NULL, "DAC MIXL" },
+	{ "DAC MIX", NULL, "DAC MIXR" },
 
-	{ "Stereo1 ADC1 Mux", "ADC", "Stereo1 ADC Mux" },
-	{ "Stereo1 ADC1 Mux", "DAC MIX", "DAC MIXR" },
 	{ "Stereo1 ADC2 Mux", "DMIC", "Stereo1 DMIC Mux" },
-	{ "Stereo1 ADC2 Mux", "DAC MIX", "DAC MIXR" },
+	{ "Stereo1 ADC2 Mux", "DAC MIX", "DAC MIX" },
+	{ "Stereo1 ADC1 Mux", "ADC", "Stereo1 ADC Mux" },
+	{ "Stereo1 ADC1 Mux", "DAC MIX", "DAC MIX" },
 
 	{ "Mono ADC L Mux", "ADC1", "ADC 1" },
 	{ "Mono ADC L Mux", "ADC3", "ADC 3" },
@@ -3188,14 +3220,9 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "Stereo2 ADC Mux", "ADC3", "ADC 3" },
 
 	{ "Stereo2 ADC2 Mux", "DMIC", "Stereo2 DMIC Mux" },
-	{ "Stereo2 ADC2 Mux", "DAC MIX", "DAC MIXL" },
+	{ "Stereo2 ADC2 Mux", "DAC MIX", "DAC MIX" },
 	{ "Stereo2 ADC1 Mux", "ADC", "Stereo2 ADC Mux" },
-	{ "Stereo2 ADC1 Mux", "DAC MIX", "DAC MIXL" },
-
-	{ "Stereo2 ADC1 Mux", "ADC", "Stereo2 ADC Mux" },
-	{ "Stereo2 ADC1 Mux", "DAC MIX", "DAC MIXR" },
-	{ "Stereo2 ADC2 Mux", "DMIC", "Stereo2 DMIC Mux" },
-	{ "Stereo2 ADC2 Mux", "DAC MIX", "DAC MIXR" },
+	{ "Stereo2 ADC1 Mux", "DAC MIX", "DAC MIX" },
 
 	{ "Sto2 ADC MIXL", "ADC1 Switch", "Stereo2 ADC1 Mux" },
 	{ "Sto2 ADC MIXL", "ADC2 Switch", "Stereo2 ADC2 Mux" },
@@ -3219,7 +3246,7 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "VAD ADC Mux", "Sto1 ADC L", "Stereo1 ADC MIXL" },
 	{ "VAD ADC Mux", "Mono ADC L", "Mono ADC MIXL" },
 	{ "VAD ADC Mux", "Mono ADC R", "Mono ADC MIXR" },
-	{ "VAD ADC Mux", "Sto2 ADC L", "Sto2 ADC MIXL" },
+	{ "VAD ADC Mux", "Sto2 ADC L", "Stereo2 ADC MIXL" },
 
 	{ "VAD_ADC", NULL, "VAD ADC Mux" },
 
@@ -3247,27 +3274,25 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 
 	{ "Stereo1 ADC MIX", NULL, "Stereo1 ADC MIXL" },
 	{ "Stereo1 ADC MIX", NULL, "Stereo1 ADC MIXR" },
-	{ "Stereo2 ADC MIX", NULL, "Sto2 ADC MIXL" },
-	{ "Stereo2 ADC MIX", NULL, "Sto2 ADC MIXR" },
+	{ "Stereo2 ADC MIX", NULL, "Stereo2 ADC MIXL" },
+	{ "Stereo2 ADC MIX", NULL, "Stereo2 ADC MIXR" },
+	{ "Mono ADC MIX", NULL, "Mono ADC MIXL" },
+	{ "Mono ADC MIX", NULL, "Mono ADC MIXR" },
 
 	{ "RxDP Mux", "IF2 DAC", "IF2 DAC" },
-	{ "RxDP Mux", "IF1 DAC", "IF1 DAC2" },
+	{ "RxDP Mux", "IF1 DAC2", "IF1 DAC2" },
 	{ "RxDP Mux", "STO1 ADC Mixer", "Stereo1 ADC MIX" },
 	{ "RxDP Mux", "STO2 ADC Mixer", "Stereo2 ADC MIX" },
 	{ "RxDP Mux", "Mono ADC Mixer L", "Mono ADC MIXL" },
 	{ "RxDP Mux", "Mono ADC Mixer R", "Mono ADC MIXR" },
-	{ "RxDP Mux", "DAC1", "DAC MIX" },
+	{ "RxDP Mux", "DAC1", "DAC1 MIX" },
 
-	{ "8CH TDM Data", NULL, "Stereo1 ADC MIXL" },
-	{ "8CH TDM Data", NULL, "Stereo1 ADC MIXR" },
-	{ "8CH TDM Data", NULL, "Mono ADC MIXL" },
-	{ "8CH TDM Data", NULL, "Mono ADC MIXR" },
-	{ "8CH TDM Data", NULL, "Sto2 ADC MIXL" },
-	{ "8CH TDM Data", NULL, "Sto2 ADC MIXR" },
-	{ "8CH TDM Data", NULL, "IF2 DAC L" },
-	{ "8CH TDM Data", NULL, "IF2 DAC R" },
+	{ "TDM Data Mux", "Slot 0-1", "Stereo1 ADC MIX" },
+	{ "TDM Data Mux", "Slot 2-3", "Mono ADC MIX" },
+	{ "TDM Data Mux", "Slot 4-5", "Stereo2 ADC MIX" },
+	{ "TDM Data Mux", "Slot 6-7", "IF2 DAC" },
 
-	{ "DSP UL Mux", "Bypass", "8CH TDM Data" },
+	{ "DSP UL Mux", "Bypass", "TDM Data Mux" },
 	{ "DSP UL Mux", NULL, "I2S DSP" },
 	{ "DSP DL Mux", "Bypass", "RxDP Mux" },
 	{ "DSP DL Mux", NULL, "I2S DSP" },
@@ -3281,10 +3306,11 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 
 	{ "IF1 ADC", NULL, "I2S1" },
 	{ "IF1 ADC", NULL, "IF1_ADC1" },
+#ifdef USE_TDM
 	{ "IF1 ADC", NULL, "IF1_ADC2" },
 	{ "IF1 ADC", NULL, "IF_ADC3" },
 	{ "IF1 ADC", NULL, "TxDP_ADC" },
-
+#endif
 	{ "IF2 ADC Mux", "IF_ADC1", "IF_ADC1" },
 	{ "IF2 ADC Mux", "IF_ADC2", "IF_ADC2" },
 	{ "IF2 ADC Mux", "IF_ADC3", "IF_ADC3" },
@@ -3372,8 +3398,8 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "DAC1 MIXR", "DAC1 Switch", "DAC1 R Mux" },
 	{ "DAC1 MIXR", NULL, "dac stereo1 filter" },
 
-	{ "DAC MIX", NULL, "DAC1 MIXL" },
-	{ "DAC MIX", NULL, "DAC1 MIXR" },
+	{ "DAC1 MIX", NULL, "DAC1 MIXL" },
+	{ "DAC1 MIX", NULL, "DAC1 MIXR" },
 
 	{ "Audio DSP", NULL, "DAC1 MIXL" },
 	{ "Audio DSP", NULL, "DAC1 MIXR" },
@@ -3585,9 +3611,9 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 			RT5671_I2S_DL_MASK, val_len);
 		snd_soc_update_bits(codec, RT5671_ADDA_CLK1, mask_clk, val_clk);
 		if (bclk_ms == 1)
-			snd_soc_update_bits(codec, RT5671_TDM_CTRL_1, 0x4f00, 0x4c00);
+			snd_soc_update_bits(codec, RT5671_TDM_CTRL_1, 0x4c00, 0x4c00);
 		else
-			snd_soc_update_bits(codec, RT5671_TDM_CTRL_1, 0x4f00, 0x4000);
+			snd_soc_update_bits(codec, RT5671_TDM_CTRL_1, 0x4c00, 0x4000);
 		break;
 	case RT5671_AIF2:
 		bclk_ms = 1;
@@ -4159,7 +4185,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x279c);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x273c);
-			snd_soc_write(codec, RT5671_IRQ_CTRL3, 0x0040);
+			snd_soc_write(codec, RT5671_IRQ_CTRL2, 0x0040);
 			snd_soc_update_bits(codec, RT5671_STO1_ADC_DIG_VOL, RT5671_L_MUTE, 0);
 #else
 			/* Oder 130701 update for DMIC1 start 19.2M to 16k */
@@ -4183,7 +4209,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x279c);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x273c);
-			snd_soc_write(codec, RT5671_IRQ_CTRL3, 0x0040);
+			snd_soc_write(codec, RT5671_IRQ_CTRL2, 0x0040);
 			snd_soc_update_bits(codec, RT5671_STO1_ADC_DIG_VOL, RT5671_L_MUTE, 0);
 			/* Oder 130701 update end */
 #endif
@@ -4288,7 +4314,6 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 			ARRAY_SIZE(rt5671_dapm_widgets));
 	snd_soc_dapm_add_routes(&codec->dapm, rt5671_dapm_routes,
 			ARRAY_SIZE(rt5671_dapm_routes));
-
 	rt5671->dsp_sw = RT5671_DSP_NS;
 	rt5671_dsp_probe(codec);
 
@@ -4405,6 +4430,7 @@ struct snd_soc_dai_driver rt5671_dai[] = {
 			.formats = RT5671_FORMATS,
 		},
 		.ops = &rt5671_aif_dai_ops,
+		.symmetric_rates = 1,
 	},
 	{
 		.name = "rt5671-aif2",
@@ -4424,6 +4450,7 @@ struct snd_soc_dai_driver rt5671_dai[] = {
 			.formats = RT5671_FORMATS,
 		},
 		.ops = &rt5671_aif_dai_ops,
+		.symmetric_rates = 1,
 	},
 	{
 		.name = "rt5671-aif3",
@@ -4443,6 +4470,7 @@ struct snd_soc_dai_driver rt5671_dai[] = {
 			.formats = RT5671_FORMATS,
 		},
 		.ops = &rt5671_aif_dai_ops,
+		.symmetric_rates = 1,
 	},
 	{
 		.name = "rt5671-aif4",
@@ -4462,6 +4490,7 @@ struct snd_soc_dai_driver rt5671_dai[] = {
 			.formats = RT5671_FORMATS,
 		},
 		.ops = &rt5671_aif_dai_ops,
+		.symmetric_rates = 1,
 	},
 
 };

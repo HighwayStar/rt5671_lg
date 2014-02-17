@@ -48,7 +48,7 @@
 #define RT5671_MONO_ADC_MIXER			0x28
 #define RT5671_AD_DA_MIXER			0x29
 #define RT5671_STO_DAC_MIXER			0x2a
-#define RT5671_DD_MIXER				0x2b
+#define RT5671_MONO_DAC_MIXER			0x2b
 #define RT5671_DIG_MIXER			0x2c
 #define RT5671_DSP_PATH1			0x2d
 #define RT5671_DSP_PATH2			0x2e
@@ -92,7 +92,7 @@
 #define RT5671_I2S2_SDP				0x71
 #define RT5671_I2S3_SDP				0x72
 #define RT5671_ADDA_CLK1			0x73
-#define RT5671_ADDA_CLK2			0x74
+#define RT5671_ADDA_HPF				0x74
 #define RT5671_DMIC_CTRL1			0x75
 #define RT5671_DMIC_CTRL2			0x76
 /* Format - TDM Control */
@@ -141,11 +141,11 @@
 #define RT5671_ALC_CTRL_2			0xb5
 #define RT5671_ALC_CTRL_3			0xb6
 #define RT5671_ALC_CTRL_4			0xb7
-#define RT5671_JD_CTRL				0xbb
-#define RT5671_IRQ_CTRL1			0xbc
-#define RT5671_IRQ_CTRL2			0xbd
-#define RT5671_IRQ_CTRL3			0xbe
-#define RT5671_INT_IRQ_ST			0xbf
+#define RT5671_JD_CTRL1				0xbb
+#define RT5671_JD_CTRL2				0xbc
+#define RT5671_IRQ_CTRL1			0xbd
+#define RT5671_IRQ_CTRL2			0xbe
+#define RT5671_IRQ_CTRL3			0xbf
 #define RT5671_GPIO_CTRL1			0xc0
 #define RT5671_GPIO_CTRL2			0xc1
 #define RT5671_GPIO_CTRL3			0xc2
@@ -159,7 +159,7 @@
 #define RT5671_HP_CALIB_AMP_DET			0xd6
 #define RT5671_SV_ZCD1				0xd9
 #define RT5671_SV_ZCD2				0xda
-#define RT5671_IL_CMD				0xdb
+#define RT5671_IL_CMD1				0xdb
 #define RT5671_IL_CMD2				0xdc
 #define RT5671_IL_CMD3				0xdd
 #define RT5671_DRC_HL_CTRL1			0xe6
@@ -171,7 +171,7 @@
 #define RT5671_JD_CTRL3				0xf8
 #define RT5671_JD_CTRL4				0xf9
 /* General Control */
-#define RT5671_DIG_MISC				0xfa
+#define RT5671_GEN_CTRL1			0xfa
 #define RT5671_GEN_CTRL2			0xfb
 #define RT5671_GEN_CTRL3			0xfc
 
@@ -502,14 +502,18 @@
 /* DSP Path Control 1 (0x2d) */
 #define RT5671_RXDP_SEL_MASK			(0x7 << 13)
 #define RT5671_RXDP_SEL_SFT			13
-#define RT5671_RXDP_SRC_MASK			(0x1 << 15)
-#define RT5671_RXDP_SRC_SFT			15
-#define RT5671_RXDP_SRC_NOR			(0x0 << 15)
-#define RT5671_RXDP_SRC_DIV3			(0x1 << 15)
-#define RT5671_TXDP_SRC_MASK			(0x1 << 14)
-#define RT5671_TXDP_SRC_SFT			14
-#define RT5671_TXDP_SRC_NOR			(0x0 << 14)
-#define RT5671_TXDP_SRC_DIV3			(0x1 << 14)
+#define RT5671_RXDP_SRC_MASK			(0x3 << 11)
+#define RT5671_RXDP_SRC_SFT			11
+#define RT5671_RXDP_SRC_NOR			(0x0 << 11)
+#define RT5671_RXDP_SRC_DIV2			(0x1 << 11)
+#define RT5671_RXDP_SRC_DIV3			(0x2 << 11)
+#define RT5671_TXDP_SRC_MASK			(0x3 << 4)
+#define RT5671_TXDP_SRC_SFT			4
+#define RT5671_TXDP_SRC_NOR			(0x0 << 4)
+#define RT5671_TXDP_SRC_DIV2			(0x1 << 4)
+#define RT5671_TXDP_SRC_DIV3			(0x2 << 4)
+#define RT5671_TXDP_SLOT_SEL_MASK		(0x3 << 2)
+#define RT5671_TXDP_SLOT_SEL_SFT		2
 #define RT5671_DSP_UL_SEL			(0x1 << 1)
 #define RT5671_DSP_UL_SFT			1
 #define RT5671_DSP_DL_SEL			0x1
