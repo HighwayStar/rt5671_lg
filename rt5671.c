@@ -2638,6 +2638,7 @@ static int rt5671_pre_event(struct snd_soc_dapm_widget *w,
 static int rt5671_slot_sel_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *kcontrol, int event)
 {
+#if 0
 	struct snd_soc_codec *codec = w->codec;
 	int ret, val, src = 0;
 
@@ -2656,7 +2657,7 @@ static int rt5671_slot_sel_event(struct snd_soc_dapm_widget *w,
 	default:
 		return 0;
 	}
-
+#endif
 	return 0;
 }
 

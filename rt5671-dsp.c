@@ -931,8 +931,6 @@ src_err:
  * @mode: DSP mode.
  *
  * Set parameters of mode to DSP.
- * There are three modes which includes " mic AEC + NS + FENS",
- * "HFBF" and "Far-field pickup".
  *
  * Returns 0 for success or negative error code.
  */
@@ -982,7 +980,7 @@ mode_err:
 static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 {
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
-	int ret;
+	int ret, src = 0;
 
 	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, RT5671_RST_DSP,
 		RT5671_RST_DSP);
@@ -1003,6 +1001,13 @@ static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 		goto effect_err;
 
 	ret = rt5671_dsp_conf(codec);
+	if (ret < 0)
+		goto effect_err;
+
+	if ((snd_soc_read(codec, RT5671_DSP_PATH1) & 0xc) == 0x4) /*slot 2/3*/
+		src = 1;
+	
+	ret = rt5671_dsp_set_data_source(codec, src);
 	if (ret < 0)
 		goto effect_err;
 
