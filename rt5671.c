@@ -4314,7 +4314,7 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 			ARRAY_SIZE(rt5671_dapm_widgets));
 	snd_soc_dapm_add_routes(&codec->dapm, rt5671_dapm_routes,
 			ARRAY_SIZE(rt5671_dapm_routes));
-	rt5671->dsp_sw = RT5671_DSP_NS;
+	rt5671->dsp_sw = RT5671_DSP_HANDSET;
 	rt5671_dsp_probe(codec);
 
 #ifdef RTK_IOCTL

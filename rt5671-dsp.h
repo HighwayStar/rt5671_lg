@@ -49,7 +49,7 @@
 
 enum {
 	RT5671_DSP_HANDSET,
-	RT5671_DSP_HANDFREE,
+	RT5671_DSP_HANDSFREE,
 };
 
 struct rt5671_dsp_param {

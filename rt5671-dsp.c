@@ -510,7 +510,7 @@ static unsigned short rt5671_dsp_handset[][2] = {
 #define RT5671_DSP_HANDSET_NUM \
 	(sizeof(rt5671_dsp_handset) / sizeof(rt5671_dsp_handset[0]))
 
-static unsigned short rt5671_dsp_handfree[][2] = {
+static unsigned short rt5671_dsp_handsfree[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
 	{0x235b, 0x7fff}, {0x235c, 0x7fff}, {0x235d, 0x7fff}, {0x235e, 0x7fff},
@@ -526,8 +526,8 @@ static unsigned short rt5671_dsp_handfree[][2] = {
 	{0x2303, 0x0710}, {0x2304, 0x0332}, {0x230c, 0x0200}, {0x230d, 0x0080},
 	{0x2310, 0x0010}, {0x22fb, 0x0000}
 };
-#define RT5671_DSP_HANDFREE_NUM \
-	(sizeof(rt5671_dsp_handfree) / sizeof(rt5671_dsp_handfree[0]))
+#define RT5671_DSP_HANDSFREE_NUM \
+	(sizeof(rt5671_dsp_handsfree) / sizeof(rt5671_dsp_handsfree[0]))
 
 /**
  * rt5671_dsp_done - Wait until DSP is ready.
@@ -739,8 +739,7 @@ static const SOC_ENUM_SINGLE_DECL(
 
 /* Sound Effect */
 static const char *rt5671_dsp_mode[] = {
-	"Disable", "NS", "AEC", "VT", "VR", "FFP+NS", "48K-stereo+FFP",
-	"2MIC Handset", "2MIC Handsfree", "AEC Handsfree"
+	"Handset", "Handsfree"
 };
 
 static const SOC_ENUM_SINGLE_DECL(rt5671_dsp_enum, 0, 0,
@@ -949,10 +948,10 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		tab_num = RT5671_DSP_HANDSET_NUM;
 		break;
 
-	case RT5671_DSP_HANDFREE:
-		dev_info(codec->dev, "HANDFREE\n");
-		mode_tab = rt5671_dsp_handfree;
-		tab_num = RT5671_DSP_HANDFREE_NUM;
+	case RT5671_DSP_HANDSFREE:
+		dev_info(codec->dev, "HANDSFREE\n");
+		mode_tab = rt5671_dsp_handsfree;
+		tab_num = RT5671_DSP_HANDSFREE_NUM;
 		break;
 	default:
 		dev_info(codec->dev, "Disable\n");
@@ -1087,10 +1086,10 @@ static ssize_t rt5671_dsp_show(struct device *dev,
 		tab_num = RT5671_DSP_HANDSET_NUM;
 		break;
 
-	case RT5671_DSP_HANDFREE:
-		cnt += sprintf(buf, "[ RT5642 DSP 'HANDFRE ]\n");
-		rt5671_dsp_tab = rt5671_dsp_handfree;
-		tab_num = RT5671_DSP_HANDFREE_NUM;
+	case RT5671_DSP_HANDSFREE:
+		cnt += sprintf(buf, "[ RT5642 DSP 'HANDSFREE ]\n");
+		rt5671_dsp_tab = rt5671_dsp_handsfree;
+		tab_num = RT5671_DSP_HANDSFREE_NUM;
 		break;
 
 	default:
