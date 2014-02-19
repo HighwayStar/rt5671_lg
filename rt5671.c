@@ -148,6 +148,7 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_DAC_CTRL	, 0x0033},
 #endif
 	{RT5671_GEN_CTRL3	, 0x0084},
+	{RT5671_IN1_CTRL2	, 0x08a7},
 };
 #define RT5671_INIT_REG_LEN ARRAY_SIZE(init_list)
 
