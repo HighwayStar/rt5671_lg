@@ -1176,6 +1176,12 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 			RT5671_INL_VOL_SFT, RT5671_INR_VOL_SFT,
 			31, 1, in_vol_tlv),
 	/* ADC Digital Volume Control */
+	SOC_DOUBLE("STO1 ADC Capture Switch", RT5671_STO1_ADC_DIG_VOL,
+		RT5671_L_MUTE_SFT, RT5671_R_MUTE_SFT, 1, 1),
+	SOC_DOUBLE("Mono ADC Capture Switch", RT5671_MONO_ADC_DIG_VOL,
+		RT5671_L_MUTE_SFT, RT5671_R_MUTE_SFT, 1, 1),
+	SOC_DOUBLE("STO2 ADC Capture Switch", RT5671_STO2_ADC_DIG_VOL,
+		RT5671_L_MUTE_SFT, RT5671_R_MUTE_SFT, 1, 1),
 	SOC_DOUBLE_TLV("STO1 ADC Capture Volume", RT5671_STO1_ADC_DIG_VOL,
 			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT,
 			127, 0, adc_vol_tlv),
