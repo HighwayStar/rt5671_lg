@@ -2642,32 +2642,6 @@ static int rt5671_pre_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
-static int rt5671_slot_sel_event(struct snd_soc_dapm_widget *w,
-	struct snd_kcontrol *kcontrol, int event)
-{
-#if 0
-	struct snd_soc_codec *codec = w->codec;
-	int ret, val, src = 0;
-
-	switch (event) {
-	case SND_SOC_DAPM_POST_PMU:
-		/*read MX-2d [3:2] to decide TDM source*/
-		/*currently, support slot 0/1 and 2/3 only*/
-		val = snd_soc_read(codec, RT5671_DSP_PATH1) & 0xc;
-		if (val == 0x4) /*slot 2/3*/
-			src = 1;
-
-		ret = rt5671_dsp_set_data_source(codec, src);
-		if (ret < 0)
-			pr_err("set DSP slot select error\n");
-		break;
-	default:
-		return 0;
-	}
-#endif
-	return 0;
-}
-
 static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_SUPPLY("PLL1", RT5671_PWR_ANLG2,
 		RT5671_PWR_PLL_BIT, 0, NULL, 0),
@@ -2861,9 +2835,8 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA("TxDP_ADC_R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("TxDC_DAC", SND_SOC_NOPM, 0, 0, NULL, 0),
 
-	SND_SOC_DAPM_MUX_E("TDM Data Mux", SND_SOC_NOPM, 0, 0,
-		&rt5671_txdp_slot_mux, rt5671_slot_sel_event,
-		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_MUX("TDM Data Mux", SND_SOC_NOPM, 0, 0,
+		&rt5671_txdp_slot_mux),
 
 	SND_SOC_DAPM_MUX("DSP UL Mux", SND_SOC_NOPM, 0, 0,
 		&rt5671_dsp_ul_mux),
