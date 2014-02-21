@@ -560,6 +560,9 @@ static unsigned short rt5671_dsp_8[][2] = {
 #define RT5671_DSP_8_NUM (sizeof(rt5671_dsp_8) / sizeof(rt5671_dsp_8[0]))
 
 /* DSP mode */
+static int rt5671_dsp_handset_size = 0;
+static char *rt5671_dsp_handset_buf;
+static char *rt5671_dsp_handset_file = "/etc/firmware/rt5671_dsp_handset.bin";
 static unsigned short rt5671_dsp_handset[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -579,6 +582,9 @@ static unsigned short rt5671_dsp_handset[][2] = {
 #define RT5671_DSP_HANDSET_NUM \
 	(sizeof(rt5671_dsp_handset) / sizeof(rt5671_dsp_handset[0]))
 
+static int rt5671_dsp_handsfree_size = 0;
+static char *rt5671_dsp_handsfree_buf;
+static char *rt5671_dsp_handsfree_file = "/etc/firmware/rt5671_dsp_handsfree.bin";
 static unsigned short rt5671_dsp_handsfree[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -764,6 +770,80 @@ static unsigned int rt5671_dsp_read(
 
 err:
 	return ret;
+}
+
+static unsigned int rt5671_read_dsp_code_from_file(char *file_path,
+	 u8 **buf)
+{
+	loff_t pos = 0;
+	unsigned int file_size = 0;
+	struct file *fp;
+
+	pr_debug("%s\n", __func__);
+
+
+	fp = filp_open(file_path, O_RDONLY, 0);
+	if (!IS_ERR(fp)) {
+		file_size = vfs_llseek(fp, pos, SEEK_END);
+		*buf = kzalloc(file_size, GFP_KERNEL);
+		if (*buf == NULL) {
+			pr_err("%s: kzalloc size=0x%x fail\n", __func__,
+				file_size);
+			filp_close(fp, 0);
+			return 0;
+		}
+
+		kernel_read(fp, pos, *buf, file_size);
+		filp_close(fp, 0);
+
+		return file_size;
+	} else {
+		pr_err("%s: filp_open fail\n", __func__);
+	}
+	return 0;
+}
+
+static int char2int(char *buf, int count)
+{
+	int i, val = 0;
+
+	for (i = 0; i < count; i++) {
+		if (*(buf+i) <= '9' && *(buf + i) >= '0')
+			val = (val << 4) | (*(buf + i) - '0');
+		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
+			val = (val << 4) | ((*(buf + i) - 'a') + 0xa);
+		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
+			val = (val << 4) | ((*(buf + i) - 'A') + 0xa);
+		else
+			break;
+	}
+
+	return val;
+}
+
+static int load_dsp_parameters(struct snd_soc_codec *codec, char *buf)
+{
+	char *ptr;
+	int addr, val, ret;
+	ptr = buf;
+
+	ptr = strstr(ptr, "0x");
+	while (ptr) {
+		ptr += 2;
+		addr = char2int(ptr, 4);
+		ptr = strstr(ptr, "0x");
+		ptr += 2;
+		val = char2int(ptr, 4);
+		ptr = strstr(ptr, "0x");
+
+		ret = rt5671_dsp_write(codec, addr, val);
+		if (ret < 0) {
+			dev_err(codec->dev, "Fail to load Dsp: %d\n", ret);
+			return 0;
+		}
+	}
+
+	return 0;
 }
 
 static int rt5671_dsp_get(struct snd_kcontrol *kcontrol,
@@ -1068,7 +1148,8 @@ src_err:
  */
 static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 {
-	int ret, i, tab_num;
+	int ret, i, tab_num, *file_size;
+	char *file_buf, *file_name;
 	unsigned short (*mode_tab)[2];
 
 	switch (mode) {
@@ -1076,22 +1157,36 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		dev_info(codec->dev, "HANDSET\n");
 		mode_tab = rt5671_dsp_handset;
 		tab_num = RT5671_DSP_HANDSET_NUM;
+		file_size = &rt5671_dsp_handset_size;
+		file_buf = rt5671_dsp_handset_buf;
+		file_name = rt5671_dsp_handset_file; 
 		break;
 
 	case RT5671_DSP_HANDSFREE:
 		dev_info(codec->dev, "HANDSFREE\n");
 		mode_tab = rt5671_dsp_handsfree;
 		tab_num = RT5671_DSP_HANDSFREE_NUM;
+		file_size = &rt5671_dsp_handsfree_size;
+		file_buf = rt5671_dsp_handsfree_buf;
+		file_name = rt5671_dsp_handsfree_file; 
 		break;
 	default:
 		dev_info(codec->dev, "Disable\n");
 		return 0;
 	}
 
-	for (i = 0; i < tab_num; i++) {
-		ret = rt5671_dsp_write(codec, mode_tab[i][0], mode_tab[i][1]);
-		if (ret < 0)
-			goto mode_err;
+	if (*file_size == 0)
+		*file_size = rt5671_read_dsp_code_from_file(file_name,
+				(u8 **)&file_buf);
+
+	if (*file_size) {
+		load_dsp_parameters(codec, file_buf);
+	} else {
+		for (i = 0; i < tab_num; i++) {
+			ret = rt5671_dsp_write(codec, mode_tab[i][0], mode_tab[i][1]);
+			if (ret < 0)
+				goto mode_err;
+		}
 	}
 
 	return 0;
