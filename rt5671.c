@@ -87,7 +87,7 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_PRIV_INDEX	, 0x0014},	/* PR3d[12] = 0'b; PR3d[9] = 1'b */
 	{RT5671_PRIV_DATA	, 0x9a8a},
 	{RT5671_PRIV_INDEX	, 0x003d},	/* PR3d[12] = 0'b; PR3d[9] = 1'b */
-	{RT5671_PRIV_DATA	, 0x3e40},
+	{RT5671_PRIV_DATA	, 0x3640},
 	/*playback*/
 /*	{RT5671_STO_DAC_MIXER	, 0x1616},	Dig inf 1 -> Sto DAC mixer -> DACL */
 	{RT5671_OUT_L1_MIXER	, 0x0072},	/* DACL1 -> OUTMIXL */
