@@ -1047,10 +1047,11 @@ static const char *rt5671_voice_call_mode[] = {
 
 static const SOC_ENUM_SINGLE_DECL(rt5671_voice_call_enum, 0, 0, rt5671_voice_call_mode);
 
+static int voice_call = 0;
 static int rt5671_voice_call_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
-	ucontrol->value.integer.value[0] = 0;
+	ucontrol->value.integer.value[0] = voice_call;
 
 	return 0;
 }
@@ -1062,9 +1063,11 @@ static int rt5671_voice_call_put(struct snd_kcontrol *kcontrol,
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 
 	if (ucontrol->value.integer.value[0] == 0) {
+		voice_call = 0;
 		snd_soc_update_bits(codec, RT5671_ASRC_2, 0x0ff0, 0x0000);
 		snd_soc_update_bits(codec, RT5671_ASRC_3, 0x00ff, 0x0000);
 	} else {
+		voice_call = 1;
 		snd_soc_update_bits(codec, RT5671_ASRC_2, 0x0ff0, 0x0550);
 		snd_soc_update_bits(codec, RT5671_ASRC_3, 0x00ff, 0x0022);
 		snd_soc_update_bits(codec, RT5671_DIG_INF1_DATA, 0x0c00, 0x0800);
@@ -1078,10 +1081,11 @@ static const char *rt5671_bt_call_mode[] = {
 
 static const SOC_ENUM_SINGLE_DECL(rt5671_bt_call_enum, 0, 0, rt5671_bt_call_mode);
 
+static int bt_call = 0;
 static int rt5671_bt_call_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
-	ucontrol->value.integer.value[0] = 0;
+	ucontrol->value.integer.value[0] = bt_call;
 
 	return 0;
 }
@@ -1093,11 +1097,13 @@ static int rt5671_bt_call_put(struct snd_kcontrol *kcontrol,
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 
 	if (ucontrol->value.integer.value[0] == 0) {
+		bt_call = 0;
 		snd_soc_update_bits(codec, RT5671_ASRC_2, 0xfff0, 0x0000);
 		snd_soc_update_bits(codec, RT5671_ASRC_3, 0x00ff, 0x0000);
 		snd_soc_update_bits(codec, RT5671_ASRC_10, 0xf000, 0x0000);
 		snd_soc_update_bits(codec, RT5671_TDM_CTRL_1, 0x40c0, 0x4000);
 	} else {
+		bt_call = 1;
 		snd_soc_update_bits(codec, RT5671_ASRC_2, 0xfff0, 0x6550);
 		snd_soc_update_bits(codec, RT5671_ASRC_3, 0x00ff, 0x0022);
 		snd_soc_update_bits(codec, RT5671_ASRC_10, 0xf000, 0x3000);
@@ -4246,7 +4252,7 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
 		RT5671_PWR_HP_L | RT5671_PWR_HP_R |
 		RT5671_PWR_VREF2, RT5671_PWR_VREF2);
-	msleep(1000);
+	msleep(400);
 
 	rt5671_reset(codec);
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
