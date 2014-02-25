@@ -109,10 +109,6 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_STO1_ADC_DIG_VOL, 0xafaf},	/* Mute STO1 ADC for depop */
 /*	{RT5671_MONO_DAC_MIXER	, 0x1414}, */
 	{RT5671_PDM_OUT_CTRL	, 0xff00},
-#if 0 /* test IF_ADC3 */
-	{RT5671_DIG_INF1_DATA	, 0x2002}, /* IF_ADC3 -> IF2_ADC */
-	{RT5671_STO2_ADC_MIXER	, 0x3820},
-#endif
 #ifdef JD1_FUNC
 #if REALTEK_USE_AMIC
 	{RT5671_GPIO_CTRL2	, 0x0024}, /* Oder 130618 */
@@ -127,26 +123,8 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_JD_CTRL3	, 0x0088},
 #endif
 #endif
-/*
-	{RT5671_ASRC_2		, 0x6550},
-	{RT5671_ASRC_3		, 0x0022},
-*/
 	{RT5671_ASRC_8		, 0x0120},
-/*
-	{RT5671_ASRC_10		, 0x3007},
-*/
 	{RT5671_IL_CMD3		, 0x001b},
-
-#if 0 /* DMIC2 */
-	{RT5671_STO1_ADC_MIXER	, 0x5940},
-#endif
-/* 	{RT5671_IN1_CTRL1	, 0x1001}, BST1 20db */
-#if 0 /* test DSP */
-	{RT5671_STO_DAC_MIXER	, 0x4646},
-	{RT5671_DSP_PATH1	, 0xc000},
-	/* {RT5671_DSP_PATH1	, 0xc003}, bypass dsp */
-	{RT5671_DAC_CTRL	, 0x0033},
-#endif
 	{RT5671_GEN_CTRL3	, 0x0084},
 	{RT5671_IN1_CTRL2	, 0x08a7},
 };
