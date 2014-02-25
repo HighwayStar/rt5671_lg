@@ -948,6 +948,9 @@ static const SOC_ENUM_SINGLE_DECL(rt5671_ad_monor_asrc_enum, RT5671_ASRC_3,
 static const SOC_ENUM_SINGLE_DECL(rt5671_ad_sto2_asrc_enum, RT5671_ASRC_10,
 				12, rt5671_asrc_clk_source);
 
+static const SOC_ENUM_SINGLE_DECL(rt5671_dsp_asrc_enum, RT5671_DSP_CLK,
+				0, rt5671_asrc_clk_source);
+
 static const char * const rt5671_tdm_select[] = {
 	"1_2_3_4", "3_4_1_2", "2_1_4_3", "4_3_2_1"
 };
@@ -1203,6 +1206,7 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	SOC_ENUM("AD MONOR ASRC Switch", rt5671_ad_monor_asrc_enum),
 	SOC_ENUM("UP ASRC Switch", rt5671_up_filter_asrc_enum),
 	SOC_ENUM("DOWN ASRC Switch", rt5671_down_filter_asrc_enum),
+	SOC_ENUM("DSP ASRC Switch", rt5671_dsp_asrc_enum),
 
 	SOC_ENUM("IF1 ADC TDM Switch", rt5671_if1_tdm_enum),
 
