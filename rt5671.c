@@ -123,7 +123,7 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_JD_CTRL3	, 0x0088},
 #endif
 #endif
-	{RT5671_ASRC_8		, 0x0120},
+	{RT5671_ASRC_8		, 0x0123},
 	{RT5671_IL_CMD3		, 0x001b},
 	{RT5671_GEN_CTRL3	, 0x0084},
 	{RT5671_IN1_CTRL2	, 0x08a7},
