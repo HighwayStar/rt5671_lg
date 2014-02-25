@@ -119,7 +119,7 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_GPIO_CTRL3	, 0x0100}, /* Oder 130619 set GPIO8 OUTPUT */
 	{RT5671_GPIO_CTRL2	, 0x8004},
 	{RT5671_GPIO_CTRL1	, 0x8000},
-	{RT5671_IRQ_CTRL1	, 0x0280}, /* hyunsoo 130710 0x0200->0x0280 */
+	{RT5671_IRQ_CTRL1	, 0x0000}, /* Disable JD to IRQ function */
 	{RT5671_JD_CTRL3	, 0x0088},
 #endif
 #endif
