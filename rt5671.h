@@ -154,8 +154,8 @@
 #define RT5671_BASE_BACK			0xcf
 #define RT5671_MP3_PLUS1			0xd0
 #define RT5671_MP3_PLUS2			0xd1
-#define RT5671_ADJ_HPF1				0xd3
-#define RT5671_ADJ_HPF2				0xd4
+#define RT5671_ADC_STO1_HP_CTRL1		0xd3
+#define RT5671_ADC_STO1_HP_CTRL2		0xd4
 #define RT5671_HP_CALIB_AMP_DET			0xd6
 #define RT5671_SV_ZCD1				0xd9
 #define RT5671_SV_ZCD2				0xda
