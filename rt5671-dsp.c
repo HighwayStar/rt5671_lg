@@ -498,10 +498,16 @@ static unsigned short rt5671_dsp_init[][2] = {
 #define RT5671_DSP_TDM_SRC_PAR_NUM 5
 
 static unsigned short rt5671_dsp_data_src[][2] = {
-	/*For Stereo ADC mixer*/
+	/*For Stereo1 ADC mixer*/
 	{0x2261, 0x30d9}, {0x2282, 0x0008}, {0x2283, 0x0009},
 	{0x22d7, 0x0008}, {0x22d8, 0x0009},
 	/*For Mono ADC mixer*/
+	{0x2261, 0x30df}, {0x2282, 0x000a}, {0x2283, 0x000b},
+	{0x22d7, 0x000a}, {0x22d8, 0x000b},
+	/*For Stereo2 ADC mixer*/ // TODO: Modfiy the parameters
+	{0x2261, 0x30df}, {0x2282, 0x000a}, {0x2283, 0x000b},
+	{0x22d7, 0x000a}, {0x22d8, 0x000b},
+	/*For IF2 DAC*/ // TODO: Modfiy the parameters
 	{0x2261, 0x30df}, {0x2282, 0x000a}, {0x2283, 0x000b},
 	{0x22d7, 0x000a}, {0x22d8, 0x000b},
 };
@@ -1207,7 +1213,7 @@ mode_err:
 static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 {
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
-	int ret, rate, src = 0;
+	int ret, rate;
 
 	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, RT5671_RST_DSP,
 		RT5671_RST_DSP);
@@ -1237,11 +1243,9 @@ static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 	ret = rt5671_dsp_conf(codec);
 	if (ret < 0)
 		goto effect_err;
-
-	if ((snd_soc_read(codec, RT5671_DSP_PATH1) & 0xc) == 0x4) /*slot 2/3*/
-		src = 1;
 	
-	ret = rt5671_dsp_set_data_source(codec, src);
+	ret = rt5671_dsp_set_data_source(codec,
+		(snd_soc_read(codec, RT5671_DSP_PATH1) & 0xc) >> 2);
 	if (ret < 0)
 		goto effect_err;
 
