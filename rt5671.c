@@ -958,6 +958,19 @@ static const char * const rt5671_tdm_select[] = {
 static const SOC_ENUM_SINGLE_DECL(rt5671_if1_tdm_enum, RT5671_TDM_CTRL_1,
 				8, rt5671_tdm_select);
 
+static const char * const rt5671_adc_hp_coarse_select[] = {
+	"8k_12k_16k", "24k_32k", "44.1k_48k", "88.2k_96k", "176.4k_192k"
+};
+
+static const SOC_ENUM_DOUBLE_DECL(rt5671_sto1_adc_hp_coarse_select,
+	RT5671_ADC_STO1_HP_CTRL1, 12, 8, rt5671_adc_hp_coarse_select);
+
+static const SOC_ENUM_DOUBLE_DECL(rt5671_mono_adc_hp_coarse_select,
+	RT5671_ADC_MONO_HP_CTRL1, 12, 8, rt5671_adc_hp_coarse_select);
+
+static const SOC_ENUM_DOUBLE_DECL(rt5671_sto2_adc_hp_coarse_select,
+	RT5671_ADC_STO2_HP_CTRL1, 12, 8, rt5671_adc_hp_coarse_select);
+
 static int rt5671_vol_rescale_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
@@ -1223,6 +1236,9 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT, 63, 0),
 	SOC_DOUBLE("MONO ADC HP Filter", RT5671_ADC_MONO_HP_CTRL2,
 			RT5671_L_VOL_SFT, RT5671_R_VOL_SFT, 63, 0),
+	SOC_ENUM("STO1 ADC HP Filter Coarse", rt5671_sto1_adc_hp_coarse_select),
+	SOC_ENUM("STO2 ADC HP Filter Coarse", rt5671_sto2_adc_hp_coarse_select),
+	SOC_ENUM("MONO ADC HP Filter Coarse", rt5671_mono_adc_hp_coarse_select),
 
 	SOC_ENUM_EXT("VAD Switch", rt5671_vad_enum,
 		rt5671_vad_get, rt5671_vad_put),
