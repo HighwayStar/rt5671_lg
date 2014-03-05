@@ -4242,7 +4242,6 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			}
 			snd_soc_update_bits(codec, RT5671_GLB_CLK,
 				RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_MCLK);
-			snd_soc_write(codec, RT5671_ADDA_CLK1, 0x7770);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 		}
 		break;
