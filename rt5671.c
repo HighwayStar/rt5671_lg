@@ -57,7 +57,7 @@ module_param(hp_amp_time, int, 0644);
 #define RT5671_DET_EXT_MIC 0
 /*#define USE_INT_CLK*/
 /*#define ALC_DRC_FUNC*/
-/*#define USE_TDM*/
+#define USE_TDM
 #define JD1_FUNC
 
 
@@ -4240,8 +4240,6 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x2001);
 				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0004);
 			}
-			snd_soc_update_bits(codec, RT5671_GLB_CLK,
-				RT5671_SCLK_SRC_MASK, RT5671_SCLK_SRC_MCLK);
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 		}
 		break;
@@ -4275,7 +4273,7 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
 		RT5671_PWR_HP_L | RT5671_PWR_HP_R |
 		RT5671_PWR_VREF2, RT5671_PWR_VREF2);
-	msleep(400);
+	msleep(100);
 
 	rt5671_reset(codec);
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
