@@ -899,6 +899,15 @@ static const char * const rt5671_data_select[] = {
 	"Normal", "Swap", "left copy to right", "right copy to left"
 };
 
+static const SOC_ENUM_SINGLE_DECL(rt5671_if1_adc1_enum, RT5671_TDM_CTRL_1,
+				6, rt5671_data_select);
+static const SOC_ENUM_SINGLE_DECL(rt5671_if1_adc2_enum, RT5671_TDM_CTRL_1,
+				4, rt5671_data_select);
+static const SOC_ENUM_SINGLE_DECL(rt5671_if1_adc3_enum, RT5671_TDM_CTRL_1,
+				2, rt5671_data_select);
+static const SOC_ENUM_SINGLE_DECL(rt5671_if1_adc4_enum, RT5671_TDM_CTRL_1,
+				0, rt5671_data_select);
+
 static const SOC_ENUM_SINGLE_DECL(rt5671_if2_dac_enum, RT5671_DIG_INF1_DATA,
 				RT5671_IF2_DAC_SEL_SFT, rt5671_data_select);
 
@@ -1204,6 +1213,11 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	SOC_DOUBLE_TLV("STO2 ADC Boost Gain", RT5671_ADC_BST_VOL1,
 			RT5671_STO2_ADC_L_BST_SFT, RT5671_STO2_ADC_R_BST_SFT,
 			3, 0, adc_bst_tlv),
+
+	SOC_ENUM("ADC1 IF1 Data Switch", rt5671_if1_adc1_enum),
+	SOC_ENUM("ADC2 IF1 Data Switch", rt5671_if1_adc2_enum),
+	SOC_ENUM("ADC3 IF1 Data Switch", rt5671_if1_adc3_enum),
+	SOC_ENUM("ADC4 IF1 Data Switch", rt5671_if1_adc4_enum),
 
 	SOC_ENUM("ADC IF2 Data Switch", rt5671_if2_adc_enum),
 	SOC_ENUM("DAC IF2 Data Switch", rt5671_if2_dac_enum),
