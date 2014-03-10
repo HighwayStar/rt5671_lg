@@ -1242,6 +1242,8 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 	SOC_ENUM("STO2 ADC HP Filter Coarse", rt5671_sto2_adc_hp_coarse_select),
 	SOC_ENUM("MONO ADC HP Filter Coarse", rt5671_mono_adc_hp_coarse_select),
 
+	SOC_SINGLE("PDM Gain", RT5671_PDM_OUT_CTRL, 4, 1, 0),
+
 	SOC_ENUM_EXT("VAD Switch", rt5671_vad_enum,
 		rt5671_vad_get, rt5671_vad_put),
 	SOC_ENUM_EXT("Voice Call", rt5671_voice_call_enum,
