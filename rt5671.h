@@ -51,7 +51,7 @@
 #define RT5671_MONO_DAC_MIXER			0x2b
 #define RT5671_DIG_MIXER			0x2c
 #define RT5671_DSP_PATH1			0x2d
-#define RT5671_DSP_PATH2			0x2e
+#define RT5671_DSP_VOL_CTRL			0x2e
 #define RT5671_DIG_INF1_DATA			0x2f
 #define RT5671_DIG_INF2_DATA			0x30
 /* Mixer - PDM */
@@ -623,6 +623,14 @@
 #define RT5671_M_BST2_RM_R_SFT			2
 #define RT5671_M_BST1_RM_R			(0x1 << 1)
 #define RT5671_M_BST1_RM_R_SFT			1
+
+/* REC Mono Mixer Control 1 (0x3f) */
+#define RT5671_G_BST4_RM_M_MASK			(0x7 << 7)
+#define RT5671_G_BST4_RM_M_SFT			7
+#define RT5671_G_BST3_RM_M_MASK			(0x7 << 4)
+#define RT5671_G_BST3_RM_M_SFT			4
+#define RT5671_G_BST2_RM_M_MASK			(0x7 << 1)
+#define RT5671_G_BST2_RM_M_SFT			1
 
 /* REC Mono Mixer Control 2 (0x40) */
 #define RT5671_G_BST1_RM_M_MASK			(0x7 << 13)
