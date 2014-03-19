@@ -4195,6 +4195,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 
 	case SND_SOC_BIAS_STANDBY:
 		if (SND_SOC_BIAS_OFF == codec->dapm.bias_level) {
+			snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x1);
 			snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
 				RT5671_PWR_VREF1 | RT5671_PWR_MB |
 				RT5671_PWR_BG | RT5671_PWR_VREF2,
@@ -4278,8 +4279,9 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 				snd_soc_write(codec, RT5671_PWR_DIG2, 0x0001);
 				snd_soc_write(codec, RT5671_PWR_VOL, 0x0000);
 				snd_soc_write(codec, RT5671_PWR_MIXER, 0x0001);
-				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x2001);
-				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0004);
+				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x0001);
+				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0000);
+				snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x0);
 			}
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 		}
