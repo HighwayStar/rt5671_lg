@@ -2658,6 +2658,7 @@ static int rt5671_pre_event(struct snd_soc_dapm_widget *w,
 	case SND_SOC_DAPM_PRE_PMU:
 		snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
 			RT5671_LDO_SEL_MASK, 0x3);
+		rt5671_index_update_bits(codec, 0x15, 0x7, 0x7);
 		break;
 	default:
 		return 0;
@@ -4282,6 +4283,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x0001);
 				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0000);
 				snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x0);
+				rt5671_index_update_bits(codec, 0x15, 0x7, 0x0);
 			}
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 		}
