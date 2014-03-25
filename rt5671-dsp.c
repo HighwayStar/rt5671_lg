@@ -694,6 +694,7 @@ static int rt5671_dsp_done(struct snd_soc_codec *codec)
 			return -EBUSY;
 		dsp_val = snd_soc_read(codec, RT5671_DSP_CTRL1);
 		count++;
+		mdelay(1);
 	}
 
 	return 0;

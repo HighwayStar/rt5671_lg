@@ -4355,7 +4355,6 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 
 	snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x1);
 
-	codec->dapm.bias_level = SND_SOC_BIAS_OFF;
 	rt5671->codec = codec;
 	rt5671->combo_jack_en = true; /* enable combo jack */
 
@@ -4407,6 +4406,8 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 	}
 
 	rt5671->jack_type = 0;
+
+	rt5671_set_bias_level(codec, SND_SOC_BIAS_OFF);
 
 	return 0;
 }
