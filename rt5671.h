@@ -648,10 +648,10 @@
 /* HPMIX Control (0x45) */
 #define RT5671_M_DAC2_HM			(0x1 << 15)
 #define RT5671_M_DAC2_HM_SFT			15
-#define RT5671_M_DAC1_HM			(0x1 << 14)
-#define RT5671_M_DAC1_HM_SFT			14
-#define RT5671_M_HPVOL_HM			(0x1 << 13)
-#define RT5671_M_HPVOL_HM_SFT			13
+#define RT5671_M_HPVOL_HM			(0x1 << 14)
+#define RT5671_M_HPVOL_HM_SFT			14
+#define RT5671_M_DAC1_HM			(0x1 << 13)
+#define RT5671_M_DAC1_HM_SFT			13
 #define RT5671_G_HPOMIX_MASK			(0x1 << 12)
 #define RT5671_G_HPOMIX_SFT			12
 #define RT5671_M_INR1_HMR			(0x1 << 3)
@@ -828,7 +828,7 @@
 #define RT5671_PWR_VREF2_BIT			4
 #define RT5671_PWR_FV2				(0x1 << 3)
 #define RT5671_PWR_FV2_BIT			3
-#define RT5671_LDO_SEL_MASK			(0x3)
+#define RT5671_LDO_SEL_MASK			(0x7)
 #define RT5671_LDO_SEL_SFT			0
 
 /* Power Management for Analog 2 (0x64) */
@@ -924,10 +924,6 @@
 #define RT5671_I2S2_SDI_I2S2			(0x1 << 6)
 
 /* ADC/DAC Clock Control 1 (0x73) */
-#define RT5671_I2S_BCLK_MS1_MASK		(0x1 << 15)
-#define RT5671_I2S_BCLK_MS1_SFT			15
-#define RT5671_I2S_BCLK_MS1_32			(0x0 << 15)
-#define RT5671_I2S_BCLK_MS1_64			(0x1 << 15)
 #define RT5671_I2S_PD1_MASK			(0x7 << 12)
 #define RT5671_I2S_PD1_SFT			12
 #define RT5671_I2S_PD1_1			(0x0 << 12)
