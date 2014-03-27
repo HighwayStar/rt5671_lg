@@ -4355,7 +4355,7 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 			RT5671_PWR_JD1);
 #endif
 
-	snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x1);
+	snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x3);
 
 	rt5671->codec = codec;
 	rt5671->combo_jack_en = true; /* enable combo jack */

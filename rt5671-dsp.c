@@ -1158,7 +1158,12 @@ static void rt5671_do_dsp_patch(struct work_struct *work)
 	struct rt5671_priv *rt5671 =
 		container_of(work, struct rt5671_priv, patch_work.work);
 	struct snd_soc_codec *codec = rt5671->codec;
-	
+
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x1);
+	snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x3);
+	snd_soc_write(codec, RT5671_PRIV_INDEX, 0x15);
+	snd_soc_update_bits(codec, RT5671_PRIV_DATA, 0x7, 0x7);
+
 	snd_soc_update_bits(codec, RT5671_PWR_DIG2,
 		RT5671_PWR_I2S_DSP, RT5671_PWR_I2S_DSP);
 
@@ -1185,6 +1190,11 @@ static void rt5671_do_dsp_patch(struct work_struct *work)
 
 	snd_soc_update_bits(codec, RT5671_PWR_DIG2,
 		RT5671_PWR_I2S_DSP, 0);
+
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x0);
+	snd_soc_update_bits(codec, RT5671_PWR_ANLG1, RT5671_LDO_SEL_MASK, 0x1);
+	snd_soc_write(codec, RT5671_PRIV_INDEX, 0x15);
+	snd_soc_update_bits(codec, RT5671_PRIV_DATA, 0x7, 0x0);
 }
 
 int rt5671_dsp_set_data_source(struct snd_soc_codec *codec, int src)
