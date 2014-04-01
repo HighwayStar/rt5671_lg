@@ -961,7 +961,7 @@ static const SOC_ENUM_SINGLE_DECL(
 
 /* Sound Effect */
 static const char *rt5671_dsp_mode[] = {
-	"Handset", "Handsfree"
+	"Handset", "Handsfree", "Headphone", "Headset", "Bluetooth"
 };
 
 static const SOC_ENUM_SINGLE_DECL(rt5671_dsp_enum, 0, 0,
@@ -1430,15 +1430,33 @@ static ssize_t rt5671_dsp_show(struct device *dev,
 
 	switch (rt5671->dsp_sw) {
 	case RT5671_DSP_HANDSET:
-		cnt += sprintf(buf, "[ RT5642 DSP 'HANDSET' ]\n");
+		cnt += sprintf(buf, "[HANDSET]\n");
 		rt5671_dsp_tab = rt5671_dsp_handset;
 		tab_num = RT5671_DSP_HANDSET_NUM;
 		break;
 
 	case RT5671_DSP_HANDSFREE:
-		cnt += sprintf(buf, "[ RT5642 DSP 'HANDSFREE ]\n");
+		cnt += sprintf(buf, "[HANDSFREE]\n");
 		rt5671_dsp_tab = rt5671_dsp_handsfree;
 		tab_num = RT5671_DSP_HANDSFREE_NUM;
+		break;
+
+	case RT5671_DSP_HEADPHONE:
+		cnt += sprintf(buf, "[HEADPHONE]\n");
+		rt5671_dsp_tab = rt5671_dsp_headphone;
+		tab_num = RT5671_DSP_HEADPHONE_NUM;
+		break;
+	
+	case RT5671_DSP_HEADSET:
+		cnt += sprintf(buf, "[HEADSET]\n");
+		rt5671_dsp_tab = rt5671_dsp_headset;
+		tab_num = RT5671_DSP_HEADSET_NUM;
+		break;
+
+	case RT5671_DSP_BLUETOOTH:
+		cnt += sprintf(buf, "[BLUETOOTH]\n");
+		rt5671_dsp_tab = rt5671_dsp_bluetooth;
+		tab_num = RT5671_DSP_BLUETOOTH_NUM;
 		break;
 
 	default:
