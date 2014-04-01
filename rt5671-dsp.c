@@ -935,9 +935,17 @@ static int rt5671_dsp_put(struct snd_kcontrol *kcontrol,
 {
 	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_dapm_widget *w;
 
-	if (rt5671->dsp_sw != ucontrol->value.integer.value[0])
+	if (rt5671->dsp_sw != ucontrol->value.integer.value[0]) {
 		rt5671->dsp_sw = ucontrol->value.integer.value[0];
+
+		list_for_each_entry(w, &codec->card->widgets, list)
+			if (!strcmp(w->name, "Voice DSP") && w->power) {
+				rt5671_dsp_write(codec, 0x22f9, 1);
+				rt5671_dsp_snd_effect(codec);
+			}
+	}
 
 	return 0;
 }
@@ -1608,7 +1616,6 @@ static ssize_t rt5671_dsp_adb_store(struct device *dev,
 
 	return count;
 }
-
 static DEVICE_ATTR(dsp_reg_adb, 0666, rt5671_dsp_adb_show, rt5671_dsp_adb_store);
 
 /**

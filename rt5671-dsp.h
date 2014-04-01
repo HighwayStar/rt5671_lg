@@ -74,6 +74,7 @@ int rt5671_dsp_ioctl_common(struct snd_hwdep *hw,
 int rt5671_dsp_suspend(struct snd_soc_codec *codec);
 int rt5671_dsp_resume(struct snd_soc_codec *codec);
 #endif
+static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec);
 
 #endif /* __RT5671_DSP_H__ */
 
