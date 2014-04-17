@@ -982,6 +982,27 @@ static const SOC_ENUM_DOUBLE_DECL(rt5671_mono_adc_hp_coarse_select,
 static const SOC_ENUM_DOUBLE_DECL(rt5671_sto2_adc_hp_coarse_select,
 	RT5671_ADC_STO2_HP_CTRL1, 12, 8, rt5671_adc_hp_coarse_select);
 
+/*I2S clock division for tracking mode */
+static const char * const rt5671_i2s_track_div[] = {
+	"Normal", "Divided by 2", "Divided by 3"
+};
+
+static const SOC_ENUM_SINGLE_DECL(
+	rt5671_i2s1_track_div, RT5671_ASRC_8,
+	14, rt5671_i2s_track_div);
+
+static const SOC_ENUM_SINGLE_DECL(
+	rt5671_i2s2_track_div, RT5671_ASRC_8,
+	10, rt5671_i2s_track_div);
+
+static const SOC_ENUM_SINGLE_DECL(
+	rt5671_i2s3_track_div, RT5671_ASRC_8,
+	6, rt5671_i2s_track_div);
+
+static const SOC_ENUM_SINGLE_DECL(
+	rt5671_i2s4_track_div, RT5671_ASRC_8,
+	2, rt5671_i2s_track_div);
+
 static int rt5671_vol_rescale_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
@@ -1291,6 +1312,11 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 		rt5671_bt_call_get, rt5671_bt_call_put),
 	SOC_ENUM_EXT("EQ Mode", rt5671_eq_mode_enum,
 		rt5671_eq_mode_get, rt5671_eq_mode_put),
+
+	SOC_ENUM("I2S1 Track Division Switch", rt5671_i2s1_track_div),
+	SOC_ENUM("I2S2 Track Division Switch", rt5671_i2s2_track_div),
+	SOC_ENUM("I2S3 Track Division Switch", rt5671_i2s3_track_div),
+	SOC_ENUM("I2S4 Track Division Switch", rt5671_i2s4_track_div),
 };
 
 /**
