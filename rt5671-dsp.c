@@ -1169,7 +1169,7 @@ static const SOC_ENUM_SINGLE_DECL(
 static const char *rt5671_dsp_mode[] = {
 	"Handset", "Handsfree", "Headphone", "Headset", "Bluetooth",
 	"Handset-NB", "Handsfree-NB", "Headphone-NB", "Headset-NB", "Bluetooth-NB",
-	"Handset-VOIP", "Handsfree-VOIP", "Headphone-VOIP", "Headset-VOIP",
+	"Handset-VOIP", "Handsfree-VOIP", "Headphone-VOIP", "Headset-VOIP"
 };
 
 static const SOC_ENUM_SINGLE_DECL(rt5671_dsp_enum, 0, 0,
