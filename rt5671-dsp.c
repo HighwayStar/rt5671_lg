@@ -504,12 +504,12 @@ static unsigned short rt5671_dsp_data_src[][2] = {
 	/*For Mono ADC mixer*/
 	{0x2261, 0x30df}, {0x2282, 0x000a}, {0x2283, 0x000b},
 	{0x22d7, 0x000a}, {0x22d8, 0x000b},
-	/*For Stereo2 ADC mixer*/ // TODO: Modfiy the parameters
-	{0x2261, 0x30df}, {0x2282, 0x000a}, {0x2283, 0x000b},
-	{0x22d7, 0x000a}, {0x22d8, 0x000b},
-	/*For IF2 DAC*/ // TODO: Modfiy the parameters
-	{0x2261, 0x30df}, {0x2282, 0x000a}, {0x2283, 0x000b},
-	{0x22d7, 0x000a}, {0x22d8, 0x000b},
+	/*For Stereo2 ADC mixer*/
+	{0x2261, 0x30df}, {0x2282, 0x000c}, {0x2283, 0x000d},
+	{0x22d7, 0x000c}, {0x22d8, 0x000d},
+	/*For IF2 DAC*/
+	{0x2261, 0x30df}, {0x2282, 0x000e}, {0x2283, 0x000f},
+	{0x22d7, 0x000e}, {0x22d8, 0x000f},
 };
 
 static unsigned short rt5671_dsp_rate_par[] = {
@@ -873,6 +873,28 @@ static unsigned short rt5671_dsp_headset_voip[][2] = {
 };
 #define RT5671_DSP_HEADSET_VOIP_NUM \
 	(sizeof(rt5671_dsp_headset_voip) / sizeof(rt5671_dsp_headset_voip[0]))
+
+static int rt5671_dsp_bluetooth_voip_size = 0;
+static char *rt5671_dsp_bluetooth_voip_buf;
+static char *rt5671_dsp_bluetooth_voip_file = "/etc/firmware/rt5671_dsp_bluetooth_voip.bin";
+static unsigned short rt5671_dsp_bluetooth_voip[][2] = {
+	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
+	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
+	{0x235b, 0x7fff}, {0x235c, 0x7fff}, {0x235d, 0x7fff}, {0x235e, 0x7fff},
+	{0x235f, 0x7fff}, {0x2360, 0x7fff}, {0x2361, 0x7fff}, {0x2362, 0x1000},
+	{0x2367, 0x0007}, {0x2368, 0x4000}, {0x2369, 0x0008}, {0x236a, 0x2000},
+	{0x236b, 0x0009}, {0x236c, 0x003c}, {0x236d, 0x0000}, {0x236f, 0x2000},
+	{0x2370, 0x0008}, {0x2371, 0x000a}, {0x2373, 0x0000}, {0x2374, 0x7fff},
+	{0x2375, 0x7ff0}, {0x2376, 0x7990}, {0x2377, 0x7332}, {0x2379, 0x1000},
+	{0x237a, 0x1000}, {0x2388, 0x7fff}, {0x2389, 0x6000}, {0x238a, 0x4000},
+	{0x238b, 0x1000}, {0x238c, 0x1000}, {0x2398, 0x4668}, {0x23a1, 0x2000},
+	{0x23a3, 0x4000}, {0x23ad, 0x2000}, {0x23ae, 0x2000}, {0x23af, 0x2000},
+	{0x23b4, 0x2000}, {0x23b5, 0x2000}, {0x23b6, 0x2000}, {0x23bb, 0x6000},
+	{0x2303, 0x0710}, {0x2304, 0x0332}, {0x230c, 0x0200}, {0x230d, 0x0080},
+	{0x2310, 0x0010}, {0x22fb, 0x0000}
+};
+#define RT5671_DSP_BLUETOOTH_VOIP_NUM \
+	(sizeof(rt5671_dsp_bluetooth_voip) / sizeof(rt5671_dsp_bluetooth_voip[0]))
 
 /**
  * rt5671_dsp_done - Wait until DSP is ready.
@@ -1570,6 +1592,15 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_name = rt5671_dsp_headset_voip_file; 
 		break;
 
+	case RT5671_DSP_BLUETOOTH_VOIP:
+		dev_info(codec->dev, "BLUETOOTH_VOIP\n");
+		mode_tab = rt5671_dsp_bluetooth_voip;
+		tab_num = RT5671_DSP_BLUETOOTH_VOIP_NUM;
+		file_size = &rt5671_dsp_bluetooth_voip_size;
+		file_buf = rt5671_dsp_bluetooth_voip_buf;
+		file_name = rt5671_dsp_bluetooth_voip_file; 
+		break;
+
 	default:
 		dev_info(codec->dev, "Disable\n");
 		return 0;
@@ -1800,6 +1831,12 @@ static ssize_t rt5671_dsp_show(struct device *dev,
 		cnt += sprintf(buf, "[HEADSET_VOIP]\n");
 		rt5671_dsp_tab = rt5671_dsp_headset_voip;
 		tab_num = RT5671_DSP_HEADSET_VOIP_NUM;
+		break;
+
+	case RT5671_DSP_BLUETOOTH_VOIP:
+		cnt += sprintf(buf, "[BLUETOOTH_VOIP]\n");
+		rt5671_dsp_tab = rt5671_dsp_bluetooth_voip;
+		tab_num = RT5671_DSP_BLUETOOTH_VOIP_NUM;
 		break;
 
 	default:
