@@ -1606,9 +1606,75 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		return 0;
 	}
 
-	if (*file_size == 0)
+	if (*file_size == 0) {
 		*file_size = rt5671_read_dsp_code_from_file(file_name,
 				(u8 **)&file_buf);
+
+		switch (mode) {
+		case RT5671_DSP_HANDSET:
+			rt5671_dsp_handset_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HANDSFREE:
+			rt5671_dsp_handsfree_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HEADPHONE:
+			rt5671_dsp_headphone_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HEADSET:
+			rt5671_dsp_headset_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_BLUETOOTH:
+			rt5671_dsp_bluetooth_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HANDSET_NB:
+			rt5671_dsp_handset_nb_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HANDSFREE_NB:
+			rt5671_dsp_handsfree_nb_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HEADPHONE_NB:
+			rt5671_dsp_headphone_nb_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HEADSET_NB:
+			rt5671_dsp_headset_nb_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_BLUETOOTH_NB:
+			rt5671_dsp_bluetooth_nb_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HANDSET_VOIP:
+			rt5671_dsp_handset_voip_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HANDSFREE_VOIP:
+			rt5671_dsp_handsfree_voip_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HEADPHONE_VOIP:
+			rt5671_dsp_headphone_voip_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_HEADSET_VOIP:
+			rt5671_dsp_headset_voip_buf = file_buf;
+			break;
+		
+		case RT5671_DSP_BLUETOOTH_VOIP:
+			rt5671_dsp_bluetooth_voip_buf = file_buf;
+			break;
+		
+		default:
+			return 0;
+		}
+	}
 
 	if (*file_size) {
 		load_dsp_parameters(codec, file_buf);
