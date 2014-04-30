@@ -931,8 +931,8 @@ static int rt5671_dsp_done(struct snd_soc_codec *codec)
  *
  * Returns 0 for success or negative error code.
  */
-static int rt5671_dsp_write(struct snd_soc_codec *codec,
-		unsigned int addr, unsigned int data)
+int rt5671_dsp_write(struct snd_soc_codec *codec, unsigned int addr,
+	unsigned int data)
 {
 	unsigned int dsp_val;
 	int ret;
@@ -978,8 +978,7 @@ err:
  *
  * Returns DSP register value or negative error code.
  */
-static unsigned int rt5671_dsp_read(
-	struct snd_soc_codec *codec, unsigned int reg)
+unsigned int rt5671_dsp_read(struct snd_soc_codec *codec, unsigned int reg)
 {
 	unsigned int value;
 	unsigned int dsp_val;
@@ -1701,7 +1700,7 @@ mode_err:
  *
  * Returns 0 for success or negative error code.
  */
-static int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
+int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 {
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	int ret, rate;
@@ -2015,47 +2014,6 @@ static ssize_t dsp_reg_store(struct device *dev,
 }
 static DEVICE_ATTR(dsp_reg, 0666, rt5671_dsp_show, dsp_reg_store);
 
-static ssize_t rt5671_dsp_adb_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-	struct i2c_client *client = to_i2c_client(dev);
-	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
-	struct snd_soc_codec *codec = rt5671->codec;
-	unsigned int val;
-	int cnt = 0;
-
-	val = rt5671_dsp_read(codec, rt5671->adb_register);
-
-	cnt += snprintf(buf + cnt, 5, "%04x", val);
-
-	return cnt;
-}
-
-static ssize_t rt5671_dsp_adb_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
-{
-	struct i2c_client *client = to_i2c_client(dev);
-	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
-	unsigned int addr = 0;
-	int i;
-
-	for (i = 0; i < count; i++) {
-		if (*(buf+i) <= '9' && *(buf + i) >= '0')
-			addr = (addr << 4) | (*(buf + i) - '0');
-		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
-			addr = (addr << 4) | ((*(buf + i) - 'a')+0xa);
-		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
-			addr = (addr << 4) | ((*(buf + i) - 'A')+0xa);
-		else
-			break;
-	}
-
-	rt5671->adb_register = addr;
-
-	return count;
-}
-static DEVICE_ATTR(dsp_reg_adb, 0666, rt5671_dsp_adb_show, rt5671_dsp_adb_store);
-
 /**
  * rt5671_dsp_probe - register DSP for rt5671
  * @codec: audio codec
@@ -2116,13 +2074,6 @@ int rt5671_dsp_probe(struct snd_soc_codec *codec)
 	if (ret != 0) {
 		dev_err(codec->dev,
 			"Failed to create dsp_reg sysfs files: %d\n", ret);
-		return ret;
-	}
-
-	ret = device_create_file(codec->dev, &dev_attr_dsp_reg_adb);
-	if (ret != 0) {
-		dev_err(codec->dev,
-			"Failed to create dsp_reg_adb sysfs files: %d\n", ret);
 		return ret;
 	}
 

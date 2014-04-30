@@ -4106,7 +4106,6 @@ static ssize_t rt5671_index_show(struct device *dev,
 	unsigned int val;
 	int cnt = 0, i;
 
-	cnt += sprintf(buf, "RT5671 index register\n");
 	for (i = 0; i < 0xff; i++) {
 		if (cnt + RT5671_REG_DISP_LEN >= PAGE_SIZE)
 			break;
@@ -4114,7 +4113,7 @@ static ssize_t rt5671_index_show(struct device *dev,
 		if (!val)
 			continue;
 		cnt += snprintf(buf + cnt, RT5671_REG_DISP_LEN,
-				"%02x: %04x\n", i, val);
+				"%04x: %04x\n", i, val);
 	}
 
 	if (cnt >= PAGE_SIZE)
@@ -4168,50 +4167,6 @@ static ssize_t rt5671_index_store(struct device *dev,
 }
 static DEVICE_ATTR(index_reg, 0666, rt5671_index_show, rt5671_index_store);
 
-static ssize_t rt5671_index_adb_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-	struct i2c_client *client = to_i2c_client(dev);
-	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
-	struct snd_soc_codec *codec = rt5671->codec;
-	unsigned int val;
-	int cnt = 0;
-
-	val = rt5671_index_read(codec, rt5671->adb_register);
-
-	cnt += snprintf(buf + cnt, 5, "%04x", val);
-
-	return cnt;
-}
-
-static ssize_t rt5671_index_adb_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
-{
-	struct i2c_client *client = to_i2c_client(dev);
-	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
-	unsigned int addr = 0;
-	int i;
-
-	for (i = 0; i < count; i++) {
-		if (*(buf+i) <= '9' && *(buf + i) >= '0')
-			addr = (addr << 4) | (*(buf + i) - '0');
-		else if (*(buf+i) <= 'f' && *(buf + i) >= 'a')
-			addr = (addr << 4) | ((*(buf + i) - 'a')+0xa);
-		else if (*(buf+i) <= 'F' && *(buf + i) >= 'A')
-			addr = (addr << 4) | ((*(buf + i) - 'A')+0xa);
-		else
-			break;
-	}
-
-	if (addr > RT5671_VENDOR_ID2)
-		return count;
-
-	rt5671->adb_register = addr;
-
-	return count;
-}
-static DEVICE_ATTR(index_reg_adb, 0666, rt5671_index_adb_show, rt5671_index_adb_store);
-
 static ssize_t rt5671_codec_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -4229,7 +4184,7 @@ static ssize_t rt5671_codec_show(struct device *dev,
 			val = snd_soc_read(codec, i);
 
 			cnt += snprintf(buf + cnt, RT5671_REG_DISP_LEN,
-					"%02x: %04x\n", i, val);
+					"%04x: %04x\n", i, val);
 		}
 	}
 
@@ -4291,16 +4246,122 @@ static ssize_t rt5671_codec_adb_show(struct device *dev,
 	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
 	struct snd_soc_codec *codec = rt5671->codec;
 	unsigned int val;
-	int cnt = 0;
+	int cnt = 0, i;
 
-	val = snd_soc_read(codec, rt5671->adb_register);
+	for (i = 0; i < rt5671->adb_reg_num; i++) {
+		if (cnt + RT5671_REG_DISP_LEN >= PAGE_SIZE)
+			break;
 
-	cnt += snprintf(buf + cnt, 5, "%04x", val);
+		switch (rt5671->adb_reg_addr[i] & 0x30000) {
+		case 0x10000:
+			val = rt5671_index_read(codec, rt5671->adb_reg_addr[i] & 0xffff);
+			break;
+		case 0x20000:
+			val = rt5671_dsp_read(codec, rt5671->adb_reg_addr[i] & 0xffff);
+			break;
+		default:
+			val = snd_soc_read(codec, rt5671->adb_reg_addr[i] & 0xffff);
+		}
+			
+		cnt += snprintf(buf + cnt, RT5671_REG_DISP_LEN, "%05x: %04x\n",
+			rt5671->adb_reg_addr[i], val);
+	}
 
 	return cnt;
 }
 
-static DEVICE_ATTR(codec_reg_adb, 0666, rt5671_codec_adb_show, rt5671_index_adb_store);
+static ssize_t rt5671_codec_adb_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct rt5671_priv *rt5671 = i2c_get_clientdata(client);
+	struct snd_soc_codec *codec = rt5671->codec;
+	unsigned int value = 0;
+	int i = 2, j = 0;
+
+	if (buf[0] == 'R' || buf[0] == 'r') {
+		while (j < 0x100 && i < count) {
+			rt5671->adb_reg_addr[j] = 0;
+			value = 0;
+			for ( ; i < count; i++) {
+				if (*(buf + i) <= '9' && *(buf + i) >= '0')
+					value = (value << 4) | (*(buf + i) - '0');
+				else if (*(buf + i) <= 'f' && *(buf + i) >= 'a')
+					value = (value << 4) | ((*(buf + i) - 'a')+0xa);
+				else if (*(buf + i) <= 'F' && *(buf + i) >= 'A')
+					value = (value << 4) | ((*(buf + i) - 'A')+0xa);
+				else
+					break;
+			}
+			i++;
+
+			rt5671->adb_reg_addr[j] = value;
+			j++;
+		}
+		rt5671->adb_reg_num = j;
+	} else if (buf[0] == 'W' || buf[0] == 'w') { 
+		while (j < 0x100 && i < count) {
+			/* Get address */
+			rt5671->adb_reg_addr[j] = 0;
+			value = 0;
+			for ( ; i < count; i++) {
+				if (*(buf + i) <= '9' && *(buf + i) >= '0')
+					value = (value << 4) | (*(buf + i) - '0');
+				else if (*(buf + i) <= 'f' && *(buf + i) >= 'a')
+					value = (value << 4) | ((*(buf + i) - 'a')+0xa);
+				else if (*(buf + i) <= 'F' && *(buf + i) >= 'A')
+					value = (value << 4) | ((*(buf + i) - 'A')+0xa);
+				else
+					break;
+			}
+			i++;
+			rt5671->adb_reg_addr[j] = value;
+
+			/* Get value */
+			rt5671->adb_reg_value[j] = 0;
+			value = 0;
+			for ( ; i < count; i++) {
+				if (*(buf + i) <= '9' && *(buf + i) >= '0')
+					value = (value << 4) | (*(buf + i) - '0');
+				else if (*(buf + i) <= 'f' && *(buf + i) >= 'a')
+					value = (value << 4) | ((*(buf + i) - 'a')+0xa);
+				else if (*(buf + i) <= 'F' && *(buf + i) >= 'A')
+					value = (value << 4) | ((*(buf + i) - 'A')+0xa);
+				else
+					break;
+			}
+			i++;
+			rt5671->adb_reg_value[j] = value;
+
+			j++;
+		}
+
+		rt5671->adb_reg_num = j;
+
+		for (i = 0; i < rt5671->adb_reg_num; i++) {
+			switch (rt5671->adb_reg_addr[i] & 0x30000) {
+			case 0x10000:
+				rt5671_index_write(codec,
+					rt5671->adb_reg_addr[i] & 0xffff,
+					rt5671->adb_reg_value[i]);
+				break;
+			case 0x20000:
+				rt5671_dsp_write(codec,
+					rt5671->adb_reg_addr[i] & 0xffff,
+					rt5671->adb_reg_value[i]);
+				break;
+			default:
+				snd_soc_write(codec,
+					rt5671->adb_reg_addr[i] & 0xffff,
+					rt5671->adb_reg_value[i]);
+			}
+		}
+
+	}
+
+	return count;
+}
+static DEVICE_ATTR(codec_reg_adb, 0666, rt5671_codec_adb_show, rt5671_codec_adb_store);
 
 static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			enum snd_soc_bias_level level)
@@ -4532,13 +4593,6 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 	if (ret != 0) {
 		dev_err(codec->dev,
 			"Failed to create codec_reg_adb sysfs files: %d\n", ret);
-		return ret;
-	}
-
-	ret = device_create_file(codec->dev, &dev_attr_index_reg_adb);
-	if (ret != 0) {
-		dev_err(codec->dev,
-			"Failed to create index_reg_adb sysfs files: %d\n", ret);
 		return ret;
 	}
 

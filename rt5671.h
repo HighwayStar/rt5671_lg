@@ -2029,7 +2029,7 @@ enum {
 #define RT5671_VOL_RSCL_MAX 0x27
 #define RT5671_VOL_RSCL_RANGE 0x1F
 /* Debug String Length */
-#define RT5671_REG_DISP_LEN 23
+#define RT5671_REG_DISP_LEN 13
 
 #define RT5671_NO_JACK		BIT(0)
 #define RT5671_HEADSET_DET	BIT(1)
@@ -2118,9 +2118,11 @@ struct rt5671_priv {
 	bool vad_en;
 	int stream;
 	int jack_type;
-
-	int adb_register;
 	int eq_mode;
+
+	unsigned int adb_reg_addr[0x100];
+	unsigned int adb_reg_value[0x100];
+	unsigned char adb_reg_num;
 };
 
 #endif /* __RT5671_H__ */
