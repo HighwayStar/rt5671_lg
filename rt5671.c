@@ -107,6 +107,8 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_REC_R2_MIXER	, 0x007d},	/* Mic1 -> RECMIXR */
 	{RT5671_STO1_ADC_MIXER	, 0x3920},	/* ADC -> Sto ADC mixer */
 	{RT5671_STO1_ADC_DIG_VOL, 0xafaf},	/* Mute STO1 ADC for depop */
+	{RT5671_MONO_ADC_DIG_VOL, 0xafaf},	/* Mute Mono ADC for depop */
+	{RT5671_STO2_ADC_DIG_VOL, 0xafaf},	/* Mute STO2 ADC for depop */
 /*	{RT5671_MONO_DAC_MIXER	, 0x1414}, */
 	{RT5671_PDM_OUT_CTRL	, 0xff00},
 #ifdef JD1_FUNC
@@ -2200,6 +2202,52 @@ static int rt5671_mono_adcr_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+static int rt5671_sto2_adcl_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		snd_soc_update_bits(codec, RT5671_STO2_ADC_DIG_VOL,
+			RT5671_L_MUTE, 0);
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		snd_soc_update_bits(codec, RT5671_STO2_ADC_DIG_VOL,
+			RT5671_L_MUTE,
+			RT5671_L_MUTE);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_sto2_adcr_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		snd_soc_update_bits(codec, RT5671_STO2_ADC_DIG_VOL,
+			RT5671_R_MUTE, 0);
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		snd_soc_update_bits(codec, RT5671_STO2_ADC_DIG_VOL,
+			RT5671_R_MUTE,
+			RT5671_R_MUTE);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
 void hp_amp_power(struct snd_soc_codec *codec, int on)
 {
 	if (on) {
@@ -2667,7 +2715,6 @@ static int rt5671_dac_filter_depop_event(struct snd_soc_dapm_widget *w,
 			struct snd_kcontrol *kcontrol, int event)
 {
 	struct snd_soc_codec *codec = w->codec;
-	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	static unsigned int reg_sto_dac, reg_mono_dac;
 
 	switch (event) {
@@ -2706,7 +2753,6 @@ static int rt5671_dac_monol_filter_depop_event(struct snd_soc_dapm_widget *w,
 			struct snd_kcontrol *kcontrol, int event)
 {
 	struct snd_soc_codec *codec = w->codec;
-	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	static unsigned int reg_sto_dac, reg_mono_dac, reg_dig_mix;
 
 	switch (event) {
@@ -2747,7 +2793,6 @@ static int rt5671_dac_monor_filter_depop_event(struct snd_soc_dapm_widget *w,
 			struct snd_kcontrol *kcontrol, int event)
 {
 	struct snd_soc_codec *codec = w->codec;
-	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 	static unsigned int reg_sto_dac, reg_mono_dac, reg_dig_mix;
 
 	switch (event) {
@@ -2993,16 +3038,12 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		rt5671_sto2_adc_r_mix, ARRAY_SIZE(rt5671_sto2_adc_r_mix)),
 	SND_SOC_DAPM_SUPPLY("adc mono left filter", RT5671_PWR_DIG2,
 		RT5671_PWR_ADC_MF_L_BIT, 0, NULL, 0),
-	SND_SOC_DAPM_MIXER_E("Mono ADC MIXL", SND_SOC_NOPM, 0, 0,
-		rt5671_mono_adc_l_mix, ARRAY_SIZE(rt5671_mono_adc_l_mix),
-		rt5671_mono_adcl_event, SND_SOC_DAPM_PRE_PMD |
-		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_MIXER("Mono ADC MIXL", SND_SOC_NOPM, 0, 0,
+		rt5671_mono_adc_l_mix, ARRAY_SIZE(rt5671_mono_adc_l_mix)),
 	SND_SOC_DAPM_SUPPLY("adc mono right filter", RT5671_PWR_DIG2,
 		RT5671_PWR_ADC_MF_R_BIT, 0, NULL, 0),
-	SND_SOC_DAPM_MIXER_E("Mono ADC MIXR", SND_SOC_NOPM, 0, 0,
-		rt5671_mono_adc_r_mix, ARRAY_SIZE(rt5671_mono_adc_r_mix),
-		rt5671_mono_adcr_event, SND_SOC_DAPM_PRE_PMD |
-		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_MIXER("Mono ADC MIXR", SND_SOC_NOPM, 0, 0,
+		rt5671_mono_adc_r_mix, ARRAY_SIZE(rt5671_mono_adc_r_mix)),
 
 	/* ADC PGA */
 	SND_SOC_DAPM_PGA_S("Stereo1 ADC MIXL", 1, SND_SOC_NOPM, 0, 0,
@@ -3011,8 +3052,18 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA_S("Stereo1 ADC MIXR", 1, SND_SOC_NOPM, 0, 0,
 		rt5671_sto1_adcr_event, SND_SOC_DAPM_PRE_PMD |
 		SND_SOC_DAPM_POST_PMU),
-	SND_SOC_DAPM_PGA("Stereo2 ADC MIXL", SND_SOC_NOPM, 0, 0, NULL, 0),
-	SND_SOC_DAPM_PGA("Stereo2 ADC MIXR", SND_SOC_NOPM, 0, 0, NULL, 0),
+	SND_SOC_DAPM_PGA_S("Stereo2 ADC MIXL", 1, SND_SOC_NOPM, 0, 0,
+		rt5671_sto2_adcl_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_PGA_S("Stereo2 ADC MIXR", 1, SND_SOC_NOPM, 0, 0,
+		rt5671_sto2_adcr_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_PGA_S("Mono ADC MIXL VOL", 1, SND_SOC_NOPM, 0, 0,
+		rt5671_mono_adcl_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_PGA_S("Mono ADC MIXR VOL", 1, SND_SOC_NOPM, 0, 0,
+		rt5671_mono_adcr_event, SND_SOC_DAPM_PRE_PMD |
+		SND_SOC_DAPM_POST_PMU),
 	SND_SOC_DAPM_PGA("Sto2 ADC LR MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("Stereo1 ADC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("Stereo2 ADC MIX", SND_SOC_NOPM, 0, 0, NULL, 0),
@@ -3405,6 +3456,9 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "Mono ADC MIXR", NULL, "adc mono right filter" },
 	{ "adc mono right filter", NULL, "PLL1", check_sysclk1_source },
 
+	{ "Mono ADC MIXL VOL", NULL, "Mono ADC MIXL" },
+	{ "Mono ADC MIXR VOL", NULL, "Mono ADC MIXR" },
+
 	{ "Stereo2 ADC Mux", "ADC1L ADC2R", "ADC 1_2" },
 	{ "Stereo2 ADC Mux", "ADC3", "ADC 3" },
 
@@ -3433,16 +3487,16 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "adc stereo2 filter", NULL, "PLL1", check_sysclk1_source },
 
 	{ "VAD ADC Mux", "Sto1 ADC L", "Stereo1 ADC MIXL" },
-	{ "VAD ADC Mux", "Mono ADC L", "Mono ADC MIXL" },
-	{ "VAD ADC Mux", "Mono ADC R", "Mono ADC MIXR" },
+	{ "VAD ADC Mux", "Mono ADC L", "Mono ADC MIXL VOL" },
+	{ "VAD ADC Mux", "Mono ADC R", "Mono ADC MIXR VOL" },
 	{ "VAD ADC Mux", "Sto2 ADC L", "Stereo2 ADC MIXL" },
 
 	{ "VAD_ADC", NULL, "VAD ADC Mux" },
 
 	{ "IF_ADC1", NULL, "Stereo1 ADC MIXL" },
 	{ "IF_ADC1", NULL, "Stereo1 ADC MIXR" },
-	{ "IF_ADC2", NULL, "Mono ADC MIXL" },
-	{ "IF_ADC2", NULL, "Mono ADC MIXR" },
+	{ "IF_ADC2", NULL, "Mono ADC MIXL VOL" },
+	{ "IF_ADC2", NULL, "Mono ADC MIXR VOL" },
 	{ "IF_ADC3", NULL, "Stereo2 ADC MIXL" },
 	{ "IF_ADC3", NULL, "Stereo2 ADC MIXR" },
 
@@ -3465,15 +3519,15 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "Stereo1 ADC MIX", NULL, "Stereo1 ADC MIXR" },
 	{ "Stereo2 ADC MIX", NULL, "Stereo2 ADC MIXL" },
 	{ "Stereo2 ADC MIX", NULL, "Stereo2 ADC MIXR" },
-	{ "Mono ADC MIX", NULL, "Mono ADC MIXL" },
-	{ "Mono ADC MIX", NULL, "Mono ADC MIXR" },
+	{ "Mono ADC MIX", NULL, "Mono ADC MIXL VOL" },
+	{ "Mono ADC MIX", NULL, "Mono ADC MIXR VOL" },
 
 	{ "RxDP Mux", "IF2 DAC", "IF2 DAC" },
 	{ "RxDP Mux", "IF1 DAC2", "IF1 DAC2" },
 	{ "RxDP Mux", "STO1 ADC Mixer", "Stereo1 ADC MIX" },
 	{ "RxDP Mux", "STO2 ADC Mixer", "Stereo2 ADC MIX" },
-	{ "RxDP Mux", "Mono ADC Mixer L", "Mono ADC MIXL" },
-	{ "RxDP Mux", "Mono ADC Mixer R", "Mono ADC MIXR" },
+	{ "RxDP Mux", "Mono ADC Mixer L", "Mono ADC MIXL VOL" },
+	{ "RxDP Mux", "Mono ADC Mixer R", "Mono ADC MIXR VOL" },
 	{ "RxDP Mux", "DAC1", "DAC1 MIX" },
 
 	{ "TDM Data Mux", "Slot 0-1", "Stereo1 ADC MIX" },
