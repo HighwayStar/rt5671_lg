@@ -2829,6 +2829,106 @@ static int rt5671_dac_monor_filter_depop_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+static int rt5671_dac1_l_depop_event(struct snd_soc_dapm_widget *w,
+			struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	static unsigned int reg_dac;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		reg_dac = snd_soc_read(codec, RT5671_OUT_L1_MIXER);
+		snd_soc_update_bits(codec, RT5671_OUT_L1_MIXER,
+			 RT5671_M_DAC_L1_OM_L, RT5671_M_DAC_L1_OM_L);
+		break;
+
+	case SND_SOC_DAPM_POST_PMU:
+		snd_soc_update_bits(codec, RT5671_OUT_L1_MIXER,
+			 RT5671_M_DAC_L1_OM_L, reg_dac);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_dac1_r_depop_event(struct snd_soc_dapm_widget *w,
+			struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	static unsigned int reg_dac;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		reg_dac = snd_soc_read(codec, RT5671_OUT_R1_MIXER);
+		snd_soc_update_bits(codec, RT5671_OUT_R1_MIXER,
+			 RT5671_M_DAC_R1_OM_R, RT5671_M_DAC_R1_OM_R);
+		break;
+
+	case SND_SOC_DAPM_POST_PMU:
+		snd_soc_update_bits(codec, RT5671_OUT_R1_MIXER,
+			 RT5671_M_DAC_R1_OM_R, reg_dac);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_dac2_l_depop_event(struct snd_soc_dapm_widget *w,
+			struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	static unsigned int reg_dac;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		reg_dac = snd_soc_read(codec, RT5671_OUT_L1_MIXER);
+		snd_soc_update_bits(codec, RT5671_OUT_L1_MIXER,
+			 RT5671_M_DAC_L2_OM_L, RT5671_M_DAC_L2_OM_L);
+		break;
+
+	case SND_SOC_DAPM_POST_PMU:
+		snd_soc_update_bits(codec, RT5671_OUT_L1_MIXER,
+			 RT5671_M_DAC_L2_OM_L, reg_dac);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_dac2_r_depop_event(struct snd_soc_dapm_widget *w,
+			struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	static unsigned int reg_dac;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		reg_dac = snd_soc_read(codec, RT5671_OUT_R1_MIXER);
+		snd_soc_update_bits(codec, RT5671_OUT_R1_MIXER,
+			 RT5671_M_DAC_R2_OM_R, RT5671_M_DAC_R2_OM_R);
+		break;
+
+	case SND_SOC_DAPM_POST_PMU:
+		snd_soc_update_bits(codec, RT5671_OUT_R1_MIXER,
+			 RT5671_M_DAC_R2_OM_R, reg_dac);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
 static int rt5671_post_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *kcontrol, int event)
 {
@@ -3218,16 +3318,20 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 
 	/* DACs */
 	SND_SOC_DAPM_SUPPLY("DAC L1 Power", RT5671_PWR_DIG1,
-		RT5671_PWR_DAC_L1_BIT, 0, NULL, 0),
+		RT5671_PWR_DAC_L1_BIT, 0, rt5671_dac1_l_depop_event,
+		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
 	SND_SOC_DAPM_SUPPLY("DAC R1 Power", RT5671_PWR_DIG1,
-		RT5671_PWR_DAC_R1_BIT, 0, NULL, 0),
+		RT5671_PWR_DAC_R1_BIT, 0, rt5671_dac1_r_depop_event,
+		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
 	SND_SOC_DAPM_DAC("DAC L1", NULL, SND_SOC_NOPM, 0, 0),
 	SND_SOC_DAPM_DAC("DAC R1", NULL, SND_SOC_NOPM, 0, 0),
-	SND_SOC_DAPM_DAC("DAC L2", NULL, RT5671_PWR_DIG1,
-		RT5671_PWR_DAC_L2_BIT, 0),
+	SND_SOC_DAPM_DAC_E("DAC L2", NULL, RT5671_PWR_DIG1,
+		RT5671_PWR_DAC_L2_BIT, 0, rt5671_dac2_l_depop_event,
+		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
 
-	SND_SOC_DAPM_DAC("DAC R2", NULL, RT5671_PWR_DIG1,
-		RT5671_PWR_DAC_R2_BIT, 0),
+	SND_SOC_DAPM_DAC_E("DAC R2", NULL, RT5671_PWR_DIG1,
+		RT5671_PWR_DAC_R2_BIT, 0, rt5671_dac2_r_depop_event,
+		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
 	/* OUT Mixer */
 
 	SND_SOC_DAPM_MIXER("OUT MIXL", RT5671_PWR_MIXER, RT5671_PWR_OM_L_BIT,
