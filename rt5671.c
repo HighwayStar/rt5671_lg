@@ -131,6 +131,7 @@ static struct rt5671_init_reg init_list[] = {
 	{RT5671_IN1_CTRL1	, 0x0021},
 	{RT5671_IN1_CTRL2	, 0x08a7},
 	{RT5671_GEN_CTRL2	, 0x0031},
+	{RT5671_TDM_CTRL_3	, 0x0101}, /* Add for IF1 DAC TDM selection */
 };
 #define RT5671_INIT_REG_LEN ARRAY_SIZE(init_list)
 
