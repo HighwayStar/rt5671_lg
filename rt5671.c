@@ -54,6 +54,9 @@ module_param(pmu_depop_time, int, 0644);
 static int hp_amp_time = 20;
 module_param(hp_amp_time, int, 0644);
 
+bool hp_amp_power_up = false;
+bool lout_amp_power_up = false;
+
 #define RT5671_DET_EXT_MIC 0
 /*#define USE_INT_CLK*/
 /*#define ALC_DRC_FUNC*/
@@ -2249,7 +2252,7 @@ static int rt5671_sto2_adcr_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
-void hp_amp_power(struct snd_soc_codec *codec, int on)
+void hp_amp_power(struct snd_soc_codec *codec, int on, bool delay)
 {
 	if (on) {
 		snd_soc_update_bits(codec, RT5671_CHARGE_PUMP,
@@ -2265,12 +2268,15 @@ void hp_amp_power(struct snd_soc_codec *codec, int on)
 		snd_soc_write(codec, RT5671_DEPOP_M2, 0x3100);
 		snd_soc_write(codec, RT5671_DEPOP_M1, 0x8009);
 		rt5671_index_write(codec, RT5671_HP_DCC_INT1, 0x9f00);
-		pr_debug("hp_amp_time=%d\n",hp_amp_time);
-		mdelay(hp_amp_time);
+		if (delay) {
+			pr_debug("hp_amp_time=%d\n",hp_amp_time);
+			mdelay(hp_amp_time);
+		}
 		snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 	} else {
 		snd_soc_write(codec, RT5671_DEPOP_M1, 0x0004);
-		msleep(30);
+		if (delay)
+			mdelay(30);
 	}
 }
 
@@ -2286,7 +2292,7 @@ static void rt5671_pmu_depop(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, RT5671_HP_VOL,
 		RT5671_L_MUTE | RT5671_R_MUTE, 0);
 	pr_debug("pmu_depop_time=%d\n",pmu_depop_time);
-	msleep(pmu_depop_time);
+	mdelay(pmu_depop_time);
 	snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 }
 
@@ -2301,7 +2307,7 @@ static void rt5671_pmd_depop(struct snd_soc_codec *codec)
 	mdelay(10);
 	snd_soc_update_bits(codec, RT5671_HP_VOL,
 		RT5671_L_MUTE | RT5671_R_MUTE, RT5671_L_MUTE | RT5671_R_MUTE);
-	msleep(20);
+	mdelay(20);
 	snd_soc_update_bits(codec, RT5671_GEN_CTRL2, 0x0300, 0x0);
 	snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 	snd_soc_write(codec, RT5671_DEPOP_M3, 0x0707);
@@ -2315,10 +2321,41 @@ static int rt5671_hp_power_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
-		hp_amp_power(codec, 1);
+		hp_amp_power_up = true;
+
+		if (hp_amp_power_up != lout_amp_power_up)
+			hp_amp_power(codec, 1, true);
 		break;
 	case SND_SOC_DAPM_PRE_PMD:
-		hp_amp_power(codec, 0);
+		hp_amp_power_up = false;
+
+		if (!hp_amp_power_up && !lout_amp_power_up)
+			hp_amp_power(codec, 0, true);
+		break;
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_lout_power_event(struct snd_soc_dapm_widget *w,
+		struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		lout_amp_power_up = true;
+
+		if (hp_amp_power_up != lout_amp_power_up)
+			hp_amp_power(codec, 1, false);
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		lout_amp_power_up = false;
+
+		if (!hp_amp_power_up && !lout_amp_power_up)
+			hp_amp_power(codec, 0, false);
 		break;
 	default:
 		return 0;
@@ -3438,6 +3475,8 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA_S("HP Amp", 1, SND_SOC_NOPM, 0, 0,
 		rt5671_hp_event, SND_SOC_DAPM_PRE_PMD |
 		SND_SOC_DAPM_POST_PMU),
+	SND_SOC_DAPM_SUPPLY_S("Improve LOUT Amp Drv", 1, SND_SOC_NOPM,
+		0, 0, rt5671_lout_power_event, SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
 	SND_SOC_DAPM_PGA_S("LOUT Amp", 1, SND_SOC_NOPM, 0, 0,
 		rt5671_lout_event, SND_SOC_DAPM_PRE_PMD |
 		SND_SOC_DAPM_POST_PMU),
@@ -3946,8 +3985,8 @@ static const struct snd_soc_dapm_route rt5671_dapm_routes[] = {
 	{ "LOUT Amp", NULL, "LOUT MIX" },
 	{ "LOUTL", NULL, "LOUT Amp" },
 	{ "LOUTR", NULL, "LOUT Amp" },
-	{ "LOUTL", NULL, "Improve HP Amp Drv" },
-	{ "LOUTR", NULL, "Improve HP Amp Drv" },
+	{ "LOUTL", NULL, "Improve LOUT Amp Drv" },
+	{ "LOUTR", NULL, "Improve LOUT Amp Drv" },
 
 	{ "Mono Amp", NULL, "MONOAmp MIX" },
 	{ "MonoP", NULL, "Mono Amp" },
