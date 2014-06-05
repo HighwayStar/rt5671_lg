@@ -2275,8 +2275,10 @@ void hp_amp_power(struct snd_soc_codec *codec, int on, bool delay)
 		snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 	} else {
 		snd_soc_write(codec, RT5671_DEPOP_M1, 0x0004);
+/*
 		if (delay)
 			mdelay(30);
+*/
 	}
 }
 
@@ -2291,8 +2293,10 @@ static void rt5671_pmu_depop(struct snd_soc_codec *codec)
 				0x0300, 0x0300);
 	snd_soc_update_bits(codec, RT5671_HP_VOL,
 		RT5671_L_MUTE | RT5671_R_MUTE, 0);
+/*
 	pr_debug("pmu_depop_time=%d\n",pmu_depop_time);
 	mdelay(pmu_depop_time);
+*/
 	snd_soc_write(codec, RT5671_DEPOP_M1, 0x8019);
 }
 
