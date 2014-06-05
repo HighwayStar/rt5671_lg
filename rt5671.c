@@ -2930,6 +2930,74 @@ static int rt5671_dac2_r_depop_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+static int rt5671_i2s1_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		snd_soc_update_bits(codec, RT5671_PWR_DIG1,
+			RT5671_PWR_I2S1, RT5671_PWR_I2S1);
+		break;
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_i2s2_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		snd_soc_update_bits(codec, RT5671_PWR_DIG1,
+			RT5671_PWR_I2S2, RT5671_PWR_I2S2);
+		break;
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_i2s3_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		snd_soc_update_bits(codec, RT5671_PWR_DIG1,
+			RT5671_PWR_I2S3, RT5671_PWR_I2S3);
+		break;
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
+static int rt5671_i2s4_event(struct snd_soc_dapm_widget *w,
+	struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		snd_soc_update_bits(codec, RT5671_PWR_DIG1,
+			RT5671_PWR_I2S4, RT5671_PWR_I2S4);
+		break;
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
 static int rt5671_post_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *kcontrol, int event)
 {
@@ -3204,8 +3272,8 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 		&rt5671_if4_adc_in_mux),
 
 	/* Digital Interface */
-	SND_SOC_DAPM_SUPPLY("I2S1", RT5671_PWR_DIG1,
-		RT5671_PWR_I2S1_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("I2S1", SND_SOC_NOPM, 0, 0, rt5671_i2s1_event,
+		SND_SOC_DAPM_PRE_PMU),
 	SND_SOC_DAPM_PGA("IF1 DAC1", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF1 DAC2", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF1 DAC1 L", SND_SOC_NOPM, 0, 0, NULL, 0),
@@ -3213,30 +3281,30 @@ static const struct snd_soc_dapm_widget rt5671_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA("IF1 DAC2 L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF1 DAC2 R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF1 ADC", SND_SOC_NOPM, 0, 0, NULL, 0),
-	SND_SOC_DAPM_SUPPLY("I2S2", RT5671_PWR_DIG1,
-		RT5671_PWR_I2S2_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("I2S2", SND_SOC_NOPM, 0, 0, rt5671_i2s2_event,
+		SND_SOC_DAPM_PRE_PMU),
 	SND_SOC_DAPM_PGA("IF2 DAC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF2 DAC L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF2 DAC R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF2 ADC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF2 ADC L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF2 ADC R", SND_SOC_NOPM, 0, 0, NULL, 0),
-	SND_SOC_DAPM_SUPPLY("I2S3", RT5671_PWR_DIG1,
-		RT5671_PWR_I2S3_BIT, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("I2S3", SND_SOC_NOPM, 0, 0, rt5671_i2s3_event,
+		SND_SOC_DAPM_PRE_PMU),
 	SND_SOC_DAPM_PGA("IF3 DAC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 DAC L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 DAC R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 ADC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 ADC L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF3 ADC R", SND_SOC_NOPM, 0, 0, NULL, 0),
+	SND_SOC_DAPM_SUPPLY("I2S4", SND_SOC_NOPM, 0, 0, rt5671_i2s4_event,
+		SND_SOC_DAPM_PRE_PMU),
 	SND_SOC_DAPM_PGA("IF4 DAC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF4 DAC L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF4 DAC R", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF4 ADC", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF4 ADC L", SND_SOC_NOPM, 0, 0, NULL, 0),
 	SND_SOC_DAPM_PGA("IF4 ADC R", SND_SOC_NOPM, 0, 0, NULL, 0),
-	SND_SOC_DAPM_SUPPLY("I2S4", RT5671_PWR_DIG1,
-		RT5671_PWR_I2S4_BIT, 0, NULL, 0),
 
 	/* Digital Interface Select */
 	SND_SOC_DAPM_MUX("IF1 ADC1 IN1 Mux", SND_SOC_NOPM, 0, 0,
@@ -4526,6 +4594,8 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 			enum snd_soc_bias_level level)
 {
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+	static bool booted = false;
+
 	switch (level) {
 	case SND_SOC_BIAS_ON:
 		if (rt5671->vad_en) {
@@ -4548,6 +4618,7 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 
 	case SND_SOC_BIAS_STANDBY:
 		if (SND_SOC_BIAS_OFF == codec->dapm.bias_level) {
+			cancel_delayed_work_sync(&rt5671->i2s_clk_off_work);
 			snd_soc_update_bits(codec, RT5671_PWR_ANLG1,
 				RT5671_LDO_SEL_MASK, 0x3);
 			rt5671_index_update_bits(codec, 0x15, 0x7, 0x7);
@@ -4631,14 +4702,17 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x2003);
 				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0404);
 			} else {
-				snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
 				snd_soc_write(codec, RT5671_PWR_DIG2, 0x0001);
 				snd_soc_write(codec, RT5671_PWR_VOL, 0x0000);
 				snd_soc_write(codec, RT5671_PWR_MIXER, 0x0001);
 				snd_soc_write(codec, RT5671_PWR_ANLG1, 0x0001);
 				snd_soc_write(codec, RT5671_PWR_ANLG2, 0x0000);
-				snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x0);
 				rt5671_index_update_bits(codec, 0x15, 0x7, 0x0);
+				if (!booted)
+					booted = true;
+				else
+					schedule_delayed_work(&rt5671->i2s_clk_off_work,
+							msecs_to_jiffies(1000));
 			}
 			snd_soc_write(codec, RT5671_VAD_CTRL1, 0x2784);
 		}
@@ -4650,6 +4724,16 @@ static int rt5671_set_bias_level(struct snd_soc_codec *codec,
 	codec->dapm.bias_level = level;
 
 	return 0;
+}
+
+static void rt5671_do_i2s_clk_off_work(struct work_struct *work)
+{
+	struct rt5671_priv *rt5671 =
+		container_of(work, struct rt5671_priv, i2s_clk_off_work.work);
+	struct snd_soc_codec *codec = rt5671->codec;
+
+	snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x0);
 }
 
 static int rt5671_probe(struct snd_soc_codec *codec)
@@ -4733,6 +4817,7 @@ static int rt5671_probe(struct snd_soc_codec *codec)
 	realtek_ce_init_hwdep(codec);
 #endif
 #endif
+	INIT_DELAYED_WORK(&rt5671->i2s_clk_off_work, rt5671_do_i2s_clk_off_work);
 
 	ret = device_create_file(codec->dev, &dev_attr_index_reg);
 	if (ret != 0) {
@@ -4775,6 +4860,8 @@ static int rt5671_suspend(struct snd_soc_codec *codec)
 	rt5671_dsp_suspend(codec);
 	/* Move to VAD mode */
 	rt5671_set_bias_level(codec, SND_SOC_BIAS_OFF);
+	snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
+	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x0);
 	return 0;
 }
 

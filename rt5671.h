@@ -2097,6 +2097,7 @@ struct rt5671_pll_code {
 struct rt5671_priv {
 	struct snd_soc_codec *codec;
 	struct delayed_work patch_work;
+	struct delayed_work i2s_clk_off_work;
 	struct regmap *regmap;
 
 	int aif_pu;
