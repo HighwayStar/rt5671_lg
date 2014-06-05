@@ -26,7 +26,7 @@
 #include "rt5671.h"
 #include "rt5671-dsp.h"
 
-#define DSP_CLK_RATE RT5671_DSP_CLK_96K
+#define DSP_CLK_RATE RT5671_DSP_CLK_768K
 
 static unsigned short rt5671_dsp_init_patch_code[][2] = { // patch for init time, which is auto generated from FM36600C_signoff0902.patch
 	{0xe1, 0x0010}, {0xe2, 0x0000}, {0xe0, 0x6ac9},	// set to dsp0
@@ -914,7 +914,6 @@ static int rt5671_dsp_done(struct snd_soc_codec *codec)
 			return -EBUSY;
 		dsp_val = snd_soc_read(codec, RT5671_DSP_CTRL1);
 		count++;
-		mdelay(1);
 	}
 
 	return 0;
