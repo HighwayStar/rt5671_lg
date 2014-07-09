@@ -569,6 +569,12 @@ static unsigned short rt5671_dsp_8[][2] = {
 static int rt5671_dsp_handset_size = 0;
 static char *rt5671_dsp_handset_buf;
 static char *rt5671_dsp_handset_file = "/etc/firmware/rt5671_dsp_handset.bin";
+static int rt5671_dsp_handset_1mic_size = 0;
+static char *rt5671_dsp_handset_1mic_buf;
+static char *rt5671_dsp_handset_1mic_file = "/etc/firmware/rt5671_dsp_handset_1mic.bin";
+static int rt5671_dsp_handset_2mic_size = 0;
+static char *rt5671_dsp_handset_2mic_buf;
+static char *rt5671_dsp_handset_2mic_file = "/etc/firmware/rt5671_dsp_handset_2mic.bin";
 static unsigned short rt5671_dsp_handset[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -591,6 +597,12 @@ static unsigned short rt5671_dsp_handset[][2] = {
 static int rt5671_dsp_handsfree_size = 0;
 static char *rt5671_dsp_handsfree_buf;
 static char *rt5671_dsp_handsfree_file = "/etc/firmware/rt5671_dsp_handsfree.bin";
+static int rt5671_dsp_handsfree_1mic_size = 0;
+static char *rt5671_dsp_handsfree_1mic_buf;
+static char *rt5671_dsp_handsfree_1mic_file = "/etc/firmware/rt5671_dsp_handsfree_1mic.bin";
+static int rt5671_dsp_handsfree_2mic_size = 0;
+static char *rt5671_dsp_handsfree_2mic_buf;
+static char *rt5671_dsp_handsfree_2mic_file = "/etc/firmware/rt5671_dsp_handsfree_2mic.bin";
 static unsigned short rt5671_dsp_handsfree[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -613,6 +625,12 @@ static unsigned short rt5671_dsp_handsfree[][2] = {
 static int rt5671_dsp_headphone_size = 0;
 static char *rt5671_dsp_headphone_buf;
 static char *rt5671_dsp_headphone_file = "/etc/firmware/rt5671_dsp_headphone.bin";
+static int rt5671_dsp_headphone_1mic_size = 0;
+static char *rt5671_dsp_headphone_1mic_buf;
+static char *rt5671_dsp_headphone_1mic_file = "/etc/firmware/rt5671_dsp_headphone_1mic.bin";
+static int rt5671_dsp_headphone_2mic_size = 0;
+static char *rt5671_dsp_headphone_2mic_buf;
+static char *rt5671_dsp_headphone_2mic_file = "/etc/firmware/rt5671_dsp_headphone_2mic.bin";
 static unsigned short rt5671_dsp_headphone[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -635,6 +653,12 @@ static unsigned short rt5671_dsp_headphone[][2] = {
 static int rt5671_dsp_headset_size = 0;
 static char *rt5671_dsp_headset_buf;
 static char *rt5671_dsp_headset_file = "/etc/firmware/rt5671_dsp_headset.bin";
+static int rt5671_dsp_headset_1mic_size = 0;
+static char *rt5671_dsp_headset_1mic_buf;
+static char *rt5671_dsp_headset_1mic_file = "/etc/firmware/rt5671_dsp_headset_1mic.bin";
+static int rt5671_dsp_headset_2mic_size = 0;
+static char *rt5671_dsp_headset_2mic_buf;
+static char *rt5671_dsp_headset_2mic_file = "/etc/firmware/rt5671_dsp_headset_2mic.bin";
 static unsigned short rt5671_dsp_headset[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -657,6 +681,12 @@ static unsigned short rt5671_dsp_headset[][2] = {
 static int rt5671_dsp_bluetooth_size = 0;
 static char *rt5671_dsp_bluetooth_buf;
 static char *rt5671_dsp_bluetooth_file = "/etc/firmware/rt5671_dsp_bluetooth.bin";
+static int rt5671_dsp_bluetooth_1mic_size = 0;
+static char *rt5671_dsp_bluetooth_1mic_buf;
+static char *rt5671_dsp_bluetooth_1mic_file = "/etc/firmware/rt5671_dsp_bluetooth_1mic.bin";
+static int rt5671_dsp_bluetooth_2mic_size = 0;
+static char *rt5671_dsp_bluetooth_2mic_buf;
+static char *rt5671_dsp_bluetooth_2mic_file = "/etc/firmware/rt5671_dsp_bluetooth_2mic.bin";
 static unsigned short rt5671_dsp_bluetooth[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -679,6 +709,12 @@ static unsigned short rt5671_dsp_bluetooth[][2] = {
 static int rt5671_dsp_handset_nb_size = 0;
 static char *rt5671_dsp_handset_nb_buf;
 static char *rt5671_dsp_handset_nb_file = "/etc/firmware/rt5671_dsp_handset_nb.bin";
+static int rt5671_dsp_handset_nb_1mic_size = 0;
+static char *rt5671_dsp_handset_nb_1mic_buf;
+static char *rt5671_dsp_handset_nb_1mic_file = "/etc/firmware/rt5671_dsp_handset_nb_1mic.bin";
+static int rt5671_dsp_handset_nb_2mic_size = 0;
+static char *rt5671_dsp_handset_nb_2mic_buf;
+static char *rt5671_dsp_handset_nb_2mic_file = "/etc/firmware/rt5671_dsp_handset_nb_2mic.bin";
 static unsigned short rt5671_dsp_handset_nb[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -701,6 +737,12 @@ static unsigned short rt5671_dsp_handset_nb[][2] = {
 static int rt5671_dsp_handsfree_nb_size = 0;
 static char *rt5671_dsp_handsfree_nb_buf;
 static char *rt5671_dsp_handsfree_nb_file = "/etc/firmware/rt5671_dsp_handsfree_nb.bin";
+static int rt5671_dsp_handsfree_nb_1mic_size = 0;
+static char *rt5671_dsp_handsfree_nb_1mic_buf;
+static char *rt5671_dsp_handsfree_nb_1mic_file = "/etc/firmware/rt5671_dsp_handsfree_nb_1mic.bin";
+static int rt5671_dsp_handsfree_nb_2mic_size = 0;
+static char *rt5671_dsp_handsfree_nb_2mic_buf;
+static char *rt5671_dsp_handsfree_nb_2mic_file = "/etc/firmware/rt5671_dsp_handsfree_nb_2mic.bin";
 static unsigned short rt5671_dsp_handsfree_nb[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -723,6 +765,12 @@ static unsigned short rt5671_dsp_handsfree_nb[][2] = {
 static int rt5671_dsp_headphone_nb_size = 0;
 static char *rt5671_dsp_headphone_nb_buf;
 static char *rt5671_dsp_headphone_nb_file = "/etc/firmware/rt5671_dsp_headphone_nb.bin";
+static int rt5671_dsp_headphone_nb_1mic_size = 0;
+static char *rt5671_dsp_headphone_nb_1mic_buf;
+static char *rt5671_dsp_headphone_nb_1mic_file = "/etc/firmware/rt5671_dsp_headphone_nb_1mic.bin";
+static int rt5671_dsp_headphone_nb_2mic_size = 0;
+static char *rt5671_dsp_headphone_nb_2mic_buf;
+static char *rt5671_dsp_headphone_nb_2mic_file = "/etc/firmware/rt5671_dsp_headphone_nb_2mic.bin";
 static unsigned short rt5671_dsp_headphone_nb[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -745,6 +793,12 @@ static unsigned short rt5671_dsp_headphone_nb[][2] = {
 static int rt5671_dsp_headset_nb_size = 0;
 static char *rt5671_dsp_headset_nb_buf;
 static char *rt5671_dsp_headset_nb_file = "/etc/firmware/rt5671_dsp_headset_nb.bin";
+static int rt5671_dsp_headset_nb_1mic_size = 0;
+static char *rt5671_dsp_headset_nb_1mic_buf;
+static char *rt5671_dsp_headset_nb_1mic_file = "/etc/firmware/rt5671_dsp_headset_nb_1mic.bin";
+static int rt5671_dsp_headset_nb_2mic_size = 0;
+static char *rt5671_dsp_headset_nb_2mic_buf;
+static char *rt5671_dsp_headset_nb_2mic_file = "/etc/firmware/rt5671_dsp_headset_nb_2mic.bin";
 static unsigned short rt5671_dsp_headset_nb[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -767,6 +821,12 @@ static unsigned short rt5671_dsp_headset_nb[][2] = {
 static int rt5671_dsp_bluetooth_nb_size = 0;
 static char *rt5671_dsp_bluetooth_nb_buf;
 static char *rt5671_dsp_bluetooth_nb_file = "/etc/firmware/rt5671_dsp_bluetooth_nb.bin";
+static int rt5671_dsp_bluetooth_nb_1mic_size = 0;
+static char *rt5671_dsp_bluetooth_nb_1mic_buf;
+static char *rt5671_dsp_bluetooth_nb_1mic_file = "/etc/firmware/rt5671_dsp_bluetooth_nb_1mic.bin";
+static int rt5671_dsp_bluetooth_nb_2mic_size = 0;
+static char *rt5671_dsp_bluetooth_nb_2mic_buf;
+static char *rt5671_dsp_bluetooth_nb_2mic_file = "/etc/firmware/rt5671_dsp_bluetooth_nb_2mic.bin";
 static unsigned short rt5671_dsp_bluetooth_nb[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -789,6 +849,12 @@ static unsigned short rt5671_dsp_bluetooth_nb[][2] = {
 static int rt5671_dsp_handset_voip_size = 0;
 static char *rt5671_dsp_handset_voip_buf;
 static char *rt5671_dsp_handset_voip_file = "/etc/firmware/rt5671_dsp_handset_voip.bin";
+static int rt5671_dsp_handset_voip_1mic_size = 0;
+static char *rt5671_dsp_handset_voip_1mic_buf;
+static char *rt5671_dsp_handset_voip_1mic_file = "/etc/firmware/rt5671_dsp_handset_voip_1mic.bin";
+static int rt5671_dsp_handset_voip_2mic_size = 0;
+static char *rt5671_dsp_handset_voip_2mic_buf;
+static char *rt5671_dsp_handset_voip_2mic_file = "/etc/firmware/rt5671_dsp_handset_voip_2mic.bin";
 static unsigned short rt5671_dsp_handset_voip[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -811,6 +877,12 @@ static unsigned short rt5671_dsp_handset_voip[][2] = {
 static int rt5671_dsp_handsfree_voip_size = 0;
 static char *rt5671_dsp_handsfree_voip_buf;
 static char *rt5671_dsp_handsfree_voip_file = "/etc/firmware/rt5671_dsp_handsfree_voip.bin";
+static int rt5671_dsp_handsfree_voip_1mic_size = 0;
+static char *rt5671_dsp_handsfree_voip_1mic_buf;
+static char *rt5671_dsp_handsfree_voip_1mic_file = "/etc/firmware/rt5671_dsp_handsfree_voip_1mic.bin";
+static int rt5671_dsp_handsfree_voip_2mic_size = 0;
+static char *rt5671_dsp_handsfree_voip_2mic_buf;
+static char *rt5671_dsp_handsfree_voip_2mic_file = "/etc/firmware/rt5671_dsp_handsfree_voip_2mic.bin";
 static unsigned short rt5671_dsp_handsfree_voip[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -833,6 +905,12 @@ static unsigned short rt5671_dsp_handsfree_voip[][2] = {
 static int rt5671_dsp_headphone_voip_size = 0;
 static char *rt5671_dsp_headphone_voip_buf;
 static char *rt5671_dsp_headphone_voip_file = "/etc/firmware/rt5671_dsp_headphone_voip.bin";
+static int rt5671_dsp_headphone_voip_1mic_size = 0;
+static char *rt5671_dsp_headphone_voip_1mic_buf;
+static char *rt5671_dsp_headphone_voip_1mic_file = "/etc/firmware/rt5671_dsp_headphone_voip_1mic.bin";
+static int rt5671_dsp_headphone_voip_2mic_size = 0;
+static char *rt5671_dsp_headphone_voip_2mic_buf;
+static char *rt5671_dsp_headphone_voip_2mic_file = "/etc/firmware/rt5671_dsp_headphone_voip_2mic.bin";
 static unsigned short rt5671_dsp_headphone_voip[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -855,6 +933,12 @@ static unsigned short rt5671_dsp_headphone_voip[][2] = {
 static int rt5671_dsp_headset_voip_size = 0;
 static char *rt5671_dsp_headset_voip_buf;
 static char *rt5671_dsp_headset_voip_file = "/etc/firmware/rt5671_dsp_headset_voip.bin";
+static int rt5671_dsp_headset_voip_1mic_size = 0;
+static char *rt5671_dsp_headset_voip_1mic_buf;
+static char *rt5671_dsp_headset_voip_1mic_file = "/etc/firmware/rt5671_dsp_headset_voip_1mic.bin";
+static int rt5671_dsp_headset_voip_2mic_size = 0;
+static char *rt5671_dsp_headset_voip_2mic_buf;
+static char *rt5671_dsp_headset_voip_2mic_file = "/etc/firmware/rt5671_dsp_headset_voip_2mic.bin";
 static unsigned short rt5671_dsp_headset_voip[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -877,6 +961,12 @@ static unsigned short rt5671_dsp_headset_voip[][2] = {
 static int rt5671_dsp_bluetooth_voip_size = 0;
 static char *rt5671_dsp_bluetooth_voip_buf;
 static char *rt5671_dsp_bluetooth_voip_file = "/etc/firmware/rt5671_dsp_bluetooth_voip.bin";
+static int rt5671_dsp_bluetooth_voip_1mic_size = 0;
+static char *rt5671_dsp_bluetooth_voip_1mic_buf;
+static char *rt5671_dsp_bluetooth_voip_1mic_file = "/etc/firmware/rt5671_dsp_bluetooth_voip_1mic.bin";
+static int rt5671_dsp_bluetooth_voip_2mic_size = 0;
+static char *rt5671_dsp_bluetooth_voip_2mic_buf;
+static char *rt5671_dsp_bluetooth_voip_2mic_file = "/etc/firmware/rt5671_dsp_bluetooth_voip_2mic.bin";
 static unsigned short rt5671_dsp_bluetooth_voip[][2] = {
 	{0x22f8, 0x8003}, {0x232f, 0x00d0}, {0x2355, 0x2666}, {0x2356, 0x2666},
 	{0x2357, 0x2666}, {0x2358, 0x6666}, {0x2359, 0x6666}, {0x235a, 0x6666},
@@ -1168,6 +1258,349 @@ static int rt5671_dsp_put(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
+static int rt5671_dsp_set_mic_mode(struct snd_soc_codec *codec,
+	int mode, bool two_mic)
+{
+	int ret, i, *mic_file_size;
+	char *mic_file_buf, *mic_file_name;
+
+	switch (mode) {
+	case RT5671_DSP_HANDSET:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handset_2mic_size;
+			mic_file_buf = rt5671_dsp_handset_2mic_buf;
+			mic_file_name = rt5671_dsp_handset_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handset_1mic_size;
+			mic_file_buf = rt5671_dsp_handset_1mic_buf;
+			mic_file_name = rt5671_dsp_handset_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HANDSFREE:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handsfree_2mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_2mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handsfree_1mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_1mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HEADPHONE:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headphone_2mic_size;
+			mic_file_buf = rt5671_dsp_headphone_2mic_buf;
+			mic_file_name = rt5671_dsp_headphone_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headphone_1mic_size;
+			mic_file_buf = rt5671_dsp_headphone_1mic_buf;
+			mic_file_name = rt5671_dsp_headphone_1mic_file; 
+		}
+		break;
+	
+	case RT5671_DSP_HEADSET:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headset_2mic_size;
+			mic_file_buf = rt5671_dsp_headset_2mic_buf;
+			mic_file_name = rt5671_dsp_headset_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headset_1mic_size;
+			mic_file_buf = rt5671_dsp_headset_1mic_buf;
+			mic_file_name = rt5671_dsp_headset_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_BLUETOOTH:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_bluetooth_2mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_2mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_bluetooth_1mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_1mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HANDSET_NB:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handset_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_handset_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_handset_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handset_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_handset_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_handset_nb_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HANDSFREE_NB:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handsfree_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handsfree_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_nb_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HEADPHONE_NB:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headphone_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_headphone_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_headphone_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headphone_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_headphone_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_headphone_nb_1mic_file; 
+		}
+		break;
+	
+	case RT5671_DSP_HEADSET_NB:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headset_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_headset_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_headset_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headset_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_headset_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_headset_nb_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_BLUETOOTH_NB:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_bluetooth_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_bluetooth_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_nb_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HANDSET_VOIP:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handset_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_handset_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_handset_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handset_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_handset_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_handset_voip_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HANDSFREE_VOIP:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handsfree_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handsfree_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_voip_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_HEADPHONE_VOIP:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headphone_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_headphone_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_headphone_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headphone_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_headphone_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_headphone_voip_1mic_file; 
+		}
+		break;
+	
+	case RT5671_DSP_HEADSET_VOIP:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headset_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_headset_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_headset_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headset_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_headset_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_headset_voip_1mic_file; 
+		}
+		break;
+
+	case RT5671_DSP_BLUETOOTH_VOIP:
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_bluetooth_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_bluetooth_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_voip_1mic_file; 
+		}
+		break;
+
+	default:
+		dev_info(codec->dev, "Disable\n");
+		return 0;
+	}
+
+	if (*mic_file_size == 0) {
+		*mic_file_size = rt5671_read_dsp_code_from_file(mic_file_name,
+				(u8 **)&mic_file_buf);
+
+		switch (mode) {
+		case RT5671_DSP_HANDSET:
+			if (two_mic)
+				rt5671_dsp_handset_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handset_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSFREE:
+			if (two_mic)
+				rt5671_dsp_handsfree_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handsfree_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADPHONE:
+			if (two_mic)
+				rt5671_dsp_headphone_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headphone_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADSET:
+			if (two_mic)
+				rt5671_dsp_headset_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headset_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_BLUETOOTH:
+			if (two_mic)
+				rt5671_dsp_bluetooth_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_bluetooth_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSET_NB:
+			if (two_mic)
+				rt5671_dsp_handset_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handset_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSFREE_NB:
+			if (two_mic)
+				rt5671_dsp_handsfree_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handsfree_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADPHONE_NB:
+			if (two_mic)
+				rt5671_dsp_headphone_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headphone_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADSET_NB:
+			if (two_mic)
+				rt5671_dsp_headset_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headset_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_BLUETOOTH_NB:
+			if (two_mic)
+				rt5671_dsp_bluetooth_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_bluetooth_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSET_VOIP:
+			if (two_mic)
+				rt5671_dsp_handset_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handset_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSFREE_VOIP:
+			if (two_mic)
+				rt5671_dsp_handsfree_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handsfree_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADPHONE_VOIP:
+			if (two_mic)
+				rt5671_dsp_headphone_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headphone_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADSET_VOIP:
+			if (two_mic)
+				rt5671_dsp_headset_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headset_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_BLUETOOTH_VOIP:
+			if (two_mic)
+				rt5671_dsp_bluetooth_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_bluetooth_voip_1mic_buf = mic_file_buf;
+			break;
+
+		default:
+			return 0;
+		}
+	}
+
+	if (*mic_file_size)
+		load_dsp_parameters(codec, mic_file_buf);
+
+	return 0;
+}
+
+static int rt5671_dsp_2mic_get(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	ucontrol->value.integer.value[0] = rt5671->dsp_2mic;
+
+	return 0;
+}
+
+static int rt5671_dsp_2mic_put(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_dapm_widget *w;
+
+	if (rt5671->dsp_2mic != ucontrol->value.integer.value[0]) {
+		rt5671->dsp_2mic = ucontrol->value.integer.value[0];
+
+		list_for_each_entry(w, &codec->card->widgets, list)
+			if (!strcmp(w->name, "Voice DSP") && w->power)
+				rt5671_dsp_set_mic_mode(codec, rt5671->dsp_sw,
+					rt5671->dsp_2mic);
+	}
+
+	return 0;
+}
+
 /* DSP Path Control 1 */
 static const char * const rt5671_src_rxdp_mode[] = {
 	"Normal", "Divided by 2", "Divided by 3"
@@ -1201,6 +1634,8 @@ static const struct snd_kcontrol_new rt5671_dsp_snd_controls[] = {
 	/* AEC */
 	SOC_ENUM_EXT("DSP Function Switch", rt5671_dsp_enum,
 		rt5671_dsp_get, rt5671_dsp_put),
+	SOC_SINGLE_EXT("DSP 2MIC Switch", SND_SOC_NOPM, 0, 1, 0,
+		rt5671_dsp_2mic_get, rt5671_dsp_2mic_put),
 };
 
 /**
@@ -1457,10 +1892,11 @@ src_err:
  *
  * Returns 0 for success or negative error code.
  */
-static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
+static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode,
+	bool two_mic)
 {
-	int ret, i, tab_num, *file_size;
-	char *file_buf, *file_name;
+	int ret, i, tab_num, *file_size, *mic_file_size;
+	char *file_buf, *file_name, *mic_file_buf, *mic_file_name;
 	unsigned short (*mode_tab)[2];
 
 	switch (mode) {
@@ -1471,6 +1907,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_handset_size;
 		file_buf = rt5671_dsp_handset_buf;
 		file_name = rt5671_dsp_handset_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handset_2mic_size;
+			mic_file_buf = rt5671_dsp_handset_2mic_buf;
+			mic_file_name = rt5671_dsp_handset_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handset_1mic_size;
+			mic_file_buf = rt5671_dsp_handset_1mic_buf;
+			mic_file_name = rt5671_dsp_handset_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HANDSFREE:
@@ -1480,6 +1926,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_handsfree_size;
 		file_buf = rt5671_dsp_handsfree_buf;
 		file_name = rt5671_dsp_handsfree_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handsfree_2mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_2mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handsfree_1mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_1mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HEADPHONE:
@@ -1489,6 +1945,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_headphone_size;
 		file_buf = rt5671_dsp_headphone_buf;
 		file_name = rt5671_dsp_headphone_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headphone_2mic_size;
+			mic_file_buf = rt5671_dsp_headphone_2mic_buf;
+			mic_file_name = rt5671_dsp_headphone_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headphone_1mic_size;
+			mic_file_buf = rt5671_dsp_headphone_1mic_buf;
+			mic_file_name = rt5671_dsp_headphone_1mic_file; 
+		}
 		break;
 	
 	case RT5671_DSP_HEADSET:
@@ -1498,6 +1964,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_headset_size;
 		file_buf = rt5671_dsp_headset_buf;
 		file_name = rt5671_dsp_headset_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headset_2mic_size;
+			mic_file_buf = rt5671_dsp_headset_2mic_buf;
+			mic_file_name = rt5671_dsp_headset_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headset_1mic_size;
+			mic_file_buf = rt5671_dsp_headset_1mic_buf;
+			mic_file_name = rt5671_dsp_headset_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_BLUETOOTH:
@@ -1507,6 +1983,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_bluetooth_size;
 		file_buf = rt5671_dsp_bluetooth_buf;
 		file_name = rt5671_dsp_bluetooth_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_bluetooth_2mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_2mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_bluetooth_1mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_1mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HANDSET_NB:
@@ -1516,6 +2002,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_handset_nb_size;
 		file_buf = rt5671_dsp_handset_nb_buf;
 		file_name = rt5671_dsp_handset_nb_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handset_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_handset_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_handset_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handset_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_handset_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_handset_nb_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HANDSFREE_NB:
@@ -1525,6 +2021,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_handsfree_nb_size;
 		file_buf = rt5671_dsp_handsfree_nb_buf;
 		file_name = rt5671_dsp_handsfree_nb_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handsfree_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handsfree_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_nb_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HEADPHONE_NB:
@@ -1534,6 +2040,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_headphone_nb_size;
 		file_buf = rt5671_dsp_headphone_nb_buf;
 		file_name = rt5671_dsp_headphone_nb_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headphone_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_headphone_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_headphone_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headphone_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_headphone_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_headphone_nb_1mic_file; 
+		}
 		break;
 	
 	case RT5671_DSP_HEADSET_NB:
@@ -1543,6 +2059,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_headset_nb_size;
 		file_buf = rt5671_dsp_headset_nb_buf;
 		file_name = rt5671_dsp_headset_nb_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headset_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_headset_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_headset_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headset_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_headset_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_headset_nb_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_BLUETOOTH_NB:
@@ -1552,6 +2078,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_bluetooth_nb_size;
 		file_buf = rt5671_dsp_bluetooth_nb_buf;
 		file_name = rt5671_dsp_bluetooth_nb_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_bluetooth_nb_2mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_nb_2mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_nb_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_bluetooth_nb_1mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_nb_1mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_nb_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HANDSET_VOIP:
@@ -1561,6 +2097,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_handset_voip_size;
 		file_buf = rt5671_dsp_handset_voip_buf;
 		file_name = rt5671_dsp_handset_voip_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handset_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_handset_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_handset_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handset_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_handset_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_handset_voip_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HANDSFREE_VOIP:
@@ -1570,6 +2116,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_handsfree_voip_size;
 		file_buf = rt5671_dsp_handsfree_voip_buf;
 		file_name = rt5671_dsp_handsfree_voip_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_handsfree_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_handsfree_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_handsfree_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_handsfree_voip_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_HEADPHONE_VOIP:
@@ -1579,6 +2135,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_headphone_voip_size;
 		file_buf = rt5671_dsp_headphone_voip_buf;
 		file_name = rt5671_dsp_headphone_voip_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headphone_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_headphone_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_headphone_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headphone_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_headphone_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_headphone_voip_1mic_file; 
+		}
 		break;
 	
 	case RT5671_DSP_HEADSET_VOIP:
@@ -1588,6 +2154,16 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_headset_voip_size;
 		file_buf = rt5671_dsp_headset_voip_buf;
 		file_name = rt5671_dsp_headset_voip_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_headset_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_headset_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_headset_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_headset_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_headset_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_headset_voip_1mic_file; 
+		}
 		break;
 
 	case RT5671_DSP_BLUETOOTH_VOIP:
@@ -1597,12 +2173,141 @@ static int rt5671_dsp_set_mode(struct snd_soc_codec *codec, int mode)
 		file_size = &rt5671_dsp_bluetooth_voip_size;
 		file_buf = rt5671_dsp_bluetooth_voip_buf;
 		file_name = rt5671_dsp_bluetooth_voip_file; 
+
+		if (two_mic){
+			mic_file_size = &rt5671_dsp_bluetooth_voip_2mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_voip_2mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_voip_2mic_file; 
+		} else {
+			mic_file_size = &rt5671_dsp_bluetooth_voip_1mic_size;
+			mic_file_buf = rt5671_dsp_bluetooth_voip_1mic_buf;
+			mic_file_name = rt5671_dsp_bluetooth_voip_1mic_file; 
+		}
 		break;
 
 	default:
 		dev_info(codec->dev, "Disable\n");
 		return 0;
 	}
+
+	if (*mic_file_size == 0) {
+		*mic_file_size = rt5671_read_dsp_code_from_file(mic_file_name,
+				(u8 **)&mic_file_buf);
+
+		switch (mode) {
+		case RT5671_DSP_HANDSET:
+			if (two_mic)
+				rt5671_dsp_handset_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handset_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSFREE:
+			if (two_mic)
+				rt5671_dsp_handsfree_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handsfree_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADPHONE:
+			if (two_mic)
+				rt5671_dsp_headphone_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headphone_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADSET:
+			if (two_mic)
+				rt5671_dsp_headset_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headset_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_BLUETOOTH:
+			if (two_mic)
+				rt5671_dsp_bluetooth_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_bluetooth_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSET_NB:
+			if (two_mic)
+				rt5671_dsp_handset_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handset_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSFREE_NB:
+			if (two_mic)
+				rt5671_dsp_handsfree_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handsfree_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADPHONE_NB:
+			if (two_mic)
+				rt5671_dsp_headphone_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headphone_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADSET_NB:
+			if (two_mic)
+				rt5671_dsp_headset_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headset_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_BLUETOOTH_NB:
+			if (two_mic)
+				rt5671_dsp_bluetooth_nb_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_bluetooth_nb_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSET_VOIP:
+			if (two_mic)
+				rt5671_dsp_handset_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handset_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HANDSFREE_VOIP:
+			if (two_mic)
+				rt5671_dsp_handsfree_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_handsfree_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADPHONE_VOIP:
+			if (two_mic)
+				rt5671_dsp_headphone_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headphone_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_HEADSET_VOIP:
+			if (two_mic)
+				rt5671_dsp_headset_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_headset_voip_1mic_buf = mic_file_buf;
+			break;
+
+		case RT5671_DSP_BLUETOOTH_VOIP:
+			if (two_mic)
+				rt5671_dsp_bluetooth_voip_2mic_buf = mic_file_buf;
+			else
+				rt5671_dsp_bluetooth_voip_1mic_buf = mic_file_buf;
+			break;
+
+		default:
+			return 0;
+		}
+	}
+
+	if (*mic_file_size)
+		load_dsp_parameters(codec, mic_file_buf);
+
 
 	if (*file_size == 0) {
 		*file_size = rt5671_read_dsp_code_from_file(file_name,
@@ -1738,7 +2443,7 @@ int rt5671_dsp_snd_effect(struct snd_soc_codec *codec)
 	if (ret < 0)
 		goto effect_err;
 
-	ret = rt5671_dsp_set_mode(codec, rt5671->dsp_sw);
+	ret = rt5671_dsp_set_mode(codec, rt5671->dsp_sw, rt5671->dsp_2mic);
 	if (ret < 0)
 		goto effect_err;
 
