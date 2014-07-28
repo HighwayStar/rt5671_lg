@@ -23,6 +23,9 @@ enum {
 	NORMAL = 0,
 	SPK,
 	HP,
+	ADC_TYPE1,
+	ADC_TYPE2,
+	ADC_TYPE3,
 	MODE_NUM,
 };
 
@@ -40,10 +43,24 @@ typedef struct  hweq_s {
 	unsigned int ctrl;
 } hweq_t;
 
+enum {
+	ALC_NORMAL = 0,
+	ALC_TYPE1,
+	ALC_TYPE2,
+	ALC_TYPE3,
+	ALC_MODE_NUM,
+};
+
+#define ALC_REG_NUM 6
+typedef struct hwalc_s {
+	unsigned int value[ALC_REG_NUM];
+} hwalc_t;
+
 int rt5671_ioctl_common(struct snd_hwdep *hw, struct file *file,
 			unsigned int cmd, unsigned long arg);
 int rt5671_update_eqmode(
 	struct snd_soc_codec *codec, int channel, int mode);
+int rt5671_update_alcmode(struct snd_soc_codec *codec, int mode);
 
 #endif /* __RT5671_IOCTL_H__ */
 /* LGE_CHANGE_E */

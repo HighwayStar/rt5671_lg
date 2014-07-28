@@ -1070,6 +1070,7 @@ static int rt5671_vad_put(struct snd_kcontrol *kcontrol,
 	}
 
 	rt5671_set_bias_level(codec, SND_SOC_BIAS_OFF);
+
 	return 0;
 }
 
@@ -1169,6 +1170,67 @@ static int rt5671_eq_mode_put(struct snd_kcontrol *kcontrol,
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 
 	rt5671->eq_mode = ucontrol->value.integer.value[0];
+
+	return 0;
+}
+
+static const char *rt5671_adc_eq_mode[] = {
+	"Normal", "Type1", "Type2", "Type3"
+};
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_adc_eq_mode_enum, 0, 0, rt5671_adc_eq_mode);
+
+static int rt5671_adc_eq_mode_get(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	ucontrol->value.integer.value[0] =
+		(rt5671->adc_eq_mode == 0) ? rt5671->adc_eq_mode :
+		rt5671->adc_eq_mode - HP;
+
+	return 0;
+}
+
+static int rt5671_adc_eq_mode_put(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	rt5671->adc_eq_mode = (ucontrol->value.integer.value[0] == 0) ? 
+		ucontrol->value.integer.value[0] :
+		ucontrol->value.integer.value[0] + HP;
+
+	return 0;
+}
+
+static const char *rt5671_alc_drc_mode[] = {
+	"Normal", "Type1", "Type2", "Type3"
+};
+
+static const SOC_ENUM_SINGLE_DECL(rt5671_alc_drc_mode_enum, 0, 0,
+	rt5671_alc_drc_mode);
+
+static int rt5671_alc_drc_mode_get(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	ucontrol->value.integer.value[0] = rt5671->alc_drc_mode;
+
+	return 0;
+}
+
+static int rt5671_alc_drc_mode_put(struct snd_kcontrol *kcontrol,
+		struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
+
+	rt5671->alc_drc_mode = ucontrol->value.integer.value[0];
 
 	return 0;
 }
@@ -1318,6 +1380,10 @@ static const struct snd_kcontrol_new rt5671_snd_controls[] = {
 		rt5671_bt_call_get, rt5671_bt_call_put),
 	SOC_ENUM_EXT("EQ Mode", rt5671_eq_mode_enum,
 		rt5671_eq_mode_get, rt5671_eq_mode_put),
+	SOC_ENUM_EXT("ADC EQ Mode", rt5671_adc_eq_mode_enum,
+		rt5671_adc_eq_mode_get, rt5671_adc_eq_mode_put),
+	SOC_ENUM_EXT("ALC DRC Mode", rt5671_alc_drc_mode_enum,
+		rt5671_alc_drc_mode_get, rt5671_alc_drc_mode_put),
 
 	SOC_ENUM("I2S1 Track Division Switch", rt5671_i2s1_track_div),
 	SOC_ENUM("I2S2 Track Division Switch", rt5671_i2s2_track_div),
@@ -2104,13 +2170,18 @@ static int rt5671_sto1_adcl_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *kcontrol, int event)
 {
 	struct snd_soc_codec *codec = w->codec;
+	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 
 	switch (event) {
 	case SND_SOC_DAPM_POST_PMU:
+		rt5671_update_eqmode(codec, EQ_CH_ADC, rt5671->adc_eq_mode);
+		rt5671_update_alcmode(codec, rt5671->alc_drc_mode);
 		snd_soc_update_bits(codec, RT5671_STO1_ADC_DIG_VOL,
 			RT5671_L_MUTE, 0);
 		break;
 	case SND_SOC_DAPM_PRE_PMD:
+		rt5671_update_eqmode(codec, EQ_CH_ADC, NORMAL);
+		rt5671_update_alcmode(codec, ALC_NORMAL);
 		snd_soc_update_bits(codec, RT5671_STO1_ADC_DIG_VOL,
 			RT5671_L_MUTE,
 			RT5671_L_MUTE);

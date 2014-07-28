@@ -2120,6 +2120,8 @@ struct rt5671_priv {
 	int stream;
 	int jack_type;
 	int eq_mode;
+	int adc_eq_mode;
+	int alc_drc_mode;
 	bool dsp_2mic;
 
 	unsigned int adb_reg_addr[0x100];
