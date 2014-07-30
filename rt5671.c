@@ -4171,12 +4171,12 @@ static int rt5671_hw_params(struct snd_pcm_substream *substream,
 static int rt5671_prepare(struct snd_pcm_substream *substream,
 				struct snd_soc_dai *dai)
 {
-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_codec *codec = dai->codec;
 	struct rt5671_priv *rt5671 = snd_soc_codec_get_drvdata(codec);
 
 	rt5671->aif_pu = dai->id;
 	rt5671->stream = substream->stream;
+
 	return 0;
 }
 
