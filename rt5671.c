@@ -4972,6 +4972,16 @@ static int rt5671_suspend(struct snd_soc_codec *codec)
 	rt5671_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	snd_soc_write(codec, RT5671_PWR_DIG1, 0x0000);
 	snd_soc_update_bits(codec, RT5671_GEN_CTRL1, 0x1, 0x0);
+
+	snd_soc_update_bits(codec, RT5671_I2S1_SDP, RT5671_I2S_MS_MASK,
+		RT5671_I2S_MS_S);
+	snd_soc_update_bits(codec, RT5671_I2S2_SDP, RT5671_I2S_MS_MASK,
+		RT5671_I2S_MS_S);
+	snd_soc_update_bits(codec, RT5671_I2S3_SDP, RT5671_I2S_MS_MASK,
+		RT5671_I2S_MS_S);
+	snd_soc_update_bits(codec, RT5671_I2S4_SDP, RT5671_I2S_MS_MASK,
+		RT5671_I2S_MS_S);
+
 	return 0;
 }
 
@@ -4982,7 +4992,6 @@ static int rt5671_resume(struct snd_soc_codec *codec)
 	rt5671->vad_en = 0;
 	rt5671_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	/* Disable VAD mode end */
-	rt5671_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 	rt5671_dsp_resume(codec);
 	return 0;
 }
